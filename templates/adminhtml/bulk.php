@@ -69,9 +69,10 @@ function aramex_display_bulk_in_admin()
                                 
                                 if (count($allowed_domestic_methods) > 0) {
                                     foreach ($allowed_domestic_methods as $key => $val) {
+                                        $selected = ($key === 'CDS') ? 'selected="selected"' : '';
                                         ?>
                                         <option value="<?php echo esc_attr($key); ?>"
-                                                id="<?php echo esc_attr($key); ?>"><?php echo esc_attr($val); ?></option>
+                                                id="<?php echo esc_attr($key); ?>" <?php echo $selected; ?>><?php echo esc_attr($val); ?></option>
                                         <?php
 
                                     }
@@ -117,14 +118,14 @@ function aramex_display_bulk_in_admin()
                                     name="aramex_shipment_info_payment_type_dom">
                                 <option value="P"><?php echo esc_html__('Prepaid', 'aramex'); ?></option>
                                 <option value="C"><?php echo esc_html__('Collect', 'aramex'); ?></option>
-                                <option value="3"><?php echo esc_html__('Third Party', 'aramex'); ?></option>
+                                <option value="3" selected="selected"><?php echo esc_html__('Third Party', 'aramex'); ?></option>
                             </select>
                         </div>
                         <div class="text_short">
                             <label><?php echo esc_html__('Currency', 'aramex'); ?></label><br>
                             <input type="text" class="" id="aramex_shipment_currency_code"
                                    name="aramex_shipment_currency_code_dom"
-                                   value="<?php echo esc_attr(get_woocommerce_currency()) ?>"/>
+                                   value="SAR"/>
                         </div>
                     </FIELDSET>
                 </div>
@@ -143,9 +144,10 @@ function aramex_display_bulk_in_admin()
                                 <?php 
                                     if (count($allowed_international_methods) > 0) {
                                         foreach ($allowed_international_methods as $key => $val) {
+                                                $selected = ($key === 'EPX') ? 'selected="selected"' : '';
                                                 ?>
                                         <option value="<?php echo esc_attr($key); ?>"
-                                                id="<?php echo esc_attr($key); ?>"><?php echo esc_attr($val); ?></option>
+                                                id="<?php echo esc_attr($key); ?>" <?php echo $selected; ?>><?php echo esc_attr($val); ?></option>
                                 <?php 
                                         } 
                                     }
@@ -187,7 +189,7 @@ function aramex_display_bulk_in_admin()
                             <label><?php echo esc_html__('Payment Type', 'aramex'); ?></label><br/>
                             <select class="aramex_all_options" id="aramex_shipment_info_payment_type"
                                     name="aramex_shipment_info_payment_type">
-                                <option value="P"><?php echo esc_html__('Prepaid', 'aramex'); ?></option>
+                                <option value="P" selected="selected"><?php echo esc_html__('Prepaid', 'aramex'); ?></option>
                                 <option value="C"><?php echo esc_html__('Collect', 'aramex'); ?></option>
                                 <option value="3"><?php echo esc_html__('Third Party', 'aramex'); ?></option>
                             </select>
@@ -222,7 +224,7 @@ function aramex_display_bulk_in_admin()
                             <label><?php echo esc_html__('Currency', 'aramex'); ?></label><br/>
                             <input type="text" class="" id="aramex_shipment_currency_code"
                                    name="aramex_shipment_currency_code"
-                                   value="<?php echo esc_attr(get_woocommerce_currency()) ?>"/>
+                                   value="SAR"/>
                         </div>
                         <div class="aramex_clearer"></div>
                     </FIELDSET>
@@ -262,6 +264,11 @@ function aramex_display_bulk_in_admin()
                     $(".aramex_loader").css("display","none");
                     $(".order_in_background").fadeIn(500);
                     $(".aramex_bulk").fadeIn(500);
+                    
+                    // Auto-submit the form after a short delay to ensure it's fully displayed
+                    setTimeout(function() {
+                        $("#aramex_shipment_creation_submit_id").trigger('click');
+                    }, 1000);
                 });
 
                 $("#aramex_shipment_creation_submit_id").click(function () {
