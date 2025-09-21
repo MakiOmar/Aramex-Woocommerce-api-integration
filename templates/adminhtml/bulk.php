@@ -83,7 +83,7 @@ function aramex_display_bulk_in_admin()
                             <label><?php echo esc_html__('Additional Services', 'aramex'); ?></label>
                             <select class="aramex_all_options" id="aramex_shipment_info_service_type"
                                     name="aramex_shipment_info_service_type_dom">
-                                <option value=""></option>
+                                <option value="" selected="selected"></option>
 
                                 <?php
                                 if (count($allowed_domestic_additional_services) > 0) {
@@ -158,7 +158,7 @@ function aramex_display_bulk_in_admin()
                             <label><?php echo esc_html__('Additional Services', 'aramex'); ?></label><br/>
                             <select class="aramex_all_options" id="aramex_shipment_info_service_type"
                                     name="aramex_shipment_info_service_type">
-                                <option value=""></option>
+                                <option value="" selected="selected"></option>
                                 <?php
                                 if (count($allowed_international_additional_services) > 0) {
                                     foreach ($allowed_international_additional_services as $key => $val) {
@@ -199,7 +199,7 @@ function aramex_display_bulk_in_admin()
                             <label><?php echo esc_html__('Payment Option', 'aramex'); ?></label><br/>
                             <select class="" id="aramex_shipment_info_payment_option"
                                     name="aramex_shipment_info_payment_option">
-                                <option value=""></option>
+                                <option value="" selected="selected"></option>
                                 <option id="ASCC" value="ASCC"
                                         style="display: none;"><?php echo esc_html__('Needs Shipper Account Number to be filled',
                                         'aramex'); ?>
