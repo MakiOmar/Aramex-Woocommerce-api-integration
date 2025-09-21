@@ -1,0 +1,493 @@
+/*
+Plugin Name:  Aramex Shipping WooCommerce
+Plugin URI:   https://aramex.com
+Description:  Aramex Shipping WooCommerce plugin
+Version:      1.0.0
+Author:       aramex.com
+Author URI:   https://www.aramex.com/solutions-services/developers-solutions-center
+License:      GPL2
+License URI:  https://www.gnu.org/licenses/gpl-2.0.html
+Text Domain:  aramex
+Domain Path:  /languages
+ */
+
+#aramex_shipment_creation legend {
+    display: block;
+    font-weight: bold;
+    margin-left: 4px;
+    padding-left: 5px;
+    padding-right: 5px;
+
+}
+
+.aramex_shipment_creation_fieldset {
+    float: left;
+    margin-bottom: 10px;
+    min-height: 250px;
+    width: 310px;
+}
+
+#aramex_shipment_creation, .aramex_bulk {
+    width: 728px;
+    font-family: verdana;
+    font-size: 13px !important;
+    margin: 0 auto;
+    z-index: 401;
+
+    opacity: 1;
+    background: #fff;
+    padding: 15px;
+    margin-top: 10px;
+    border: 1px solid #D6D6D6;
+    overflow: hidden;
+}
+
+.aramex_bulk input, .aramex_bulk select, .aramex_bulk textarea {
+    font-size: 13px !important;
+    width: 270px;
+}
+
+#aramex_shipment_creation_header {
+    margin-bottom: 20px;
+}
+
+#aramex_shipment_creation_logo {
+    float: right;
+}
+
+#aramex_shipment_creation_title {
+    float: left;
+    margin-left: 15px;
+    margin-top: 15px;
+}
+
+.aramex_clearer {
+    clear: both;
+}
+
+#aramex_shipment_creation label {
+    display: block;
+    float: left;
+    font-size: 11px;
+    padding: 2px;
+    width: 90px;
+}
+
+#aramex_shipment_creation select {
+    display: inline-block;
+    width: 190px;
+}
+
+#aramex_shipment_creation .text_short {
+    clear: both;
+    margin-bottom: 10px;
+    min-height: 28px;
+}
+
+#shipment_infromation .text_short {
+    min-height: 35px;
+}
+
+#aramex_shipment_creation .little_description, .aramex_bulk .little_description {
+    font-size: 9px;
+    color: #555;
+    padding-right: 20px;
+    margin-bottom: 5px;
+    margin-top: 3px;
+}
+
+#general_details {
+    margin-bottom: -10px;
+}
+
+.aramex_shipment_creation_fieldset_big {
+    margin-bottom: 10px;
+}
+
+#aramex_shipment_creation_general_info {
+    background: #FFFFCC;
+}
+
+#shipment_infromation {
+    float: left;
+}
+
+#shipment_infromation2 {
+    float: left;
+    margin-left: 70px;
+}
+
+#general_details .text_short {
+    width: 300px;
+    color: #000;
+}
+
+#aramex_overlay {
+    z-index: 400;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: none;
+    top: 0;
+    left: 0;
+}
+
+#aramex_items_table {
+    text-align: left;
+    border-collapse: collapse;
+}
+
+#aramex_items_table th {
+    text-align: left;
+    background: #ccc;
+}
+
+#aramex_items_table td, #aramex_items_table th {
+    border: 0 none;
+    padding: 1px 15px 3px 3px;
+}
+
+#aramex_items_table .aramex_item_qty {
+    width: 20px;
+}
+
+#aramex_items_table .aramex_item_name {
+    width: 180px;
+}
+
+#aramex_items_table .aramex_item_options {
+    width: 20px;
+}
+
+#aramex_items_table .aramex_item_tobe_shipped {
+    padding-top: 3px;
+    padding-bottom: 3px;
+}
+
+#aramex_shipment label.error {
+    display: inline-block;
+    float: none;
+    margin-left: 17px;
+    padding-left: 58px;
+    width: 200px;
+}
+
+#aramex_shipment a.error span,
+#aramex_shipment .required,
+#aramex_shipment .validation-advice {
+    color: #000000 !important;
+    font-weight: normal !important;
+}
+
+#aramex_shipment .error {
+    color: red !important;
+}
+
+#aramex_shipment_creation textarea {
+    width: 194px;
+}
+
+#aramex_shipment_creation .aramex_input_items_qty {
+    width: 25px;
+}
+
+#aramex_shipment_creation fieldset, .cal-form fieldset {
+    border: 1px solid #D6D6D6;
+    margin-bottom: 15px;
+    padding: 10px 15px;
+    box-sizing: none;
+}
+
+.back-over {
+    position: fixed;
+    left: 0;
+    top: 0;
+    background: #000;
+    opacity: 0.7;
+    z-index: 420;
+    display: none;
+    width: 100%;
+    height: 100%;
+}
+
+.cal-rate-part, .schedule-pickup-part {
+    position: absolute;
+    display: none;
+    z-index: 500;
+    background: #fff;
+    height: 400px;
+    width: 700px;
+    left: calc(50% - 350px);
+    top: calc(50% - 200px);
+    overflow: auto;
+}
+
+.cal-form fieldset, .pickup-form fieldset {
+    background: none repeat scroll 0 0 #FAFAFA;
+    border: 1px solid #D6D6D6;
+    margin-bottom: 15px;
+    padding: 10px 15px;
+}
+
+.cal-form, .pickup-form {
+    padding: 15px;
+}
+
+.fl {
+ display:inline-block;
+    width: 250px;
+}
+
+.fr {
+    float: right;
+}
+
+.clearfix:after {
+    content: ".";
+    display: block;
+    height: 0;
+    clear: both;
+    visibility: hidden;
+}
+
+.cal-form legend, .pickup-form legand {
+    font-size: 16px;
+}
+
+.mar-10 {
+    margin: 10px 0;
+    overflow: hidden;
+    display: block;
+}
+
+.mar-5 {
+    margin: 5px 0;
+}
+
+.mar-30 {
+    margin: 30px 0;
+}
+
+.fields {
+}
+
+.fields h3 {
+    font-size: 14px;
+}
+
+.field label span, .red {
+    color: red;
+}
+
+.field input, .field select {
+    width: 250px;
+    height: 25px;
+}
+
+.field label {
+    width: 200px;
+    display: block;
+}
+
+.width-60 {
+    width: 60px !important;
+}
+
+.width-150 {
+    width: 160px !important;
+}
+
+.width-270 {
+    width: 270px;
+}
+
+.width-full {
+    width: 519px !important
+}
+
+.mar-right-10 {
+    margin-right: 10px;
+}
+
+.mar-lf-10 {
+    margin-left: 10px;
+}
+
+.rate-result, .pickup-result {
+    display: none;
+    padding: 0 10px;
+    border: 1px solid #ccc;
+}
+
+.result .error, .pickup-res .error {
+    color: red;
+}
+
+.result .amount {
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.calendar {
+    z-index: 10000;
+    left: 30% !important;
+}
+
+.f1l {
+    width: 150px;
+}
+
+.order_in_background {
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    /* Fallback for web browsers that don't support RGBa */
+    background-color: rgb(0, 0, 0);
+    /* RGBa with 0.6 opacity */
+    background-color: rgba(0, 0, 0, 0.6);
+    /* For IE 5.5 - 7*/
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#99000000, endColorstr=#99000000);
+    /* For IE 8*/
+    -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#99000000, endColorstr=#99000000)";
+    z-index: 100000;
+}
+
+.aramex_bulk fieldset {
+    border: 1px solid #D6D6D6;
+    margin-bottom: 15px;
+    padding: 10px 15px;
+    box-sizing: none;
+}
+
+.aramex_bulk .aramex_shipment_creation_part_left {
+    float: left;
+    width: 350px;
+    height: 300px;
+
+}
+
+.aramex_bulk .aramex_shipment_creation_part_right {
+    float: right;
+    width: 350px;
+
+}
+
+.aramex_bulk .aramex_shipment_creation_fieldset_big {
+
+    height: 340px;
+}
+
+.aramex_bulk {
+    z-index: 9999;
+}
+
+.aramex_bulk .text_short {
+    padding-bottom: 5px;
+}
+
+.aramex_green {
+    color: green;
+    border: 1px solid green;
+    padding: 5px;
+}
+
+.aramex_red {
+    color: red;
+    border: 1px solid red;
+    padding: 5px;
+}
+
+#aramex_shipment_creation {
+    background: #f2f2f2;
+}
+
+.cal-rate-button {
+    clear: both;
+}
+
+.aramex_shipment_creation_fieldset_left {
+    float: left;
+}
+
+.aramex_shipment_creation_fieldset_right {
+    float: right;
+}
+
+.aramex_errors {
+    padding: 15px;
+    background: #FFFFCC;
+    margin-bottom: 10px;
+}
+
+.aramex_errors .error {
+    color: red;
+}
+
+.aramex_errors .success {
+    color: green;
+}
+
+.cal-button-part {
+    padding: 3px;
+}
+
+.cal-rate-part .error {
+    color: red;
+}
+
+.pickup-form .error {
+    color: red;
+}
+
+#track_overlay {
+    z-index: 400;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+
+}
+
+.track-form {
+    width: 428px;
+    font-family: verdana;
+    font-size: 12px;
+    margin: 0 auto;
+    z-index: 401;
+
+    opacity: 1;
+    background: #fff;
+    padding: 15px;
+    margin-top: 10px;
+    border: 1px solid #D6D6D6;
+    overflow: hidden;
+    background: #f2f2f2;
+}
+
+.track-form fieldset {
+    border: 1px solid #D6D6D6;
+    margin-bottom: 15px;
+    padding: 10px 15px;
+    box-sizing: none;
+    background-color: white;
+}
+
+.track-form input {
+    border: 1px solid #D6D6D6;
+}
+
+.track-form .first {
+    text-align: left;
+}
+
+.track-form .data-table {
+    background: white;
+}
+
+.printlabel_error {
+    width: 500px;
+    margin: 70px auto;
+}
