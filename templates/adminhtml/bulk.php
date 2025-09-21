@@ -88,10 +88,7 @@ function aramex_display_bulk_in_admin()
                                 <?php
                                 if (count($allowed_domestic_additional_services) > 0) {
                                     foreach ($allowed_domestic_additional_services as $key => $val) {
-                                        $setSelected = false;
-                                        if(array_key_exists($key,$allowed_domestic_additional_service)){
-                                            $setSelected = true;
-                                        }
+                                        $setSelected = false; // Always false to ensure no additional services are selected by default
                                         ?>
                                 
                                         <option 
@@ -162,10 +159,7 @@ function aramex_display_bulk_in_admin()
                                 <?php
                                 if (count($allowed_international_additional_services) > 0) {
                                     foreach ($allowed_international_additional_services as $key => $val) {
-                                        $setSelected = false;
-                                        if(array_key_exists($key,$allowed_international_additional_service)){
-                                            $setSelected = true;
-                                        }
+                                        $setSelected = false; // Always false to ensure no additional services are selected by default
                                         ?>
                                         <option 
                                                 <?php
