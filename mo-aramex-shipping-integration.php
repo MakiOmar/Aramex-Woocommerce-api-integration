@@ -206,7 +206,6 @@ class MO_Aramex_Plugin {
         
         // Add admin menu hooks for bulk operations
         add_action('admin_menu', array($this, 'add_admin_menu_hooks'));
-        add_action('admin_footer', array($this, 'add_bulk_buttons_to_orders_page'));
         add_action('admin_footer', array($this, 'custom_aramex_bulk_admin_footer'));
         add_action('admin_footer', array($this, 'aramex_bulk_print_label_admin_footer'));
         
