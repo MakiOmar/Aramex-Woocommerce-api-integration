@@ -22,6 +22,9 @@ vendor/
 # Keep plugin-update-checker vendor
 !plugin-update-checker/vendor/
 
+# Original plugin (for reference)
+aramex-shipping-woocommerce/
+
 # Temporary files
 *.tmp
 *.temp
