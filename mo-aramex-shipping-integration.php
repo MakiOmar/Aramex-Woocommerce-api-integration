@@ -40,7 +40,7 @@ $updateChecker = PucFactory::buildUpdateChecker(
     'mo-aramex-shipping-integration'
 );
 
-// Optional: Set the branch that contains the stable release.
+// Use master branch directly for updates (no releases needed)
 $updateChecker->setBranch('master');
 
 // Optional: If you're using a private repository, specify the access token.
