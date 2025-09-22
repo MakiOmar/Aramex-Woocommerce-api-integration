@@ -27,6 +27,7 @@ class Aramex_Bulk_Method extends MO_Aramex_Helper
         if (function_exists('custom_plugin_log')) {
             custom_plugin_log('Aramex_Bulk_Method class instantiated');
         }
+        parent::__construct();
     }
 
     /**
@@ -36,6 +37,9 @@ class Aramex_Bulk_Method extends MO_Aramex_Helper
      */
     public function run()
     {
+        // Simple test to see if this method is being called at all
+        error_log('ARAMEX BULK RUN METHOD CALLED - ' . date('Y-m-d H:i:s'));
+        
         // Log the incoming request for debugging
         custom_plugin_log('Bulk shipment request received: ' . print_r($_POST, true));
         custom_plugin_log('Current user ID: ' . get_current_user_id());

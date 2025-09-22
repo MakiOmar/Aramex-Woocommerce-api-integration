@@ -323,6 +323,13 @@ function aramex_display_bulk_in_admin()
 		// Debug: Log the AJAX request data
 		console.log('AJAX Request Data:', postData);
 		console.log('AJAX URL:', ajaxurl);
+		
+		// Test AJAX first
+		jQuery.post(ajaxurl, {action: 'test_aramex_ajax'}, function(response) {
+		    console.log('Test AJAX Response:', response);
+		}).fail(function(xhr, status, error) {
+		    console.log('Test AJAX Error:', xhr, status, error);
+		});
                
 		jQuery.post(ajaxurl, postData, function(request) {
                         console.log('AJAX Response:', request);

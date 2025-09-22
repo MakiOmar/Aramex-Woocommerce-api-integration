@@ -324,6 +324,11 @@ class MO_Aramex_Plugin {
      * Load all Aramex classes and register AJAX actions
      */
     public function load_aramex_classes() {
+        // Debug: Log that we're loading classes
+        if (function_exists('custom_plugin_log')) {
+            custom_plugin_log('Loading Aramex classes and registering AJAX actions');
+        }
+        
         // Include all shipment classes
         require_once MO_ARAMEX_PLUGIN_DIR . 'includes/shipment/class-aramex-woocommerce-ratecalculator.php';
         add_action('wp_ajax_the_aramex_rate_calculator', array(new Aramex_Ratecalculator_Method(), 'run'));
@@ -344,6 +349,14 @@ class MO_Aramex_Plugin {
         if (function_exists('custom_plugin_log')) {
             custom_plugin_log('AJAX action the_aramex_bulk registered successfully');
         }
+        
+        // Add a simple test AJAX action
+        add_action('wp_ajax_test_aramex_ajax', function() {
+            if (function_exists('custom_plugin_log')) {
+                custom_plugin_log('Test AJAX action called successfully');
+            }
+            wp_die('Test AJAX working');
+        });
         
         require_once MO_ARAMEX_PLUGIN_DIR . 'includes/shipment/class-aramex-woocommerce-bulk-printlabel.php';
         add_action('wp_ajax_the_aramex_bulk_printlabel', array(new Aramex_Bulk_Printlabel_Method(), 'run'));
