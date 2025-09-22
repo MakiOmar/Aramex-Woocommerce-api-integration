@@ -242,11 +242,31 @@ class MO_Aramex_Update_Debug {
                 }
                 
                 // Get VCS API info
-                $vcs_api = $update_checker->getVcsApi();
-                if ($vcs_api) {
-                    echo '<tr><td><strong>VCS API:</strong></td><td class="success">Available</td></tr>';
-                    echo '<tr><td><strong>Repository URL:</strong></td><td>' . $vcs_api->getRepositoryUrl() . '</td></tr>';
-                    echo '<tr><td><strong>Branch:</strong></td><td>' . $vcs_api->getBranch() . '</td></tr>';
+                try {
+                    $vcs_api = $update_checker->getVcsApi();
+                    if ($vcs_api) {
+                        echo '<tr><td><strong>VCS API:</strong></td><td class="success">Available</td></tr>';
+                        
+                        // Get repository URL safely
+                        try {
+                            $repo_url = $vcs_api->getRepositoryUrl();
+                            echo '<tr><td><strong>Repository URL:</strong></td><td>' . $repo_url . '</td></tr>';
+                        } catch (Exception $e) {
+                            echo '<tr><td><strong>Repository URL:</strong></td><td class="error">Error: ' . $e->getMessage() . '</td></tr>';
+                        }
+                        
+                        // Get branch information safely
+                        try {
+                            $branch = $vcs_api->getBranch('master');
+                            echo '<tr><td><strong>Branch:</strong></td><td>' . $branch . '</td></tr>';
+                        } catch (Exception $e) {
+                            echo '<tr><td><strong>Branch:</strong></td><td class="error">Error: ' . $e->getMessage() . '</td></tr>';
+                        }
+                    } else {
+                        echo '<tr><td><strong>VCS API:</strong></td><td class="error">Not Available</td></tr>';
+                    }
+                } catch (Exception $e) {
+                    echo '<tr><td><strong>VCS API:</strong></td><td class="error">Error: ' . $e->getMessage() . '</td></tr>';
                 }
                 
             } catch (Exception $e) {
