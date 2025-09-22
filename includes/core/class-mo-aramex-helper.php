@@ -156,5 +156,32 @@ if (!class_exists('MO_Aramex_Helper')) {
                 error_log('MO Aramex: ' . $message);
             }
         }
+
+        /**
+         * Format input data
+         *
+         * @param $array Input data
+         * @return array Result of formatting
+         */
+        protected function formatPost($array)
+        {
+            $out = array();
+            foreach ($array as $key => $val) {
+                if (is_array($val)) {
+                    foreach ($val as $key1 => $val1) {
+                        if (!is_array($val1)) {
+                            if ($val1 != "") {
+                                $out[$key][$key1] = htmlspecialchars(strip_tags(trim(sanitize_text_field($val1))));
+                            } else {
+                                $out[$key][$key1] = "";
+                            }
+                        }
+                    }
+                } else {
+                    $out[$key] = htmlspecialchars(strip_tags(trim(sanitize_text_field($val))));
+                }
+            }
+            return $out;
+        }
     }
 }

@@ -28,8 +28,11 @@ class Aramex_Bulk_Method extends MO_Aramex_Helper
     {
         // Log the incoming request for debugging
         custom_plugin_log('Bulk shipment request received: ' . print_r($_POST, true));
+        custom_plugin_log('Current user ID: ' . get_current_user_id());
+        custom_plugin_log('Current user email: ' . wp_get_current_user()->user_email);
         
         $post_out = $this->formatPost($_POST);
+        custom_plugin_log('Formatted POST data: ' . print_r($post_out, true));
         
         // Check if we have the required data
         if (!isset($post_out['selectedOrders']) || empty($post_out['selectedOrders'])) {
@@ -38,8 +41,10 @@ class Aramex_Bulk_Method extends MO_Aramex_Helper
             die();
         }
         
-        if (check_admin_referer('aramex-shipment-nonce' . wp_get_current_user()->user_email) == false || get_current_user_id() == 0) {
-            custom_plugin_log('Invalid nonce or user not logged in');
+        // Verify nonce for AJAX request
+        $nonce_action = 'aramex-shipment-nonce' . wp_get_current_user()->user_email;
+        if (!wp_verify_nonce($_POST['_wpnonce'], $nonce_action) || get_current_user_id() == 0) {
+            custom_plugin_log('Invalid nonce or user not logged in. Nonce: ' . ($_POST['_wpnonce'] ?? 'not set') . ', Action: ' . $nonce_action);
             echo json_encode(array('message' => '<p class="aramex_red">' . __('Invalid form data.', 'aramex') . '</p>'));
             die();
         }
