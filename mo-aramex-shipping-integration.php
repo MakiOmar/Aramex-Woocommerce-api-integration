@@ -52,6 +52,15 @@ if ($vcs_api) {
     
     // Set authentication if needed (uncomment and add token if repository is private)
     // $vcs_api->setAuthentication('your-github-token');
+    
+    // Add custom headers to avoid rate limiting
+    add_filter('http_request_args', function($args, $url) {
+        if (strpos($url, 'api.github.com') !== false) {
+            $args['headers']['User-Agent'] = 'MO-Aramex-Plugin/1.0.1';
+            $args['headers']['Accept'] = 'application/vnd.github.v3+json';
+        }
+        return $args;
+    }, 10, 2);
 }
 
 // Add debugging hook to see what's happening
