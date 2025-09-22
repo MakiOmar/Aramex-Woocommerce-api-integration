@@ -18,6 +18,16 @@ include_once __DIR__ . '../../core/class-mo-aramex-helper.php';
  */
 class Aramex_Bulk_Method extends MO_Aramex_Helper
 {
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        // Debug: Log class instantiation
+        if (function_exists('custom_plugin_log')) {
+            custom_plugin_log('Aramex_Bulk_Method class instantiated');
+        }
+    }
 
     /**
      * Starting method

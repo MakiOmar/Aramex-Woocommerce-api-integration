@@ -319,8 +319,13 @@ function aramex_display_bulk_in_admin()
             _wpnonce :  _wpnonce
 
 		};
+		
+		// Debug: Log the AJAX request data
+		console.log('AJAX Request Data:', postData);
+		console.log('AJAX URL:', ajaxurl);
                
 		jQuery.post(ajaxurl, postData, function(request) {
+                        console.log('AJAX Response:', request);
                         var rr = JSON.parse(request);
                         $('.popup-loading').css('display', 'none');
                         $('.aramex_loader').css('display', 'none');
@@ -332,6 +337,13 @@ function aramex_display_bulk_in_admin()
                         $(".aramexclose").click(function () {
                             aramexredirect();
                         });                    
+        }).fail(function(xhr, status, error) {
+                        console.log('AJAX Error:', xhr, status, error);
+                        console.log('Response Text:', xhr.responseText);
+                        $('.popup-loading').css('display', 'none');
+                        $('.aramex_loader').css('display', 'none');
+                        $(".aramex_result").empty().css('display', 'block');
+                        $(".aramex_result").append('<p class="aramex_red">AJAX Error: ' + error + ' (Status: ' + xhr.status + ')</p>');
         });       
     
                 }

@@ -260,8 +260,8 @@ class MO_Aramex_Plugin {
      * Initialize admin hooks
      */
     public function init_admin_hooks() {
-        // Load all Aramex classes and register AJAX actions
-        add_action('init', array($this, 'load_aramex_classes'));
+        // Load all Aramex classes and register AJAX actions immediately
+        $this->load_aramex_classes();
         
         // Add admin menu hooks for bulk operations
         add_action('admin_menu', array($this, 'add_admin_menu_hooks'));
@@ -339,6 +339,11 @@ class MO_Aramex_Plugin {
         
         require_once MO_ARAMEX_PLUGIN_DIR . 'includes/shipment/class-aramex-woocommerce-bulk.php';
         add_action('wp_ajax_the_aramex_bulk', array(new Aramex_Bulk_Method(), 'run'));
+        
+        // Debug: Log AJAX action registration
+        if (function_exists('custom_plugin_log')) {
+            custom_plugin_log('AJAX action the_aramex_bulk registered successfully');
+        }
         
         require_once MO_ARAMEX_PLUGIN_DIR . 'includes/shipment/class-aramex-woocommerce-bulk-printlabel.php';
         add_action('wp_ajax_the_aramex_bulk_printlabel', array(new Aramex_Bulk_Printlabel_Method(), 'run'));
