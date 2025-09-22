@@ -17,7 +17,6 @@ nbproject/
 # Dependencies
 composer.lock
 node_modules/
-vendor/
 
 # Keep plugin-update-checker vendor
 !plugin-update-checker/vendor/
