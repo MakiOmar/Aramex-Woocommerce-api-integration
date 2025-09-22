@@ -44,23 +44,20 @@ $GLOBALS['puc_plugin_update_checker'] = PucFactory::buildUpdateChecker(
 // Use master branch directly for updates (no releases needed)
 $GLOBALS['puc_plugin_update_checker']->setBranch('master');
 
-// Configure for branch-only updates
-$vcs_api = $GLOBALS['puc_plugin_update_checker']->getVcsApi();
-if ($vcs_api) {
-    // Disable release assets checking
-    $vcs_api->enableReleaseAssets(false);
-    
-    // Set authentication if needed (uncomment and add token if repository is private)
-    // $vcs_api->setAuthentication('your-github-token');
-    
-    // Add custom headers to avoid rate limiting
-    add_filter('http_request_args', function($args, $url) {
-        if (strpos($url, 'api.github.com') !== false) {
-            $args['headers']['User-Agent'] = 'MO-Aramex-Plugin/1.0.1';
-            $args['headers']['Accept'] = 'application/vnd.github.v3+json';
+// Add custom headers to avoid rate limiting (using the correct method name)
+if (method_exists($GLOBALS['puc_plugin_update_checker'], 'addHttpRequestArgFilter')) {
+    $GLOBALS['puc_plugin_update_checker']->addHttpRequestArgFilter(function($options) {
+        if (!isset($options['headers'])) {
+            $options['headers'] = array();
         }
-        return $args;
-    }, 10, 2);
+        
+        $options['headers']['User-Agent'] = 'MO-Aramex-Plugin/1.0.1';
+        $options['headers']['Accept'] = 'application/vnd.github.v3+json';
+        $options['headers']['X-MO-Aramex-Plugin'] = 'MO Aramex Shipping Integration';
+        $options['headers']['X-Plugin-Version'] = MO_ARAMEX_VERSION;
+        
+        return $options;
+    });
 }
 
 // Add debugging hook to see what's happening
