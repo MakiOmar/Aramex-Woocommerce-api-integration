@@ -27,7 +27,7 @@ class Aramex_Bulk_Method extends MO_Aramex_Helper
         if (function_exists('custom_plugin_log')) {
             custom_plugin_log('Aramex_Bulk_Method class instantiated');
         }
-        parent::__construct();
+        // Note: MO_Aramex_Helper doesn't have a constructor, so no parent::__construct() call needed
     }
 
     /**
