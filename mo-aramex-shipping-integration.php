@@ -35,13 +35,13 @@ require_once MO_ARAMEX_PLUGIN_DIR . 'plugin-update-checker/plugin-update-checker
 use YahnisElsts\PluginUpdateChecker\v5\PucFactory;
 
 $updateChecker = PucFactory::buildUpdateChecker(
-    'https://github.com/MakiOmar/Aramex-Woocommerce-api-integration',
+    'https://github.com/MakiOmar/Aramex-Woocommerce-api-integration.git',
     __FILE__,
     'mo-aramex-shipping-integration'
 );
 
 // Optional: Set the branch that contains the stable release.
-$updateChecker->setBranch('main');
+$updateChecker->setBranch('master');
 
 // Optional: If you're using a private repository, specify the access token.
 // $updateChecker->setAuthentication('your-github-token');
