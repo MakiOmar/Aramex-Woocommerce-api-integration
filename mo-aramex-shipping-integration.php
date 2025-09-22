@@ -329,6 +329,10 @@ class MO_Aramex_Plugin {
             custom_plugin_log('Loading Aramex classes and registering AJAX actions');
         }
         
+        // Include required files first
+        require_once MO_ARAMEX_PLUGIN_DIR . 'includes/core/class-mo-aramex-helper.php';
+        require_once MO_ARAMEX_PLUGIN_DIR . 'includes/shipping/class-mo-aramex-shipping-method.php';
+        
         // Include all shipment classes
         require_once MO_ARAMEX_PLUGIN_DIR . 'includes/shipment/class-aramex-woocommerce-ratecalculator.php';
         add_action('wp_ajax_the_aramex_rate_calculator', array(new Aramex_Ratecalculator_Method(), 'run'));
