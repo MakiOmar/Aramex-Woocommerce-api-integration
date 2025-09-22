@@ -42,8 +42,7 @@ $GLOBALS['puc_plugin_update_checker'] = PucFactory::buildUpdateChecker(
     'mo-aramex-shipping-integration'
 );
 
-// Use master branch directly for updates (no releases needed)
-$GLOBALS['puc_plugin_update_checker']->setBranch('master');
+// Note: setBranch() is not available for custom update servers, only for VCS-based checkers
 
 // Add custom headers to avoid rate limiting (using the correct method name)
 if (method_exists($GLOBALS['puc_plugin_update_checker'], 'addHttpRequestArgFilter')) {
