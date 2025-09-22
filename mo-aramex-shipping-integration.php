@@ -35,8 +35,9 @@ require_once MO_ARAMEX_PLUGIN_DIR . 'plugin-update-checker/plugin-update-checker
 use YahnisElsts\PluginUpdateChecker\v5\PucFactory;
 
 // Initialize update checker and make it globally accessible
+// Using custom update server to avoid GitHub API rate limiting
 $GLOBALS['puc_plugin_update_checker'] = PucFactory::buildUpdateChecker(
-    'https://github.com/MakiOmar/Aramex-Woocommerce-api-integration.git',
+    'https://github.com/MakiOmar/Aramex-Woocommerce-api-integration/raw/master/update-info.json',
     __FILE__,
     'mo-aramex-shipping-integration'
 );
