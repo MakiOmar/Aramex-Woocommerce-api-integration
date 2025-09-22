@@ -241,32 +241,39 @@ class MO_Aramex_Update_Debug {
                     echo '<tr><td><strong>Update Available:</strong></td><td class="success">No (up to date)</td></tr>';
                 }
                 
-                // Get VCS API info
+                // Check if this is a custom update server or VCS-based
                 try {
-                    $vcs_api = $update_checker->getVcsApi();
-                    if ($vcs_api) {
-                        echo '<tr><td><strong>VCS API:</strong></td><td class="success">Available</td></tr>';
-                        
-                        // Get repository URL safely
-                        try {
-                            $repo_url = $vcs_api->getRepositoryUrl();
-                            echo '<tr><td><strong>Repository URL:</strong></td><td>' . $repo_url . '</td></tr>';
-                        } catch (Exception $e) {
-                            echo '<tr><td><strong>Repository URL:</strong></td><td class="error">Error: ' . $e->getMessage() . '</td></tr>';
-                        }
-                        
-                        // Get branch information safely
-                        try {
-                            $branch = $vcs_api->getBranch('master');
-                            echo '<tr><td><strong>Branch:</strong></td><td>' . $branch . '</td></tr>';
-                        } catch (Exception $e) {
-                            echo '<tr><td><strong>Branch:</strong></td><td class="error">Error: ' . $e->getMessage() . '</td></tr>';
+                    if (method_exists($update_checker, 'getVcsApi')) {
+                        $vcs_api = $update_checker->getVcsApi();
+                        if ($vcs_api) {
+                            echo '<tr><td><strong>Update Type:</strong></td><td class="success">VCS-based (GitHub)</td></tr>';
+                            echo '<tr><td><strong>VCS API:</strong></td><td class="success">Available</td></tr>';
+                            
+                            // Get repository URL safely
+                            try {
+                                $repo_url = $vcs_api->getRepositoryUrl();
+                                echo '<tr><td><strong>Repository URL:</strong></td><td>' . $repo_url . '</td></tr>';
+                            } catch (Exception $e) {
+                                echo '<tr><td><strong>Repository URL:</strong></td><td class="error">Error: ' . $e->getMessage() . '</td></tr>';
+                            }
+                            
+                            // Get branch information safely
+                            try {
+                                $branch = $vcs_api->getBranch('master');
+                                echo '<tr><td><strong>Branch:</strong></td><td>' . $branch . '</td></tr>';
+                            } catch (Exception $e) {
+                                echo '<tr><td><strong>Branch:</strong></td><td class="error">Error: ' . $e->getMessage() . '</td></tr>';
+                            }
+                        } else {
+                            echo '<tr><td><strong>VCS API:</strong></td><td class="error">Not Available</td></tr>';
                         }
                     } else {
-                        echo '<tr><td><strong>VCS API:</strong></td><td class="error">Not Available</td></tr>';
+                        echo '<tr><td><strong>Update Type:</strong></td><td class="success">Custom Update Server</td></tr>';
+                        echo '<tr><td><strong>Update Source:</strong></td><td>update-info.json</td></tr>';
+                        echo '<tr><td><strong>VCS API:</strong></td><td class="info">Not applicable for custom update servers</td></tr>';
                     }
                 } catch (Exception $e) {
-                    echo '<tr><td><strong>VCS API:</strong></td><td class="error">Error: ' . $e->getMessage() . '</td></tr>';
+                    echo '<tr><td><strong>Update Type:</strong></td><td class="error">Error: ' . $e->getMessage() . '</td></tr>';
                 }
                 
             } catch (Exception $e) {

@@ -66,8 +66,8 @@ add_action('admin_notices', function() {
         $update_checker = $GLOBALS['puc_plugin_update_checker'] ?? null;
         if ($update_checker) {
             echo '<div class="notice notice-info"><p><strong>Update Checker Status:</strong> ';
-            echo 'Active | Repository: ' . $update_checker->getVcsApi()->getRepositoryUrl() . ' | ';
-            echo 'Branch: master | Current Version: ' . MO_ARAMEX_VERSION;
+            echo 'Active | Update Source: Custom Update Server | ';
+            echo 'Current Version: ' . MO_ARAMEX_VERSION;
             echo '</p></div>';
         } else {
             echo '<div class="notice notice-error"><p><strong>Update Checker Status:</strong> Not Initialized</p></div>';
