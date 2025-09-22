@@ -26,9 +26,21 @@ class Aramex_Bulk_Method extends MO_Aramex_Helper
      */
     public function run()
     {
+        // Log the incoming request for debugging
+        custom_plugin_log('Bulk shipment request received: ' . print_r($_POST, true));
+        
         $post_out = $this->formatPost($_POST);
+        
+        // Check if we have the required data
+        if (!isset($post_out['selectedOrders']) || empty($post_out['selectedOrders'])) {
+            custom_plugin_log('No orders selected for bulk shipment');
+            echo json_encode(array('message' => '<p class="aramex_red">' . __('No orders selected', 'aramex') . '</p>'));
+            die();
+        }
+        
         if (check_admin_referer('aramex-shipment-nonce' . wp_get_current_user()->user_email) == false || get_current_user_id() == 0) {
-            echo(__('Invalid form data.', 'aramex'));
+            custom_plugin_log('Invalid nonce or user not logged in');
+            echo json_encode(array('message' => '<p class="aramex_red">' . __('Invalid form data.', 'aramex') . '</p>'));
             die();
         }
 
@@ -38,11 +50,20 @@ class Aramex_Bulk_Method extends MO_Aramex_Helper
 
         $mail = isset($params1['aramex_email_customer'])? $params1['aramex_email_customer']: '' ;
         $orders = array();
-        include_once(plugin_dir_path(__FILE__) . '../../includes/shipping/class-aramex-woocommerce-shipping.php');
-        $settings = new Aramex_Shipping_Method();
+        include_once(plugin_dir_path(__FILE__) . '../../includes/shipping/class-mo-aramex-shipping-method.php');
+        $settings = new MO_Aramex_Shipping_Method();
+        
+        // Check if settings are properly loaded
+        if (!isset($settings->settings) || empty($settings->settings)) {
+            custom_plugin_log('Aramex settings not properly loaded');
+            echo json_encode(array('message' => '<p class="aramex_red">' . __('Aramex settings not configured properly', 'aramex') . '</p>'));
+            die();
+        }
+        
         $post['aramex_shipment_shipper_country'] = $settings->settings['country'];
         //check "pending" status
-        if (count($post_out["selectedOrders"])) {
+        try {
+            if (count($post_out["selectedOrders"])) {
             foreach ($post_out["selectedOrders"] as $key => $order_id) {
                 $order = wc_get_order($order_id);
 
@@ -476,7 +497,13 @@ class Aramex_Bulk_Method extends MO_Aramex_Helper
            die();
         } else {
             $errors = "<p class='aramex_red'>" . __('No orders with Pending status selected', 'aramex') . "</p>";
-            return json_encode(array('Test-Message' => $errors));
+            echo json_encode(array('message' => $errors));
+            die();
+        }
+        } catch (Exception $e) {
+            custom_plugin_log('Error in bulk shipment: ' . $e->getMessage());
+            echo json_encode(array('message' => '<p class="aramex_red">' . __('Error processing bulk shipment: ', 'aramex') . $e->getMessage() . '</p>'));
+            die();
         }
     }
 
