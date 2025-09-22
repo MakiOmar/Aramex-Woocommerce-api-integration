@@ -15,7 +15,15 @@ include_once __DIR__ . '../../core/class-mo-aramex-helper.php';
 
 
 $plugin_dir = MO_ARAMEX_PLUGIN_DIR;
-require_once $plugin_dir . '/vendor/autoload.php';
+$autoload_path = $plugin_dir . '/vendor/autoload.php';
+if (file_exists($autoload_path)) {
+    require_once $autoload_path;
+} else {
+    // Log error if vendor directory is missing
+    if (function_exists('mo_aramex_log_activity')) {
+        mo_aramex_log_activity('BULK_PRINTLABEL', 'Vendor autoload.php not found - PDF merging functionality will not be available', array('autoload_path' => $autoload_path), 'WARNING');
+    }
+}
 
 
 /**
@@ -207,10 +215,23 @@ class Aramex_Bulk_Printlabel_Method extends MO_Aramex_Helper
                     }
                 }
 
-                // create merger instance
-                $pdf = new \Jurosh\PDFMerge\PDFMerger;
-                foreach ($bulk_pdf as $item) {
-                    $pdf->addPDF($item, 'all', 'vertical');
+                // create merger instance (only if PDF merging is available)
+                if (class_exists('\Jurosh\PDFMerge\PDFMerger')) {
+                    $pdf = new \Jurosh\PDFMerge\PDFMerger;
+                    foreach ($bulk_pdf as $item) {
+                        $pdf->addPDF($item, 'all', 'vertical');
+                    }
+                } else {
+                    // Log error if PDF merging is not available
+                    if (function_exists('mo_aramex_log_activity')) {
+                        mo_aramex_log_activity('BULK_PRINTLABEL', 'PDFMerger class not available - cannot merge PDFs', array('bulk_pdf_count' => count($bulk_pdf)), 'ERROR');
+                    }
+                    
+                    // Fallback: return error message
+                    $this->aramex_errors()->add('error', 'PDF merging functionality is not available. Please ensure the vendor directory is properly installed.');
+                    $_SESSION['aramex_errors_printlabel'] = $this->aramex_errors();
+                    wp_redirect(sanitize_text_field(esc_url_raw($_POST['aramex_shipment_referer'])) . '&aramexpopup/show_printlabel');
+                    exit();
                 }
                 
                 $merge_pdf_path = '';
