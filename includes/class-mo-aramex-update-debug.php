@@ -68,6 +68,14 @@ class MO_Aramex_Update_Debug {
                     <td><strong>Plugin Basename:</strong></td>
                     <td><?php echo MO_ARAMEX_PLUGIN_BASENAME; ?></td>
                 </tr>
+                <tr>
+                    <td><strong>Update Checker File:</strong></td>
+                    <td><?php echo file_exists(MO_ARAMEX_PLUGIN_DIR . 'plugin-update-checker/plugin-update-checker.php') ? 'Exists' : 'Missing'; ?></td>
+                </tr>
+                <tr>
+                    <td><strong>PucFactory Class:</strong></td>
+                    <td><?php echo class_exists('YahnisElsts\PluginUpdateChecker\v5\PucFactory') ? 'Available' : 'Not Available'; ?></td>
+                </tr>
             </table>
             
             <h2>Update Checker Configuration</h2>
@@ -212,19 +220,42 @@ class MO_Aramex_Update_Debug {
         
         echo '<table class="widefat">';
         
+        // Check both global variable and GLOBALS array
+        $update_checker = null;
         if (isset($puc_plugin_update_checker)) {
+            $update_checker = $puc_plugin_update_checker;
+        } elseif (isset($GLOBALS['puc_plugin_update_checker'])) {
+            $update_checker = $GLOBALS['puc_plugin_update_checker'];
+        }
+        
+        if ($update_checker) {
             echo '<tr><td><strong>Update Checker:</strong></td><td class="success">Initialized</td></tr>';
             
-            // Try to get update info
-            $update_info = $puc_plugin_update_checker->getUpdate();
-            if ($update_info) {
-                echo '<tr><td><strong>Update Available:</strong></td><td class="warning">Yes</td></tr>';
-                echo '<tr><td><strong>New Version:</strong></td><td>' . $update_info->version . '</td></tr>';
-            } else {
-                echo '<tr><td><strong>Update Available:</strong></td><td class="success">No (up to date)</td></tr>';
+            // Get update checker details
+            try {
+                $update_info = $update_checker->getUpdate();
+                if ($update_info) {
+                    echo '<tr><td><strong>Update Available:</strong></td><td class="warning">Yes</td></tr>';
+                    echo '<tr><td><strong>New Version:</strong></td><td>' . $update_info->version . '</td></tr>';
+                } else {
+                    echo '<tr><td><strong>Update Available:</strong></td><td class="success">No (up to date)</td></tr>';
+                }
+                
+                // Get VCS API info
+                $vcs_api = $update_checker->getVcsApi();
+                if ($vcs_api) {
+                    echo '<tr><td><strong>VCS API:</strong></td><td class="success">Available</td></tr>';
+                    echo '<tr><td><strong>Repository URL:</strong></td><td>' . $vcs_api->getRepositoryUrl() . '</td></tr>';
+                    echo '<tr><td><strong>Branch:</strong></td><td>' . $vcs_api->getBranch() . '</td></tr>';
+                }
+                
+            } catch (Exception $e) {
+                echo '<tr><td><strong>Update Check Error:</strong></td><td class="error">' . $e->getMessage() . '</td></tr>';
             }
         } else {
             echo '<tr><td><strong>Update Checker:</strong></td><td class="error">Not Initialized</td></tr>';
+            echo '<tr><td><strong>Global Variable:</strong></td><td>' . (isset($puc_plugin_update_checker) ? 'Set' : 'Not Set') . '</td></tr>';
+            echo '<tr><td><strong>GLOBALS Array:</strong></td><td>' . (isset($GLOBALS['puc_plugin_update_checker']) ? 'Set' : 'Not Set') . '</td></tr>';
         }
         
         echo '</table>';

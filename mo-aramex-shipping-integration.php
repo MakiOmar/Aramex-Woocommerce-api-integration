@@ -34,17 +34,18 @@ require_once MO_ARAMEX_PLUGIN_DIR . 'plugin-update-checker/plugin-update-checker
 
 use YahnisElsts\PluginUpdateChecker\v5\PucFactory;
 
-$updateChecker = PucFactory::buildUpdateChecker(
+// Initialize update checker and make it globally accessible
+$GLOBALS['puc_plugin_update_checker'] = PucFactory::buildUpdateChecker(
     'https://github.com/MakiOmar/Aramex-Woocommerce-api-integration.git',
     __FILE__,
     'mo-aramex-shipping-integration'
 );
 
 // Use master branch directly for updates (no releases needed)
-$updateChecker->setBranch('master');
+$GLOBALS['puc_plugin_update_checker']->setBranch('master');
 
 // Disable release checking since we're using branch updates only
-$updateChecker->getVcsApi()->enableReleaseAssets(false);
+$GLOBALS['puc_plugin_update_checker']->getVcsApi()->enableReleaseAssets(false);
 
 // Load update debug class for troubleshooting
 require_once MO_ARAMEX_PLUGIN_DIR . 'includes/class-mo-aramex-update-debug.php';
