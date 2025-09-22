@@ -165,8 +165,27 @@ class Aramex_Ratecalculator_Method extends Aramex_Helper
 
                 custom_plugin_log('Before CalculateRate API call in backend.');
                 custom_plugin_log('CalculateRate API Request in backend.'.print_r($params, true));
+                
+                // Log API call
+                $start_time = microtime(true);
+                mo_aramex_log_api_call(
+                    'CalculateRate',
+                    $params,
+                    'SOAP',
+                    array('WSDL' => $info['baseUrl'] . 'aramex-rates-calculator-wsdl.wsdl')
+                );
 
                 $results = $soapClient->CalculateRate($params);
+                $execution_time = microtime(true) - $start_time;
+                
+                // Log API response
+                mo_aramex_log_api_response(
+                    'CalculateRate',
+                    $results,
+                    200,
+                    array(),
+                    $execution_time
+                );
 
                 custom_plugin_log('CalculateRate API Response in backend.'.print_r($results, true));
 
@@ -193,6 +212,14 @@ class Aramex_Ratecalculator_Method extends Aramex_Helper
                     $response['html'] = $amount . $text;
                 }
             } catch (Exception $e) {
+                // Log API error
+                mo_aramex_log_api_error(
+                    'CalculateRate',
+                    $e->getMessage(),
+                    $e->getCode(),
+                    array('params' => $params)
+                );
+                
                 $response['type'] = 'error';
                 $response['error'] = $e->getMessage();
             }

@@ -502,6 +502,15 @@ class Aramex_Bulk_Method extends MO_Aramex_Helper
         }
         } catch (Exception $e) {
             custom_plugin_log('Error in bulk shipment: ' . $e->getMessage());
+            
+            // Log API error
+            mo_aramex_log_api_error(
+                'CreateShipments (Bulk)',
+                $e->getMessage(),
+                $e->getCode(),
+                array('selected_orders' => $selectedOrders)
+            );
+            
             echo json_encode(array('message' => '<p class="aramex_red">' . __('Error processing bulk shipment: ', 'aramex') . $e->getMessage() . '</p>'));
             die();
         }
@@ -526,7 +535,26 @@ class Aramex_Bulk_Method extends MO_Aramex_Helper
         $soapClient = new SoapClient($info['baseUrl'] . 'shipping.wsdl', array('soap_version' => SOAP_1_1));
         try {
             //create shipment call
+            // Log API call
+            $start_time = microtime(true);
+            mo_aramex_log_api_call(
+                'CreateShipments (Bulk)',
+                $major_par,
+                'SOAP',
+                array('WSDL' => $info['baseUrl'] . 'shipping.wsdl')
+            );
+            
             $auth_call = $soapClient->CreateShipments($major_par);
+            $execution_time = microtime(true) - $start_time;
+            
+            // Log API response
+            mo_aramex_log_api_response(
+                'CreateShipments (Bulk)',
+                $auth_call,
+                200,
+                array(),
+                $execution_time
+            );
             if ($auth_call->HasErrors) {
                 if (empty($auth_call->Shipments)) {
                     if (count((array)$auth_call->Notifications->Notification) > 1) {

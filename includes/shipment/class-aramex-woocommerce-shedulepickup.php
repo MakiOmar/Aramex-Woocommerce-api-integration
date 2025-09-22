@@ -95,7 +95,26 @@ class Aramex_Shedule_Method extends Aramex_Helper
             //SOAP object
             $soapClient = new SoapClient($info['baseUrl'] . 'shipping.wsdl', array('soap_version' => SOAP_1_1));
             try {
+                // Log API call
+                $start_time = microtime(true);
+                mo_aramex_log_api_call(
+                    'CreatePickup',
+                    $params,
+                    'SOAP',
+                    array('WSDL' => $info['baseUrl'] . 'shipping.wsdl')
+                );
+                
                 $results = $soapClient->CreatePickup($params);
+                $execution_time = microtime(true) - $start_time;
+                
+                // Log API response
+                mo_aramex_log_api_response(
+                    'CreatePickup',
+                    $results,
+                    200,
+                    array(),
+                    $execution_time
+                );
                 if ($results->HasErrors) {
                     if (count((array)$results->Notifications->Notification) > 1) {
                         $error = "";
@@ -133,6 +152,14 @@ class Aramex_Shedule_Method extends Aramex_Helper
                     $response['html'] = $amount;
                 }
             } catch (Exception $e) {
+                // Log API error
+                mo_aramex_log_api_error(
+                    'CreatePickup',
+                    $e->getMessage(),
+                    $e->getCode(),
+                    array('params' => $params)
+                );
+                
                 $response['type'] = 'error';
                 $response['error'] = $e->getMessage();
             }

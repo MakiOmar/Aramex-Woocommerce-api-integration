@@ -78,6 +78,11 @@ add_action('admin_notices', function() {
 // Load update debug class for troubleshooting
 require_once MO_ARAMEX_PLUGIN_DIR . 'includes/class-mo-aramex-update-debug.php';
 
+// Load logging system
+require_once MO_ARAMEX_PLUGIN_DIR . 'includes/class-mo-aramex-logger.php';
+require_once MO_ARAMEX_PLUGIN_DIR . 'includes/class-mo-aramex-log-helper.php';
+require_once MO_ARAMEX_PLUGIN_DIR . 'includes/class-mo-aramex-log-viewer.php';
+
 // Optional: If you're using a private repository, specify the access token.
 // $updateChecker->setAuthentication('your-github-token');
 

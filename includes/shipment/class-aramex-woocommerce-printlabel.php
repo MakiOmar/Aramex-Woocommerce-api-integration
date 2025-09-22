@@ -60,7 +60,26 @@ class Aramex_Printlabel_Method extends Aramex_Helper
                 $params['ShipmentNumber'] = $post['aramex_lasttrack'];
                 
                 try {
+                    // Log API call
+                    $start_time = microtime(true);
+                    mo_aramex_log_api_call(
+                        'PrintLabel',
+                        $params,
+                        'SOAP',
+                        array('WSDL' => $info['baseUrl'] . 'shipping.wsdl')
+                    );
+                    
                     $auth_call = $soapClient->PrintLabel($params);
+                    $execution_time = microtime(true) - $start_time;
+                    
+                    // Log API response
+                    mo_aramex_log_api_response(
+                        'PrintLabel',
+                        $auth_call,
+                        200,
+                        array(),
+                        $execution_time
+                    );
                           
                     /* bof  PDF demaged Fixes debug */
                     if ($auth_call->HasErrors) {
@@ -83,11 +102,27 @@ class Aramex_Printlabel_Method extends Aramex_Helper
                     echo($filepath);
                     exit();
                 } catch (SoapFault $fault) {
+                    // Log API error
+                    mo_aramex_log_api_error(
+                        'PrintLabel',
+                        $fault->faultstring,
+                        $fault->faultcode,
+                        array('shipment_number' => $post['aramex_lasttrack'])
+                    );
+                    
                     $this->aramex_errors()->add('error', $fault->faultstring);
                     $_SESSION['aramex_errors_printlabel'] = $this->aramex_errors();
                     wp_redirect(sanitize_text_field(esc_url_raw($_POST['aramex_shipment_referer'])) . '&aramexpopup/show_printlabel');
                     exit();
                 } catch (Exception $e) {
+                    // Log API error
+                    mo_aramex_log_api_error(
+                        'PrintLabel',
+                        $e->getMessage(),
+                        $e->getCode(),
+                        array('shipment_number' => $post['aramex_lasttrack'])
+                    );
+                    
                     $this->aramex_errors()->add('error', $e->getMessage());
                     $_SESSION['aramex_errors_printlabel'] = $this->aramex_errors();
                     wp_redirect(sanitize_text_field(esc_url_raw($_POST['aramex_shipment_referer'])) . '&aramexpopup/show_printlabel');

@@ -493,11 +493,27 @@ class Aramex_Shipment_Method extends Aramex_Helper
             try {
 
                 session_start();
-                // echo "<pre>";
-                // echo json_encode($major_par);
-                // die;
+                
+                // Log API call
+                $start_time = microtime(true);
+                mo_aramex_log_api_call(
+                    'CreateShipments',
+                    $major_par,
+                    'SOAP',
+                    array('WSDL' => $info['baseUrl'] . 'shipping.wsdl')
+                );
+                
                 $auth_call = $soapClient->CreateShipments($major_par);
-                // error_log(print_r($auth_call, true));
+                $execution_time = microtime(true) - $start_time;
+                
+                // Log API response
+                mo_aramex_log_api_response(
+                    'CreateShipments',
+                    $auth_call,
+                    200,
+                    array(),
+                    $execution_time
+                );
                            
                 if ($auth_call->HasErrors) {
                     if (empty($auth_call->Shipments)) {
@@ -626,6 +642,15 @@ class Aramex_Shipment_Method extends Aramex_Helper
                 }
             } catch (Exception $e) {
                 $aramex_errors = true;
+                
+                // Log API error
+                mo_aramex_log_api_error(
+                    'CreateShipments',
+                    $e->getMessage(),
+                    $e->getCode(),
+                    array('order_id' => $post['aramex_shipment_original_reference'])
+                );
+                
                 aramex_errors()->add('error', $e->getMessage());
             }
 

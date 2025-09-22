@@ -149,7 +149,26 @@ class Aramex_Bulk_Printlabel_Method extends MO_Aramex_Helper
                                 );
                                 $params['ShipmentNumber'] = $last_track;
                                 
+                                // Log API call
+                                $start_time = microtime(true);
+                                mo_aramex_log_api_call(
+                                    'PrintLabel (Bulk)',
+                                    $params,
+                                    'SOAP',
+                                    array('WSDL' => $info['baseUrl'] . 'shipping.wsdl', 'order_id' => $order_id)
+                                );
+                                
                                     $auth_call = $soapClient->PrintLabel($params);
+                                    $execution_time = microtime(true) - $start_time;
+                                    
+                                    // Log API response
+                                    mo_aramex_log_api_response(
+                                        'PrintLabel (Bulk)',
+                                        $auth_call,
+                                        200,
+                                        array(),
+                                        $execution_time
+                                    );
                                           
                                     /* bof  PDF demaged Fixes debug */
 

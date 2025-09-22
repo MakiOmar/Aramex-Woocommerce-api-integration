@@ -39,7 +39,27 @@ class Aramex_Track_Method extends Aramex_Helper
         $aramexParams = $this->_getAuthDetails($info);
         $aramexParams['Transaction'] = array('Reference1' => '001');
         $aramexParams['Shipments'] = array($trackingvalue);
+        
+        // Log API call
+        $start_time = microtime(true);
+        mo_aramex_log_api_call(
+            'TrackShipments',
+            $aramexParams,
+            'SOAP',
+            array('WSDL' => $info['baseUrl'] . 'Tracking.wsdl')
+        );
+        
         $resAramex = $soapClient->TrackShipments($aramexParams);
+        $execution_time = microtime(true) - $start_time;
+        
+        // Log API response
+        mo_aramex_log_api_response(
+            'TrackShipments',
+            $resAramex,
+            200,
+            array(),
+            $execution_time
+        );
 
         if (is_object($resAramex) && !$resAramex->HasErrors) {
             $response['type'] = 'success';
