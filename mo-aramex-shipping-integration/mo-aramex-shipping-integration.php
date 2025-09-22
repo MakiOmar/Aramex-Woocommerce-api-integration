@@ -43,12 +43,6 @@ $updateChecker = PucFactory::buildUpdateChecker(
 // Use master branch directly for updates (no releases needed)
 $updateChecker->setBranch('master');
 
-// Disable release checking since we're using branch updates only
-$updateChecker->getVcsApi()->enableReleaseAssets(false);
-
-// Load update debug class for troubleshooting
-require_once MO_ARAMEX_PLUGIN_DIR . 'includes/class-mo-aramex-update-debug.php';
-
 // Optional: If you're using a private repository, specify the access token.
 // $updateChecker->setAuthentication('your-github-token');
 
