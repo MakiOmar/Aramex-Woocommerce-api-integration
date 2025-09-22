@@ -44,8 +44,29 @@ $GLOBALS['puc_plugin_update_checker'] = PucFactory::buildUpdateChecker(
 // Use master branch directly for updates (no releases needed)
 $GLOBALS['puc_plugin_update_checker']->setBranch('master');
 
-// Disable release checking since we're using branch updates only
-$GLOBALS['puc_plugin_update_checker']->getVcsApi()->enableReleaseAssets(false);
+// Configure for branch-only updates
+$vcs_api = $GLOBALS['puc_plugin_update_checker']->getVcsApi();
+if ($vcs_api) {
+    // Disable release assets checking
+    $vcs_api->enableReleaseAssets(false);
+    
+    // Set authentication if needed (uncomment and add token if repository is private)
+    // $vcs_api->setAuthentication('your-github-token');
+}
+
+// Add debugging hook to see what's happening
+add_action('admin_notices', function() {
+    if (current_user_can('manage_options') && isset($_GET['page']) && $_GET['page'] === 'mo-aramex-update-debug') {
+        $update_checker = $GLOBALS['puc_plugin_update_checker'] ?? null;
+        if ($update_checker) {
+            echo '<div class="notice notice-info"><p><strong>Update Checker Debug:</strong> ';
+            echo 'Repository: ' . $update_checker->getVcsApi()->getRepositoryUrl() . ' | ';
+            echo 'Branch: master | ';
+            echo 'Release Assets: ' . ($update_checker->getVcsApi()->getReleaseAssetsEnabled() ? 'Enabled' : 'Disabled');
+            echo '</p></div>';
+        }
+    }
+});
 
 // Load update debug class for troubleshooting
 require_once MO_ARAMEX_PLUGIN_DIR . 'includes/class-mo-aramex-update-debug.php';
