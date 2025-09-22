@@ -28,12 +28,8 @@ define('MO_ARAMEX_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('MO_ARAMEX_PLUGIN_BASENAME', plugin_basename(__FILE__));
 
 /**
- * Initialize Plugin Update Checker (Temporarily Disabled)
- * 
- * The update checker is temporarily disabled due to GitHub API 404 errors.
- * This will be re-enabled once the repository structure is properly configured.
+ * Initialize Plugin Update Checker
  */
-/*
 require_once MO_ARAMEX_PLUGIN_DIR . 'plugin-update-checker/plugin-update-checker.php';
 
 use YahnisElsts\PluginUpdateChecker\v5\PucFactory;
@@ -56,24 +52,20 @@ if ($vcs_api) {
     
     // Set authentication if needed (uncomment and add token if repository is private)
     // $vcs_api->setAuthentication('your-github-token');
-    
-    // Set custom headers to avoid rate limiting
-    $vcs_api->setHttpFilter(function($options) {
-        $options['headers']['User-Agent'] = 'MO-Aramex-Plugin/1.0.1';
-        $options['timeout'] = 30;
-        return $options;
-    });
 }
-*/
 
 // Add debugging hook to see what's happening
 add_action('admin_notices', function() {
     if (current_user_can('manage_options') && isset($_GET['page']) && $_GET['page'] === 'mo-aramex-update-debug') {
-        echo '<div class="notice notice-warning"><p><strong>Update Checker Status:</strong> ';
-        echo 'Temporarily disabled due to GitHub API 404 errors. ';
-        echo 'Repository: https://github.com/MakiOmar/Aramex-Woocommerce-api-integration.git | ';
-        echo 'Current Version: ' . MO_ARAMEX_VERSION;
-        echo '</p></div>';
+        $update_checker = $GLOBALS['puc_plugin_update_checker'] ?? null;
+        if ($update_checker) {
+            echo '<div class="notice notice-info"><p><strong>Update Checker Status:</strong> ';
+            echo 'Active | Repository: ' . $update_checker->getVcsApi()->getRepositoryUrl() . ' | ';
+            echo 'Branch: master | Current Version: ' . MO_ARAMEX_VERSION;
+            echo '</p></div>';
+        } else {
+            echo '<div class="notice notice-error"><p><strong>Update Checker Status:</strong> Not Initialized</p></div>';
+        }
     }
 });
 
