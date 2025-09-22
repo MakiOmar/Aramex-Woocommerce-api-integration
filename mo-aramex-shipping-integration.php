@@ -184,7 +184,7 @@ class MO_Aramex_Plugin {
     private function includes() {
         require_once MO_ARAMEX_PLUGIN_DIR . 'includes/core/class-mo-aramex-helper.php';
         require_once MO_ARAMEX_PLUGIN_DIR . 'includes/shipping/class-mo-aramex-shipping-method.php';
-        require_once MO_ARAMEX_PLUGIN_DIR . 'includes/class-mo-aramex-updater.php';
+        // require_once MO_ARAMEX_PLUGIN_DIR . 'includes/class-mo-aramex-updater.php'; // Disabled - using main plugin update checker
         
         // Include bulk operation classes
         require_once MO_ARAMEX_PLUGIN_DIR . 'includes/shipment/class-aramex-woocommerce-bulk.php';
@@ -210,8 +210,8 @@ class MO_Aramex_Plugin {
         // Initialize shipping method
         $this->init_shipping_method();
         
-        // Initialize update checker
-        new MO_Aramex_Updater();
+        // Initialize update checker (disabled - using main plugin update checker instead)
+        // new MO_Aramex_Updater();
     }
     
     /**
