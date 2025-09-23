@@ -24,6 +24,9 @@ node_modules/
 # Original plugin (for reference)
 aramex-shipping-woocommerce/
 
+# Duplicate plugin directory (untracked)
+mo-aramex-shipping-integration/
+
 # Temporary files
 *.tmp
 *.temp
