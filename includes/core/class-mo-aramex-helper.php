@@ -49,28 +49,28 @@ if (!class_exists('MO_Aramex_Helper')) {
             }
 
             $settings = array(
-                'api_source' => get_option('woocommerce_mo-aramex_settings')['api_source'],
-                'api_username' => get_option('woocommerce_mo-aramex_settings')['username'],
-                'api_password' => get_option('woocommerce_mo-aramex_settings')['password'],
-                'api_account_pin' => get_option('woocommerce_mo-aramex_settings')['account_pin'],
-                'api_account_number' => get_option('woocommerce_mo-aramex_settings')['account_number'],
-                'api_account_entity' => get_option('woocommerce_mo-aramex_settings')['account_entity'],
-                'api_account_country_code' => get_option('woocommerce_mo-aramex_settings')['account_country_code'],
-                'api_version' => get_option('woocommerce_mo-aramex_settings')['api_version'],
-                'api_company' => get_option('woocommerce_mo-aramex_settings')['company'],
-                'api_address' => get_option('woocommerce_mo-aramex_settings')['address'],
-                'api_city' => get_option('woocommerce_mo-aramex_settings')['city'],
-                'api_state' => get_option('woocommerce_mo-aramex_settings')['state'],
-                'api_postal_code' => get_option('woocommerce_mo-aramex_settings')['postal_code'],
-                'api_country_code' => get_option('woocommerce_mo-aramex_settings')['country_code'],
-                'api_name' => get_option('woocommerce_mo-aramex_settings')['name'],
-                'api_email' => get_option('woocommerce_mo-aramex_settings')['email'],
-                'api_phone' => get_option('woocommerce_mo-aramex_settings')['phone'],
-                'api_phone_ext' => get_option('woocommerce_mo-aramex_settings')['phone_ext'],
-                'api_cell_phone' => get_option('woocommerce_mo-aramex_settings')['cell_phone'],
-                'api_comment' => get_option('woocommerce_mo-aramex_settings')['comment'],
-                'api_reference' => get_option('woocommerce_mo-aramex_settings')['reference'],
-                'api_address_book' => get_option('woocommerce_mo-aramex_settings')['address_book'],
+                'api_source' => get_option('woocommerce_aramex_settings')['api_source'],
+                'api_username' => get_option('woocommerce_aramex_settings')['username'],
+                'api_password' => get_option('woocommerce_aramex_settings')['password'],
+                'api_account_pin' => get_option('woocommerce_aramex_settings')['account_pin'],
+                'api_account_number' => get_option('woocommerce_aramex_settings')['account_number'],
+                'api_account_entity' => get_option('woocommerce_aramex_settings')['account_entity'],
+                'api_account_country_code' => get_option('woocommerce_aramex_settings')['account_country_code'],
+                'api_version' => get_option('woocommerce_aramex_settings')['api_version'],
+                'api_company' => get_option('woocommerce_aramex_settings')['company'],
+                'api_address' => get_option('woocommerce_aramex_settings')['address'],
+                'api_city' => get_option('woocommerce_aramex_settings')['city'],
+                'api_state' => get_option('woocommerce_aramex_settings')['state'],
+                'api_postal_code' => get_option('woocommerce_aramex_settings')['postal_code'],
+                'api_country_code' => get_option('woocommerce_aramex_settings')['country_code'],
+                'api_name' => get_option('woocommerce_aramex_settings')['name'],
+                'api_email' => get_option('woocommerce_aramex_settings')['email'],
+                'api_phone' => get_option('woocommerce_aramex_settings')['phone'],
+                'api_phone_ext' => get_option('woocommerce_aramex_settings')['phone_ext'],
+                'api_cell_phone' => get_option('woocommerce_aramex_settings')['cell_phone'],
+                'api_comment' => get_option('woocommerce_aramex_settings')['comment'],
+                'api_reference' => get_option('woocommerce_aramex_settings')['reference'],
+                'api_address_book' => get_option('woocommerce_aramex_settings')['address_book'],
             );
 
             return $settings;
@@ -192,7 +192,7 @@ if (!class_exists('MO_Aramex_Helper')) {
          */
         public static function getInfo($nonce)
         {
-            $settings = get_option('woocommerce_mo-aramex_settings');
+            $settings = get_option('woocommerce_aramex_settings');
             if (!$settings) {
                 return array();
             }
