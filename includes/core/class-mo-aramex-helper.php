@@ -183,5 +183,55 @@ if (!class_exists('MO_Aramex_Helper')) {
             }
             return $out;
         }
+
+        /**
+         * Get info about Admin
+         *
+         * @param $nonce Nonce
+         * @return array Admin info
+         */
+        public static function getInfo($nonce)
+        {
+            $settings = get_option('woocommerce_mo-aramex_settings');
+            if (!$settings) {
+                return array();
+            }
+
+            // Determine base URL based on sandbox flag
+            $wsdl_path = __DIR__ . '/../../wsdl/';
+            if (isset($settings['sandbox_flag']) && $settings['sandbox_flag'] == 1) {
+                $baseUrl = $wsdl_path . 'test/';
+            } else {
+                $baseUrl = $wsdl_path;
+            }
+
+            $clientInfo = array(
+                'AccountCountryCode' => $settings['account_country_code'] ?? '',
+                'AccountEntity' => $settings['account_entity'] ?? '',
+                'AccountNumber' => $settings['account_number'] ?? '',
+                'AccountPin' => $settings['account_pin'] ?? '',
+                'UserName' => $settings['username'] ?? '',
+                'Password' => $settings['password'] ?? '',
+                'Version' => 'v1.0',
+                'Source' => 52,
+                'address' => $settings['address'] ?? '',
+                'city' => $settings['city'] ?? '',
+                'state' => $settings['state'] ?? '',
+                'postalcode' => $settings['postal_code'] ?? '',
+                'country' => $settings['country_code'] ?? '',
+                'name' => $settings['name'] ?? '',
+                'company' => $settings['company'] ?? '',
+                'phone' => $settings['phone'] ?? '',
+                'email' => $settings['email'] ?? '',
+                'report_id' => $settings['report_id'] ?? '',
+            );
+
+            $copyInfo = array(
+                'copy_to' => $settings['copy_to'] ?? '',
+                'copy_method' => $settings['copy_method'] ?? '',
+            );
+
+            return array('baseUrl' => $baseUrl, 'clientInfo' => $clientInfo, 'copyInfo' => $copyInfo);
+        }
     }
 }

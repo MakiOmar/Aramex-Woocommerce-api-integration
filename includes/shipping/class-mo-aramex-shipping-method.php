@@ -79,7 +79,7 @@ if (!class_exists('MO_Aramex_Shipping_Method')) {
         public function init_form_fields()
         {
             // Load settings from the original file but with updated references
-            $settings_file = __DIR__ . '/data-mo-aramex-settings.php';
+            $settings_file = __DIR__ . '/data-aramex-settings.php';
             if (file_exists($settings_file)) {
                 $this->form_fields = include($settings_file);
             } else {

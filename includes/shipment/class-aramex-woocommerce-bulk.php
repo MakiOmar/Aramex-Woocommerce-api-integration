@@ -11,7 +11,7 @@ License URI:  https://www.gnu.org/licenses/gpl-2.0.html
 Text Domain:  aramex
 Domain Path:  /languages
 */
-include_once __DIR__ . '../../core/class-mo-aramex-helper.php';
+include_once __DIR__ . '/../core/class-mo-aramex-helper.php';
 
 /**
  * Controller for for Bulk functionality
@@ -483,7 +483,7 @@ class Aramex_Bulk_Method extends MO_Aramex_Helper
                 );
 
                 $major_par['Shipments'][] = $params;
-                $info = Aramex_Helper::getInfo(wp_create_nonce('aramex-shipment-check' . wp_get_current_user()->user_email));
+                $info = MO_Aramex_Helper::getInfo(wp_create_nonce('aramex-shipment-check' . wp_get_current_user()->user_email));
                 $major_par['ClientInfo'] = $info['clientInfo'];
                 $report_id = trim($settings->settings['report_id']);
                 if ($report_id == "") {
@@ -547,7 +547,7 @@ class Aramex_Bulk_Method extends MO_Aramex_Helper
     private function postAction($major_par, $order, $method, $mail)
     {
         $shipper_name = $order->shipping_first_name . " " . $order->shipping_last_name;
-        $info = Aramex_Helper::getInfo(wp_create_nonce('aramex-shipment-check' . wp_get_current_user()->user_email));
+        $info = MO_Aramex_Helper::getInfo(wp_create_nonce('aramex-shipment-check' . wp_get_current_user()->user_email));
 
         //SOAP object
      
