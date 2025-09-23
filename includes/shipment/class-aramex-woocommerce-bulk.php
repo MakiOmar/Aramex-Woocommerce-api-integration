@@ -72,9 +72,16 @@ class Aramex_Bulk_Method extends MO_Aramex_Helper
         include_once(plugin_dir_path(__FILE__) . '../../includes/shipping/class-mo-aramex-shipping-method.php');
         $settings = new MO_Aramex_Shipping_Method();
         
+        // Debug: Log the settings object
+        custom_plugin_log('Settings object created: ' . print_r($settings, true));
+        custom_plugin_log('Settings property exists: ' . (isset($settings->settings) ? 'YES' : 'NO'));
+        
         // Check if settings are properly loaded
         if (!isset($settings->settings) || empty($settings->settings)) {
             custom_plugin_log('Aramex settings not properly loaded');
+            // Try to load settings directly from database
+            $direct_settings = get_option('woocommerce_aramex_settings', array());
+            custom_plugin_log('Direct settings from database: ' . print_r($direct_settings, true));
             echo json_encode(array('message' => '<p class="aramex_red">' . __('Aramex settings not configured properly', 'aramex') . '</p>'));
             die();
         }
