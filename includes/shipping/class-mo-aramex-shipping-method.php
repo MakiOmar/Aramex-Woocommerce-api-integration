@@ -69,8 +69,8 @@ if (!class_exists('MO_Aramex_Shipping_Method')) {
             $this->init_form_fields();
             $this->init_settings();
             
-            // Load settings from database - use the original aramex settings key
-            $this->settings = get_option('woocommerce_aramex_settings', array());
+            // Load settings from database - use the correct key for this shipping method
+            $this->settings = get_option('woocommerce_mo-aramex_settings', array());
             
             // Save settings in admin if you have any defined
             add_action('woocommerce_update_options_shipping_' . $this->id, array($this, 'process_admin_options'));
