@@ -79,6 +79,9 @@ class Aramex_Bulk_Method extends MO_Aramex_Helper
             die();
         }
         
+        // Debug: Log the settings to see what's available
+        custom_plugin_log('Aramex settings loaded: ' . print_r($settings->settings, true));
+        
         $post['aramex_shipment_shipper_country'] = $settings->settings['country'];
         //check "pending" status
         try {
@@ -229,7 +232,9 @@ class Aramex_Bulk_Method extends MO_Aramex_Helper
                                    
                             ]);
 
-                            $ActualWeight = (float)$itemvv['qty'] * (float)$product_weight;
+                            // Ensure we have a valid weight (minimum 0.1 kg if empty)
+                            $product_weight = !empty($product_weight) ? (float)$product_weight : 0.1;
+                            $ActualWeight = (float)$itemvv['qty'] * $product_weight;
                             array_push($PiecesDimensions,[
                                 'Length' => $product_length,
                                 'Width' => $product_width,
@@ -274,6 +279,11 @@ class Aramex_Bulk_Method extends MO_Aramex_Helper
                     $aramex_shipment_info_service_type = ($params1['aramex_shipment_info_service_type']) ? $params1['aramex_shipment_info_service_type'] : "";
                     $aramex_shipment_currency_code = ($params1['aramex_shipment_currency_code']) ? $params1['aramex_shipment_currency_code'] : "";
                     $aramex_shipment_info_custom_amount = ($params1['aramex_shipment_info_custom_amount']) ? $params1['aramex_shipment_info_custom_amount'] : "";
+                }
+
+                // Ensure we have a minimum total weight
+                if ($totalWeight <= 0) {
+                    $totalWeight = 0.1; // Minimum weight of 0.1 kg
                 }
 
                 $company_name = isset($order->billing_country) ? $order->billing_company : '';
