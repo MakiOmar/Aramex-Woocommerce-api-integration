@@ -229,7 +229,7 @@ class Aramex_Bulk_Method extends MO_Aramex_Helper
                                    
                             ]);
 
-                            $ActualWeight = $itemvv['qty'] * $product_weight;
+                            $ActualWeight = (float)$itemvv['qty'] * (float)$product_weight;
                             array_push($PiecesDimensions,[
                                 'Length' => $product_length,
                                 'Width' => $product_width,
