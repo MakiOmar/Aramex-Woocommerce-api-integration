@@ -38,6 +38,28 @@ class MO_Aramex_Update_Debug {
      * Debug page content
      */
     public function debug_page() {
+        // Handle clear cache action
+        if (isset($_POST['clear_update_cache']) && wp_verify_nonce($_POST['_wpnonce'], 'clear_update_cache')) {
+            delete_site_transient('update_plugins');
+            delete_transient('puc_request_info-mo-aramex-shipping-integration');
+            
+            $update_checker = $GLOBALS['puc_plugin_update_checker'] ?? null;
+            if ($update_checker) {
+                $update_checker->resetUpdateState();
+            }
+            
+            echo '<div class="notice notice-success"><p>Update cache cleared! Click "Force Check" below.</p></div>';
+        }
+        
+        // Handle force check action
+        if (isset($_POST['force_check']) && wp_verify_nonce($_POST['_wpnonce'], 'force_check_updates')) {
+            $update_checker = $GLOBALS['puc_plugin_update_checker'] ?? null;
+            if ($update_checker) {
+                $update_checker->checkForUpdates();
+            }
+            echo '<div class="notice notice-success"><p>Forced update check completed!</p></div>';
+        }
+        
         ?>
         <div class="wrap">
             <h1>MO Aramex Update Checker Debug</h1>
@@ -127,15 +149,94 @@ class MO_Aramex_Update_Debug {
             <h2>Network Test</h2>
             <?php $this->test_network_connectivity(); ?>
             
+            <h2>Current Status</h2>
+            <?php
+            $update_checker = $GLOBALS['puc_plugin_update_checker'] ?? null;
+            ?>
+            <table class="widefat">
+                <tr>
+                    <td><strong>Installed Version:</strong></td>
+                    <td><?php echo MO_ARAMEX_VERSION; ?></td>
+                </tr>
+                <tr>
+                    <td><strong>Update Checker Status:</strong></td>
+                    <td><?php echo $update_checker ? 'Initialized ✓' : 'Not Initialized ✗'; ?></td>
+                </tr>
+                <tr>
+                    <td><strong>Update Info URL:</strong></td>
+                    <td><a href="https://github.com/MakiOmar/Aramex-Woocommerce-api-integration/raw/master/update-info.json" target="_blank">View update-info.json</a></td>
+                </tr>
+                <?php if ($update_checker): ?>
+                    <?php
+                    $update = $update_checker->getUpdate();
+                    ?>
+                    <tr>
+                        <td><strong>Update Available:</strong></td>
+                        <td>
+                            <?php if ($update): ?>
+                                <span style="color: green;">Yes - Version <?php echo esc_html($update->version); ?></span>
+                            <?php else: ?>
+                                <span>No (up to date)</span>
+                            <?php endif; ?>
+                        </td>
+                    </tr>
+                    
+                    <?php if ($update): ?>
+                        <tr>
+                            <td colspan="2">
+                                <div style="background: #e7f7e7; padding: 15px; border-left: 4px solid green; margin: 15px 0;">
+                                    <h3 style="margin-top: 0;">New Version Available: <?php echo esc_html($update->version); ?></h3>
+                                    <p><strong>Download URL:</strong> <?php echo esc_html($update->download_url); ?></p>
+                                </div>
+                            </td>
+                        </tr>
+                    <?php endif; ?>
+                <?php endif; ?>
+            </table>
+            
             <h2>Actions</h2>
-            <p>
-                <button type="button" class="button button-primary" onclick="location.reload();">
-                    Refresh Debug Information
-                </button>
-                <button type="button" class="button" onclick="window.open('https://github.com/MakiOmar/Aramex-Woocommerce-api-integration', '_blank');">
-                    Open GitHub Repository
-                </button>
-            </p>
+            <div class="card" style="margin-top: 20px;">
+                <h3>Update Management</h3>
+                <form method="post" style="display: inline-block; margin-right: 10px;">
+                    <?php wp_nonce_field('clear_update_cache'); ?>
+                    <button type="submit" name="clear_update_cache" class="button button-primary">Clear Update Cache</button>
+                    <p class="description">Clears WordPress update cache and plugin update checker cache</p>
+                </form>
+                
+                <form method="post" style="display: inline-block;">
+                    <?php wp_nonce_field('force_check_updates'); ?>
+                    <button type="submit" name="force_check" class="button">Force Check for Updates</button>
+                    <p class="description">Immediately checks for updates from GitHub</p>
+                </form>
+            </div>
+            
+            <div class="card" style="margin-top: 20px;">
+                <h3>Other Actions</h3>
+                <p>
+                    <button type="button" class="button button-primary" onclick="location.reload();">
+                        Refresh Debug Information
+                    </button>
+                    <button type="button" class="button" onclick="window.open('https://github.com/MakiOmar/Aramex-Woocommerce-api-integration', '_blank');">
+                        Open GitHub Repository
+                    </button>
+                </p>
+            </div>
+            
+            <div class="card" style="margin-top: 20px;">
+                <h2>Troubleshooting Steps</h2>
+                <ol>
+                    <li>Click "Clear Update Cache" to remove cached update data</li>
+                    <li>Click "Force Check for Updates" to check GitHub immediately</li>
+                    <li>Go to Dashboard → Updates to see if update appears</li>
+                    <li>Click the update-info.json link above to verify it's accessible</li>
+                </ol>
+                
+                <h3>Cache Transients Status</h3>
+                <ul>
+                    <li>WordPress update_plugins: <?php echo get_site_transient('update_plugins') ? '✓ Cached' : '✗ Not cached'; ?></li>
+                    <li>PUC request info: <?php echo get_transient('puc_request_info-mo-aramex-shipping-integration') ? '✓ Cached' : '✗ Not cached'; ?></li>
+                </ul>
+            </div>
         </div>
         
         <style>
