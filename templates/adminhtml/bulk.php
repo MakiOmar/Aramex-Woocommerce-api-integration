@@ -259,10 +259,7 @@ function aramex_display_bulk_in_admin()
                     $(".order_in_background").fadeIn(500);
                     $(".aramex_bulk").fadeIn(500);
                     
-                    // Auto-submit the form after a short delay to ensure it's fully displayed
-                    setTimeout(function() {
-                        $("#aramex_shipment_creation_submit_id").trigger('click');
-                    }, 1000);
+                    // Auto-submit removed - user must manually click the button to create shipments
                 });
 
                 $("#aramex_shipment_creation_submit_id").click(function () {
