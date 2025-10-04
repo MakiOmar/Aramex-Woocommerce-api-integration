@@ -98,7 +98,7 @@ class Aramex_Bulk_Method extends MO_Aramex_Helper
 
                 $post_status = $order->get_status();
                 if ($post_status == "processing") {
-                    $shippingCountry = $order->shipping_country;
+                    $shippingCountry = $order->get_shipping_country();
                     if ($shippingCountry == $post['aramex_shipment_shipper_country']) {
                         $orders[$key]['method'] = "DOM";
                     } else {
@@ -293,12 +293,12 @@ class Aramex_Bulk_Method extends MO_Aramex_Helper
                     $totalWeight = 0.1; // Minimum weight of 0.1 kg
                 }
 
-                $company_name = isset($order->billing_country) ? $order->billing_company : '';
+                $company_name = $order->get_billing_company();
                 if ($company_name == "") {
-                    $company_name = $order->shipping_company;
+                    $company_name = $order->get_shipping_company();
                 }
                 if ($company_name == "") {
-                    $company_name = $order->shipping_first_name . " " . $order->shipping_last_name;
+                    $company_name = $order->get_shipping_first_name() . " " . $order->get_shipping_last_name();
                 }
                 
                 $option = get_option('woocommerce_aramex_settings');
@@ -324,7 +324,7 @@ class Aramex_Bulk_Method extends MO_Aramex_Helper
 
                 //shipper parameters
                 $params['Shipper'] = array(
-                    'Reference1' => (string)$order->id,
+                    'Reference1' => (string)$order->get_id(),
                     'Reference2' => '',
                     'AccountNumber' => (string)$settings->settings['account_number'],
                     //Party Address
@@ -356,65 +356,65 @@ class Aramex_Bulk_Method extends MO_Aramex_Helper
 
                 //consinee parameters
                 $params['Consignee'] = array(
-                    'Reference1' => (string)$order->id,
+                    'Reference1' => (string)$order->get_id(),
                     'Reference2' => '',
                     'AccountNumber' => "",
                     //Party Address
                     'PartyAddress' => array(
-                        'Line1' => ($order->shipping_address_1) ? $order->shipping_address_1 . " " . $order->shipping_address_2 : '',
+                        'Line1' => ($order->get_shipping_address_1()) ? $order->get_shipping_address_1() . " " . $order->get_shipping_address_2() : '',
                         'Line2' => '',
                         'Line3' => '',
-                        'City' => ($order->shipping_city) ? $order->shipping_city : '',
+                        'City' => ($order->get_shipping_city()) ? $order->get_shipping_city() : '',
                         'StateOrProvinceCode' => '',
-                        'PostCode' => str_replace(" ","",($order->shipping_postcode) ? $order->shipping_postcode : ''),
-                        'CountryCode' => ($order->shipping_country) ? $order->shipping_country : '',
+                        'PostCode' => str_replace(" ","",($order->get_shipping_postcode()) ? $order->get_shipping_postcode() : ''),
+                        'CountryCode' => ($order->get_shipping_country()) ? $order->get_shipping_country() : '',
                     ),
                     //Contact Info
                     'Contact' => array(
                         'Department' => '',
-                        'PersonName' => ($order->shipping_first_name) ? $order->shipping_first_name . " " . $order->shipping_last_name : '',
+                        'PersonName' => ($order->get_shipping_first_name()) ? $order->get_shipping_first_name() . " " . $order->get_shipping_last_name() : '',
                         'Title' => '',
                         'CompanyName' => $company_name,
-                        'PhoneNumber1' => ($order->billing_phone) ? $order->billing_phone : '',
+                        'PhoneNumber1' => ($order->get_billing_phone()) ? $order->get_billing_phone() : '',
                         'PhoneNumber1Ext' => '',
                         'PhoneNumber2' => '',
                         'PhoneNumber2Ext' => '',
                         'FaxNumber' => '',
-                        'CellPhone' => ($order->billing_phone) ? $order->billing_phone : '',
-                        'EmailAddress' => ($order->billing_email) ? $order->billing_email : '',
+                        'CellPhone' => ($order->get_billing_phone()) ? $order->get_billing_phone() : '',
+                        'EmailAddress' => ($order->get_billing_email()) ? $order->get_billing_email() : '',
                         'Type' => ''
                     )
                 );
                 //new
                 if ($aramex_shipment_info_payment_type == 3) {
                     $params['ThirdParty'] = array(
-                        'Reference1' => (string)$order->id, //'ref11111',
+                        'Reference1' => (string)$order->get_id(), //'ref11111',
                         'Reference2' => '',
                         'AccountNumber' => (string)$settings->settings['account_number'],
                         'AccountPin' => (string)$settings->settings['account_pin'],
                         //Party Address
                         'PartyAddress' => array(
-                            'Line1' => ($order->shipping_address_1) ? $order->shipping_address_1 . " " . $order->shipping_address_2 : '',
+                            'Line1' => ($order->get_shipping_address_1()) ? $order->get_shipping_address_1() . " " . $order->get_shipping_address_2() : '',
                             'Line2' => '',
                             'Line3' => '',
-                            'City' => ($order->shipping_city) ? $order->shipping_city : '',
+                            'City' => ($order->get_shipping_city()) ? $order->get_shipping_city() : '',
                             'StateOrProvinceCode' => '',
-                            'PostCode' => str_replace(" ","",($order->shipping_postcode) ? $order->shipping_postcode : ''),
-                            'CountryCode' => ($order->shipping_country) ? $order->shipping_country : '',
+                            'PostCode' => str_replace(" ","",($order->get_shipping_postcode()) ? $order->get_shipping_postcode() : ''),
+                            'CountryCode' => ($order->get_shipping_country()) ? $order->get_shipping_country() : '',
                         ),
                         //Contact Info
                         'Contact' => array(
                             'Department' => '',
-                            'PersonName' => ($order->shipping_first_name) ? $order->shipping_first_name . " " . $order->shipping_last_name : '',
+                            'PersonName' => ($order->get_shipping_first_name()) ? $order->get_shipping_first_name() . " " . $order->get_shipping_last_name() : '',
                             'Title' => '',
                             'CompanyName' => $company_name,
-                            'PhoneNumber1' => ($order->billing_phone) ? $order->billing_phone : '',
+                            'PhoneNumber1' => ($order->get_billing_phone()) ? $order->get_billing_phone() : '',
                             'PhoneNumber1Ext' => '',
                             'PhoneNumber2' => '',
                             'PhoneNumber2Ext' => '',
                             'FaxNumber' => '',
-                            'CellPhone' => ($order->billing_phone) ? $order->billing_phone : '',
-                            'EmailAddress' => ($order->billing_email) ? $order->billing_email : '',
+                            'CellPhone' => ($order->get_billing_phone()) ? $order->get_billing_phone() : '',
+                            'EmailAddress' => ($order->get_billing_email()) ? $order->get_billing_email() : '',
                             'Type' => ''
                         ),
                     );
@@ -427,7 +427,7 @@ class Aramex_Bulk_Method extends MO_Aramex_Helper
                 }
 
                 // Other Main Shipment Parameters
-                $params['Reference1'] = (string)$order->id;
+                $params['Reference1'] = (string)$order->get_id();
                 $params['Reference2'] = '';
                 $params['Reference3'] = '';
                 $params['ForeignHAWB'] = '';
@@ -563,7 +563,7 @@ class Aramex_Bulk_Method extends MO_Aramex_Helper
      */
     private function postAction($major_par, $order, $method, $mail)
     {
-        $shipper_name = $order->shipping_first_name . " " . $order->shipping_last_name;
+        $shipper_name = $order->get_shipping_first_name() . " " . $order->get_shipping_last_name();
         $info = MO_Aramex_Helper::getInfo(wp_create_nonce('aramex-shipment-check' . wp_get_current_user()->user_email));
 
         //SOAP object
@@ -637,12 +637,12 @@ class Aramex_Bulk_Method extends MO_Aramex_Helper
                 );
 
                 wp_new_comment($commentdata);
-                $order = new WC_Order($order->id);
+                $order = new WC_Order($order->get_id());
                 $order->add_order_note($commentdata['comment_content']);
                 $order->save();
                 if (!empty($order)) {
                     $order->update_status('printing-aramex', __('Aramex shipment created.', 'woocommerce'));
-                    update_post_meta($order->id, 'aramex_awb_no', $auth_call->Shipments->ProcessedShipment->ID);
+                    update_post_meta($order->get_id(), 'aramex_awb_no', $auth_call->Shipments->ProcessedShipment->ID);
                 }
 
                 /* sending mail */
@@ -665,7 +665,7 @@ class Aramex_Bulk_Method extends MO_Aramex_Helper
                 if ($mail == 'yes') {
                     // Cliente email
                     $to = array();
-                    $to[] = $order->billing_email;
+                    $to[] = $order->get_billing_email();
                     $to[] = $info['copyInfo']['copy_to'];
                     $emailsTo = implode(',', $to);
                     if (trim($info['copyInfo']['copy_to']) == "") {
