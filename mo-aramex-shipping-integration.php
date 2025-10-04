@@ -55,6 +55,7 @@ if (method_exists($GLOBALS['puc_plugin_update_checker'], 'addHttpRequestArgFilte
         $options['headers']['Accept'] = 'application/vnd.github.v3+json';
         $options['headers']['X-MO-Aramex-Plugin'] = 'MO Aramex Shipping Integration';
         $options['headers']['X-Plugin-Version'] = MO_ARAMEX_VERSION;
+        $options['headers']['Cache-Control'] = 'no-cache';
         
         return $options;
     });
