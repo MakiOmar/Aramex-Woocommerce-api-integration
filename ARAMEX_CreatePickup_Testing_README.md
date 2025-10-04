@@ -1,0 +1,399 @@
+# Aramex CreatePickup API Testing Guide
+
+This guide provides instructions for testing the Aramex CreatePickup API using the provided Postman collection to test pickup request functionality.
+
+## 📋 Table of Contents
+
+1. [Overview](#overview)
+2. [Prerequisites](#prerequisites)
+3. [Setup Instructions](#setup-instructions)
+4. [API Endpoints](#api-endpoints)
+5. [Testing Scenarios](#testing-scenarios)
+6. [Request Structure](#request-structure)
+7. [Troubleshooting](#troubleshooting)
+8. [Expected Results](#expected-results)
+
+## 🎯 Overview
+
+The CreatePickup API allows you to:
+- Schedule pickup requests for shipments
+- Reference existing shipments for pickup
+- Create new pickup requests without existing shipments
+- Cancel scheduled pickup requests
+
+### Key Features
+- **Test Environment**: `https://ws.sbx.aramex.net/ShippingAPI.V2/Shipping/Service_1_0.svc/json`
+- **Live Environment**: `https://ws.aramex.net/ShippingAPI.V2/Shipping/Service_1_0.svc/json`
+- **Existing Shipment Support**: Can reference already created shipments
+- **Flexible Pickup Items**: Support for different product groups and types
+
+## 📋 Prerequisites
+
+### Required Information
+- **Account Number**: Your Aramex account number
+- **Account Pin**: Your Aramex account PIN
+- **Username**: Your Aramex API username
+- **Password**: Your Aramex API password
+- **Account Entity**: Usually "RUH" for Saudi Arabia
+- **Account Country Code**: Usually "SA" for Saudi Arabia
+
+### Test Credentials (Pre-configured)
+The collection comes with test credentials already configured:
+- **Username**: `testingapi@aramex.com`
+- **Password**: `R123456789$r`
+- **Account Number**: `4004636`
+- **Account Pin**: `432432`
+
+## 🚀 Setup Instructions
+
+### Step 1: Import the Collection
+
+1. Open Postman
+2. Click **Import** button
+3. Select `ARAMEX_CreatePickup_Collection.postman_collection.json`
+4. Click **Import**
+
+### Step 2: Configure Environment Variables
+
+The collection includes pre-configured variables, but you can customize them:
+
+#### Test Environment Variables (Pre-configured)
+```
+Variable Name                    | Current Value
+--------------------------------|----------------------------
+test_pickup_base_url           | https://ws.sbx.aramex.net/ShippingAPI.V2/Shipping/Service_1_0.svc/json
+test_username                  | testingapi@aramex.com
+test_password                  | R123456789$r
+test_account_number            | 4004636
+test_account_pin               | 432432
+test_account_entity            | RUH
+test_account_country_code      | SA
+test_pickup_address_line1      | Test Address Line 1
+test_pickup_address_line2      | Test Address Line 2
+test_pickup_city               | Riyadh
+test_pickup_postcode           | 00000
+test_pickup_country            | SA
+test_pickup_contact_name       | Test Contact
+test_pickup_company            | Test Company
+test_pickup_phone              | 966571427069
+test_pickup_email              | test@aramex.com
+test_pickup_location           | Home
+test_product_group             | DOM
+test_product_type              | RTC
+test_payment_type              | C
+test_existing_shipment_number  | 50003456985
+```
+
+### Step 3: Update Live Environment (Optional)
+
+For live environment testing, update these variables:
+```
+Variable Name                   | Value
+-------------------------------|----------------------------
+live_username                  | YOUR_LIVE_USERNAME
+live_password                  | YOUR_LIVE_PASSWORD
+live_account_number            | YOUR_LIVE_ACCOUNT_NUMBER
+live_account_pin               | YOUR_LIVE_ACCOUNT_PIN
+```
+
+## 🌐 API Endpoints
+
+### Test Environment
+- **Base URL**: `https://ws.sbx.aramex.net/ShippingAPI.V2/Shipping/Service_1_0.svc/json`
+- **CreatePickup**: `POST /CreatePickup`
+- **CancelPickup**: `POST /CancelPickup`
+
+### Live Environment
+- **Base URL**: `https://ws.aramex.net/ShippingAPI.V2/Shipping/Service_1_0.svc/json`
+- **CreatePickup**: `POST /CreatePickup`
+- **CancelPickup**: `POST /CancelPickup`
+
+## 🧪 Testing Scenarios
+
+### Scenario 1: CreatePickup with Existing Shipment
+
+1. Navigate to **CreatePickup - Test Environment**
+2. The request includes:
+   - Existing shipment reference: `50003456985`
+   - Pickup address and contact details
+   - Pickup timing information
+   - Product details (DOM/RTC)
+3. Click **Send**
+4. Check response for pickup confirmation
+
+### Scenario 2: CreatePickup without Existing Shipment
+
+1. Navigate to **CreatePickup - Without Existing Shipments**
+2. The request has empty `ExistingShipments` array
+3. Click **Send**
+4. Check response for new pickup creation
+
+### Scenario 3: CancelPickup
+
+1. First create a pickup (Scenario 1 or 2)
+2. Note the pickup reference from the response
+3. Navigate to **CancelPickup - Test Environment**
+4. Update the pickup reference in the request
+5. Click **Send**
+6. Check response for cancellation confirmation
+
+### Scenario 4: Live Environment (Use with Caution)
+
+1. Navigate to **CreatePickup - Live Environment**
+2. **⚠️ WARNING**: This creates real pickup requests
+3. Ensure all live credentials are configured
+4. Click **Send** only if you're sure
+5. Check response
+
+## 📝 Request Structure
+
+### CreatePickup Request Body
+
+```json
+{
+  "Pickup": {
+    "PickupAddress": {
+      "Line1": "Test Address Line 1",
+      "Line2": "Test Address Line 2",
+      "City": "Riyadh",
+      "PostCode": "00000",
+      "CountryCode": "SA",
+      "Longitude": 0.0,
+      "Latitude": 0.0
+    },
+    "PickupContact": {
+      "PersonName": "Test Contact",
+      "CompanyName": "Test Company",
+      "PhoneNumber1": "966571427069",
+      "CellPhone": "966571427069",
+      "EmailAddress": "test@aramex.com"
+    },
+    "PickupLocation": "Home",
+    "PickupDate": "/Date(1737018820000+0300)/",
+    "ReadyTime": "/Date(1737018820000+0300)/",
+    "LastPickupTime": "/Date(1737033220000+0300)/",
+    "ClosingTime": "/Date(1737033220000+0300)/",
+    "Comments": "Test pickup request",
+    "Reference1": "PICKUP-1234567890",
+    "PickupItems": [
+      {
+        "ProductGroup": "DOM",
+        "ProductType": "RTC",
+        "NumberOfShipments": 1,
+        "Payment": "C",
+        "NumberOfPieces": 1,
+        "Comments": "Test pickup item"
+      }
+    ],
+    "Status": "Ready",
+    "ExistingShipments": [
+      {
+        "Number": "50003456985",
+        "OriginEntity": "RUH",
+        "ProductGroup": "DOM"
+      }
+    ]
+  },
+  "ClientInfo": {
+    "UserName": "testingapi@aramex.com",
+    "Password": "R123456789$r",
+    "Version": "1.0",
+    "AccountNumber": "4004636",
+    "AccountPin": "432432",
+    "AccountEntity": "RUH",
+    "AccountCountryCode": "SA",
+    "Source": 24
+  }
+}
+```
+
+### Key Fields Explained
+
+#### PickupAddress
+- **Line1, Line2**: Address lines
+- **City**: City name
+- **PostCode**: Postal code
+- **CountryCode**: Country code (SA for Saudi Arabia)
+- **Longitude, Latitude**: GPS coordinates (optional)
+
+#### PickupContact
+- **PersonName**: Contact person name
+- **CompanyName**: Company name
+- **PhoneNumber1, CellPhone**: Phone numbers
+- **EmailAddress**: Email address
+
+#### PickupItems
+- **ProductGroup**: DOM (Domestic), EXP (Express), etc.
+- **ProductType**: RTC (Road Transport), EPX (Express), etc.
+- **Payment**: C (Cash), P (Prepaid), 3 (Third Party)
+- **NumberOfShipments**: Number of shipments
+- **NumberOfPieces**: Number of pieces
+
+#### ExistingShipments
+- **Number**: Existing shipment number
+- **OriginEntity**: Origin entity (RUH, etc.)
+- **ProductGroup**: Product group of existing shipment
+
+## 🔍 Troubleshooting
+
+### Common HTTP Status Codes
+
+| Code | Meaning | Possible Causes |
+|------|---------|-----------------|
+| 200 | Success | Pickup request created successfully |
+| 400 | Bad Request | Invalid request data or missing required fields |
+| 401 | Unauthorized | Invalid credentials |
+| 404 | Not Found | Endpoint not found |
+| 500 | Server Error | Aramex server issue |
+
+### Common Issues
+
+#### Issue 1: "400 Bad Request - Invalid Existing Shipment"
+**Cause**: Referenced shipment doesn't exist or is invalid
+**Solutions**:
+- Verify the existing shipment number is correct
+- Ensure the shipment exists in the system
+- Check if shipment is in correct status for pickup
+
+#### Issue 2: "401 Unauthorized"
+**Cause**: Invalid credentials
+**Solutions**:
+- Verify username and password
+- Check account number and PIN
+- Ensure account has pickup permissions
+
+#### Issue 3: "Invalid Pickup Date/Time"
+**Cause**: Pickup dates are in the past or invalid
+**Solutions**:
+- Set pickup date to future date
+- Ensure ReadyTime is before LastPickupTime
+- Check timezone settings
+
+#### Issue 4: "Address Validation Failed"
+**Cause**: Invalid pickup address
+**Solutions**:
+- Verify address format
+- Check if city and country code are valid
+- Ensure postal code is correct
+
+## ✅ Expected Results
+
+### Successful CreatePickup Response
+
+```json
+{
+  "Pickup": {
+    "ID": "123456789",
+    "Reference1": "PICKUP-1234567890",
+    "Reference2": null,
+    "Reference3": null,
+    "Status": "Ready",
+    "PickupDate": "/Date(1737018820000+0300)/",
+    "ReadyTime": "/Date(1737018820000+0300)/",
+    "LastPickupTime": "/Date(1737033220000+0300)/",
+    "ClosingTime": "/Date(1737033220000+0300)/",
+    "Comments": "Test pickup request",
+    "PickupAddress": {
+      "Line1": "Test Address Line 1",
+      "Line2": "Test Address Line 2",
+      "City": "Riyadh",
+      "PostCode": "00000",
+      "CountryCode": "SA"
+    },
+    "PickupContact": {
+      "PersonName": "Test Contact",
+      "CompanyName": "Test Company",
+      "PhoneNumber1": "966571427069",
+      "EmailAddress": "test@aramex.com"
+    }
+  },
+  "Transaction": {
+    "Reference1": "PICKUP-1234567890",
+    "Reference2": "",
+    "Reference3": "",
+    "Reference4": "",
+    "Reference5": ""
+  },
+  "HasErrors": false,
+  "Notifications": {
+    "Notification": []
+  }
+}
+```
+
+### Successful CancelPickup Response
+
+```json
+{
+  "Pickup": {
+    "ID": "123456789",
+    "Reference1": "PICKUP-1234567890",
+    "Status": "Cancelled"
+  },
+  "HasErrors": false,
+  "Notifications": {
+    "Notification": []
+  }
+}
+```
+
+## 📊 Test Results Template
+
+Use this template to document your test results:
+
+```
+Test Date: ___________
+Tester: _____________
+Environment: Test / Live
+
+CreatePickup with Existing Shipment:
+□ Success (200) - Pickup ID: ___________
+□ Failed (Error: __________)
+
+CreatePickup without Existing Shipment:
+□ Success (200) - Pickup ID: ___________
+□ Failed (Error: __________)
+
+CancelPickup:
+□ Success (200) - Status: Cancelled
+□ Failed (Error: __________)
+
+Network Connectivity:
+□ Test Environment: Working / Failed
+□ Live Environment: Working / Failed
+
+Credentials:
+□ Test Credentials: Valid / Invalid
+□ Live Credentials: Valid / Invalid
+
+Notes:
+_________________________________
+_________________________________
+_________________________________
+```
+
+## 🔧 Next Steps
+
+After completing the tests:
+
+1. **Document Results**: Use the test results template
+2. **Identify Issues**: Note which operations work and which fail
+3. **Compare with Plugin**: Compare Postman results with plugin behavior
+4. **Contact Support**: Reach out to Aramex if API issues are found
+5. **Update Plugin**: If needed, update plugin to use correct endpoints
+
+## 📞 Support
+
+### Aramex Support
+- **Email**: Contact your Aramex account manager
+- **Documentation**: [Aramex Developer Portal](https://www.aramex.com/solutions-services/developers-solutions-center)
+
+### Plugin Support
+- **Email**: maki3omar@gmail.com
+- **GitHub**: [MO Aramex Plugin Repository](https://github.com/MakiOmar/Aramex-Woocommerce-api-integration)
+
+---
+
+**Last Updated**: October 2025  
+**Version**: 1.0  
+**Compatible with**: Aramex API V2

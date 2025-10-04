@@ -1,0 +1,593 @@
+{
+	"info": {
+		"_postman_id": "b2c3d4e5-f6g7-8901-bcde-f23456789012",
+		"name": "Aramex CreatePickup API Collection",
+		"description": "Collection for testing Aramex CreatePickup API with correct endpoints and body structure",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "23456789"
+	},
+	"item": [
+		{
+			"name": "CreatePickup - Test Environment",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Response has Pickup\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.have.property('Pickup');",
+							"});",
+							"",
+							"pm.test(\"Response has Transaction\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.have.property('Transaction');",
+							"});",
+							"",
+							"pm.test(\"Response has ClientInfo\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.have.property('ClientInfo');",
+							"});",
+							"",
+							"pm.test(\"No errors in response\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.HasErrors).to.be.false;",
+							"});",
+							"",
+							"// Log response for debugging",
+							"console.log('CreatePickup Response:', JSON.stringify(pm.response.json(), null, 2));"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"Pickup\": {\n    \"PickupAddress\": {\n      \"Line1\": \"{{test_pickup_address_line1}}\",\n      \"Line2\": \"{{test_pickup_address_line2}}\",\n      \"Line3\": null,\n      \"City\": \"{{test_pickup_city}}\",\n      \"StateOrProvinceCode\": \"\",\n      \"PostCode\": \"{{test_pickup_postcode}}\",\n      \"CountryCode\": \"{{test_pickup_country}}\",\n      \"Longitude\": {{test_pickup_longitude}},\n      \"Latitude\": {{test_pickup_latitude}},\n      \"BuildingNumber\": null,\n      \"BuildingName\": null,\n      \"Floor\": null,\n      \"Apartment\": null,\n      \"POBox\": null,\n      \"Description\": null\n    },\n    \"PickupContact\": {\n      \"Department\": null,\n      \"PersonName\": \"{{test_pickup_contact_name}}\",\n      \"Title\": null,\n      \"CompanyName\": \"{{test_pickup_company}}\",\n      \"PhoneNumber1\": \"{{test_pickup_phone}}\",\n      \"PhoneNumber1Ext\": null,\n      \"PhoneNumber2\": null,\n      \"PhoneNumber2Ext\": null,\n      \"FaxNumber\": null,\n      \"CellPhone\": \"{{test_pickup_phone}}\",\n      \"EmailAddress\": \"{{test_pickup_email}}\",\n      \"Type\": null\n    },\n    \"PickupLocation\": \"{{test_pickup_location}}\",\n    \"PickupDate\": \"/Date({{test_pickup_date}}+0300)/\",\n    \"ReadyTime\": \"/Date({{test_ready_time}}+0300)/\",\n    \"LastPickupTime\": \"/Date({{test_last_pickup_time}}+0300)/\",\n    \"ClosingTime\": \"/Date({{test_closing_time}}+0300)/\",\n    \"Comments\": \"{{test_pickup_comments}}\",\n    \"Reference1\": \"{{test_pickup_reference}}\",\n    \"Reference2\": null,\n    \"Vehicle\": null,\n    \"Shipments\": null,\n    \"PickupItems\": [\n      {\n        \"ProductGroup\": \"{{test_product_group}}\",\n        \"ProductType\": \"{{test_product_type}}\",\n        \"NumberOfShipments\": {{test_number_of_shipments}},\n        \"PackageType\": null,\n        \"Payment\": \"{{test_payment_type}}\",\n        \"ShipmentWeight\": null,\n        \"ShipmentVolume\": null,\n        \"NumberOfPieces\": {{test_number_of_pieces}},\n        \"CashAmount\": null,\n        \"ExtraCharges\": null,\n        \"ShipmentDimensions\": null,\n        \"Comments\": \"{{test_pickup_item_comments}}\"\n      }\n    ],\n    \"Status\": \"{{test_pickup_status}}\",\n    \"ExistingShipments\": [\n      {\n        \"Number\": \"{{test_existing_shipment_number}}\",\n        \"OriginEntity\": \"{{test_origin_entity}}\",\n        \"ProductGroup\": \"{{test_existing_product_group}}\"\n      }\n    ],\n    \"Branch\": null,\n    \"RouteCode\": null,\n    \"Dispatcher\": 0\n  },\n  \"LabelInfo\": null,\n  \"ClientInfo\": {\n    \"UserName\": \"{{test_username}}\",\n    \"Password\": \"{{test_password}}\",\n    \"Version\": \"1.0\",\n    \"AccountNumber\": \"{{test_account_number}}\",\n    \"AccountPin\": \"{{test_account_pin}}\",\n    \"AccountEntity\": \"{{test_account_entity}}\",\n    \"AccountCountryCode\": \"{{test_account_country_code}}\",\n    \"Source\": 24,\n    \"PreferredLanguageCode\": null\n  },\n  \"Transaction\": null\n}"
+				},
+				"url": {
+					"raw": "{{test_pickup_base_url}}/CreatePickup",
+					"host": [
+						"{{test_pickup_base_url}}"
+					],
+					"path": [
+						"CreatePickup"
+					]
+				},
+				"description": "Create a pickup request in the test environment with existing shipment reference"
+			},
+			"response": []
+		},
+		{
+			"name": "CreatePickup - Live Environment",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Response has Pickup\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.have.property('Pickup');",
+							"});",
+							"",
+							"pm.test(\"No errors in response\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.HasErrors).to.be.false;",
+							"});",
+							"",
+							"// Log response for debugging",
+							"console.log('CreatePickup Live Response:', JSON.stringify(pm.response.json(), null, 2));"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"Pickup\": {\n    \"PickupAddress\": {\n      \"Line1\": \"{{live_pickup_address_line1}}\",\n      \"Line2\": \"{{live_pickup_address_line2}}\",\n      \"Line3\": null,\n      \"City\": \"{{live_pickup_city}}\",\n      \"StateOrProvinceCode\": \"\",\n      \"PostCode\": \"{{live_pickup_postcode}}\",\n      \"CountryCode\": \"{{live_pickup_country}}\",\n      \"Longitude\": {{live_pickup_longitude}},\n      \"Latitude\": {{live_pickup_latitude}},\n      \"BuildingNumber\": null,\n      \"BuildingName\": null,\n      \"Floor\": null,\n      \"Apartment\": null,\n      \"POBox\": null,\n      \"Description\": null\n    },\n    \"PickupContact\": {\n      \"Department\": null,\n      \"PersonName\": \"{{live_pickup_contact_name}}\",\n      \"Title\": null,\n      \"CompanyName\": \"{{live_pickup_company}}\",\n      \"PhoneNumber1\": \"{{live_pickup_phone}}\",\n      \"PhoneNumber1Ext\": null,\n      \"PhoneNumber2\": null,\n      \"PhoneNumber2Ext\": null,\n      \"FaxNumber\": null,\n      \"CellPhone\": \"{{live_pickup_phone}}\",\n      \"EmailAddress\": \"{{live_pickup_email}}\",\n      \"Type\": null\n    },\n    \"PickupLocation\": \"{{live_pickup_location}}\",\n    \"PickupDate\": \"/Date({{live_pickup_date}}+0300)/\",\n    \"ReadyTime\": \"/Date({{live_ready_time}}+0300)/\",\n    \"LastPickupTime\": \"/Date({{live_last_pickup_time}}+0300)/\",\n    \"ClosingTime\": \"/Date({{live_closing_time}}+0300)/\",\n    \"Comments\": \"{{live_pickup_comments}}\",\n    \"Reference1\": \"{{live_pickup_reference}}\",\n    \"Reference2\": null,\n    \"Vehicle\": null,\n    \"Shipments\": null,\n    \"PickupItems\": [\n      {\n        \"ProductGroup\": \"{{live_product_group}}\",\n        \"ProductType\": \"{{live_product_type}}\",\n        \"NumberOfShipments\": {{live_number_of_shipments}},\n        \"PackageType\": null,\n        \"Payment\": \"{{live_payment_type}}\",\n        \"ShipmentWeight\": null,\n        \"ShipmentVolume\": null,\n        \"NumberOfPieces\": {{live_number_of_pieces}},\n        \"CashAmount\": null,\n        \"ExtraCharges\": null,\n        \"ShipmentDimensions\": null,\n        \"Comments\": \"{{live_pickup_item_comments}}\"\n      }\n    ],\n    \"Status\": \"{{live_pickup_status}}\",\n    \"ExistingShipments\": [\n      {\n        \"Number\": \"{{live_existing_shipment_number}}\",\n        \"OriginEntity\": \"{{live_origin_entity}}\",\n        \"ProductGroup\": \"{{live_existing_product_group}}\"\n      }\n    ],\n    \"Branch\": null,\n    \"RouteCode\": null,\n    \"Dispatcher\": 0\n  },\n  \"LabelInfo\": null,\n  \"ClientInfo\": {\n    \"UserName\": \"{{live_username}}\",\n    \"Password\": \"{{live_password}}\",\n    \"Version\": \"1.0\",\n    \"AccountNumber\": \"{{live_account_number}}\",\n    \"AccountPin\": \"{{live_account_pin}}\",\n    \"AccountEntity\": \"{{live_account_entity}}\",\n    \"AccountCountryCode\": \"{{live_account_country_code}}\",\n    \"Source\": 24,\n    \"PreferredLanguageCode\": null\n  },\n  \"Transaction\": null\n}"
+				},
+				"url": {
+					"raw": "{{live_pickup_base_url}}/CreatePickup",
+					"host": [
+						"{{live_pickup_base_url}}"
+					],
+					"path": [
+						"CreatePickup"
+					]
+				},
+				"description": "Create a pickup request in the live environment (USE WITH CAUTION)"
+			},
+			"response": []
+		},
+		{
+			"name": "CreatePickup - Without Existing Shipments",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Response has Pickup\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.have.property('Pickup');",
+							"});",
+							"",
+							"// Log response for debugging",
+							"console.log('CreatePickup Without Existing Shipments Response:', JSON.stringify(pm.response.json(), null, 2));"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"Pickup\": {\n    \"PickupAddress\": {\n      \"Line1\": \"{{test_pickup_address_line1}}\",\n      \"Line2\": \"{{test_pickup_address_line2}}\",\n      \"Line3\": null,\n      \"City\": \"{{test_pickup_city}}\",\n      \"StateOrProvinceCode\": \"\",\n      \"PostCode\": \"{{test_pickup_postcode}}\",\n      \"CountryCode\": \"{{test_pickup_country}}\",\n      \"Longitude\": {{test_pickup_longitude}},\n      \"Latitude\": {{test_pickup_latitude}},\n      \"BuildingNumber\": null,\n      \"BuildingName\": null,\n      \"Floor\": null,\n      \"Apartment\": null,\n      \"POBox\": null,\n      \"Description\": null\n    },\n    \"PickupContact\": {\n      \"Department\": null,\n      \"PersonName\": \"{{test_pickup_contact_name}}\",\n      \"Title\": null,\n      \"CompanyName\": \"{{test_pickup_company}}\",\n      \"PhoneNumber1\": \"{{test_pickup_phone}}\",\n      \"PhoneNumber1Ext\": null,\n      \"PhoneNumber2\": null,\n      \"PhoneNumber2Ext\": null,\n      \"FaxNumber\": null,\n      \"CellPhone\": \"{{test_pickup_phone}}\",\n      \"EmailAddress\": \"{{test_pickup_email}}\",\n      \"Type\": null\n    },\n    \"PickupLocation\": \"{{test_pickup_location}}\",\n    \"PickupDate\": \"/Date({{test_pickup_date}}+0300)/\",\n    \"ReadyTime\": \"/Date({{test_ready_time}}+0300)/\",\n    \"LastPickupTime\": \"/Date({{test_last_pickup_time}}+0300)/\",\n    \"ClosingTime\": \"/Date({{test_closing_time}}+0300)/\",\n    \"Comments\": \"{{test_pickup_comments}}\",\n    \"Reference1\": \"{{test_pickup_reference}}\",\n    \"Reference2\": null,\n    \"Vehicle\": null,\n    \"Shipments\": null,\n    \"PickupItems\": [\n      {\n        \"ProductGroup\": \"{{test_product_group}}\",\n        \"ProductType\": \"{{test_product_type}}\",\n        \"NumberOfShipments\": {{test_number_of_shipments}},\n        \"PackageType\": null,\n        \"Payment\": \"{{test_payment_type}}\",\n        \"ShipmentWeight\": null,\n        \"ShipmentVolume\": null,\n        \"NumberOfPieces\": {{test_number_of_pieces}},\n        \"CashAmount\": null,\n        \"ExtraCharges\": null,\n        \"ShipmentDimensions\": null,\n        \"Comments\": \"{{test_pickup_item_comments}}\"\n      }\n    ],\n    \"Status\": \"{{test_pickup_status}}\",\n    \"ExistingShipments\": [],\n    \"Branch\": null,\n    \"RouteCode\": null,\n    \"Dispatcher\": 0\n  },\n  \"LabelInfo\": null,\n  \"ClientInfo\": {\n    \"UserName\": \"{{test_username}}\",\n    \"Password\": \"{{test_password}}\",\n    \"Version\": \"1.0\",\n    \"AccountNumber\": \"{{test_account_number}}\",\n    \"AccountPin\": \"{{test_account_pin}}\",\n    \"AccountEntity\": \"{{test_account_entity}}\",\n    \"AccountCountryCode\": \"{{test_account_country_code}}\",\n    \"Source\": 24,\n    \"PreferredLanguageCode\": null\n  },\n  \"Transaction\": null\n}"
+				},
+				"url": {
+					"raw": "{{test_pickup_base_url}}/CreatePickup",
+					"host": [
+						"{{test_pickup_base_url}}"
+					],
+					"path": [
+						"CreatePickup"
+					]
+				},
+				"description": "Create a pickup request without existing shipment references (new shipment pickup)"
+			},
+			"response": []
+		},
+		{
+			"name": "CancelPickup - Test Environment",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Response has Pickup\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.have.property('Pickup');",
+							"});",
+							"",
+							"// Log response for debugging",
+							"console.log('CancelPickup Response:', JSON.stringify(pm.response.json(), null, 2));"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"Pickup\": {\n    \"Reference1\": \"{{test_pickup_reference}}\",\n    \"Reference2\": null,\n    \"Reference3\": null\n  },\n  \"ClientInfo\": {\n    \"UserName\": \"{{test_username}}\",\n    \"Password\": \"{{test_password}}\",\n    \"Version\": \"1.0\",\n    \"AccountNumber\": \"{{test_account_number}}\",\n    \"AccountPin\": \"{{test_account_pin}}\",\n    \"AccountEntity\": \"{{test_account_entity}}\",\n    \"AccountCountryCode\": \"{{test_account_country_code}}\",\n    \"Source\": 24,\n    \"PreferredLanguageCode\": null\n  },\n  \"Transaction\": null\n}"
+				},
+				"url": {
+					"raw": "{{test_pickup_base_url}}/CancelPickup",
+					"host": [
+						"{{test_pickup_base_url}}"
+					],
+					"path": [
+						"CancelPickup"
+					]
+				},
+				"description": "Cancel a pickup request using the pickup reference"
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"// Generate timestamps for pickup dates",
+					"const now = new Date();",
+					"const pickupDate = new Date(now.getTime() + (24 * 60 * 60 * 1000)); // Tomorrow",
+					"const readyTime = new Date(now.getTime() + (25 * 60 * 60 * 1000)); // Tomorrow + 1 hour",
+					"const lastPickupTime = new Date(now.getTime() + (26 * 60 * 60 * 1000)); // Tomorrow + 2 hours",
+					"const closingTime = new Date(now.getTime() + (27 * 60 * 60 * 1000)); // Tomorrow + 3 hours",
+					"",
+					"// Set environment variables for timestamps",
+					"pm.environment.set('test_pickup_date', pickupDate.getTime());",
+					"pm.environment.set('test_ready_time', readyTime.getTime());",
+					"pm.environment.set('test_last_pickup_time', lastPickupTime.getTime());",
+					"pm.environment.set('test_closing_time', closingTime.getTime());",
+					"",
+					"// Set live environment timestamps",
+					"pm.environment.set('live_pickup_date', pickupDate.getTime());",
+					"pm.environment.set('live_ready_time', readyTime.getTime());",
+					"pm.environment.set('live_last_pickup_time', lastPickupTime.getTime());",
+					"pm.environment.set('live_closing_time', closingTime.getTime());",
+					"",
+					"// Generate unique reference",
+					"const reference = 'PICKUP-' + Date.now();",
+					"pm.environment.set('test_pickup_reference', reference);",
+					"pm.environment.set('live_pickup_reference', reference);"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "test_pickup_base_url",
+			"value": "https://ws.sbx.aramex.net/ShippingAPI.V2/Shipping/Service_1_0.svc/json",
+			"type": "string"
+		},
+		{
+			"key": "live_pickup_base_url",
+			"value": "https://ws.aramex.net/ShippingAPI.V2/Shipping/Service_1_0.svc/json",
+			"type": "string"
+		},
+		{
+			"key": "test_username",
+			"value": "testingapi@aramex.com",
+			"type": "string"
+		},
+		{
+			"key": "test_password",
+			"value": "R123456789$r",
+			"type": "string"
+		},
+		{
+			"key": "test_account_number",
+			"value": "4004636",
+			"type": "string"
+		},
+		{
+			"key": "test_account_pin",
+			"value": "432432",
+			"type": "string"
+		},
+		{
+			"key": "test_account_entity",
+			"value": "RUH",
+			"type": "string"
+		},
+		{
+			"key": "test_account_country_code",
+			"value": "SA",
+			"type": "string"
+		},
+		{
+			"key": "test_pickup_address_line1",
+			"value": "Test Address Line 1",
+			"type": "string"
+		},
+		{
+			"key": "test_pickup_address_line2",
+			"value": "Test Address Line 2",
+			"type": "string"
+		},
+		{
+			"key": "test_pickup_city",
+			"value": "Riyadh",
+			"type": "string"
+		},
+		{
+			"key": "test_pickup_postcode",
+			"value": "00000",
+			"type": "string"
+		},
+		{
+			"key": "test_pickup_country",
+			"value": "SA",
+			"type": "string"
+		},
+		{
+			"key": "test_pickup_longitude",
+			"value": "0.0",
+			"type": "string"
+		},
+		{
+			"key": "test_pickup_latitude",
+			"value": "0.0",
+			"type": "string"
+		},
+		{
+			"key": "test_pickup_contact_name",
+			"value": "Test Contact",
+			"type": "string"
+		},
+		{
+			"key": "test_pickup_company",
+			"value": "Test Company",
+			"type": "string"
+		},
+		{
+			"key": "test_pickup_phone",
+			"value": "966571427069",
+			"type": "string"
+		},
+		{
+			"key": "test_pickup_email",
+			"value": "test@aramex.com",
+			"type": "string"
+		},
+		{
+			"key": "test_pickup_location",
+			"value": "Home",
+			"type": "string"
+		},
+		{
+			"key": "test_pickup_comments",
+			"value": "Test pickup request from Postman",
+			"type": "string"
+		},
+		{
+			"key": "test_pickup_reference",
+			"value": "TEST-PICKUP-{{$timestamp}}",
+			"type": "string"
+		},
+		{
+			"key": "test_product_group",
+			"value": "DOM",
+			"type": "string"
+		},
+		{
+			"key": "test_product_type",
+			"value": "RTC",
+			"type": "string"
+		},
+		{
+			"key": "test_number_of_shipments",
+			"value": "1",
+			"type": "string"
+		},
+		{
+			"key": "test_payment_type",
+			"value": "C",
+			"type": "string"
+		},
+		{
+			"key": "test_number_of_pieces",
+			"value": "1",
+			"type": "string"
+		},
+		{
+			"key": "test_pickup_item_comments",
+			"value": "Test pickup item",
+			"type": "string"
+		},
+		{
+			"key": "test_pickup_status",
+			"value": "Ready",
+			"type": "string"
+		},
+		{
+			"key": "test_existing_shipment_number",
+			"value": "50003456985",
+			"type": "string"
+		},
+		{
+			"key": "test_origin_entity",
+			"value": "RUH",
+			"type": "string"
+		},
+		{
+			"key": "test_existing_product_group",
+			"value": "DOM",
+			"type": "string"
+		},
+		{
+			"key": "live_username",
+			"value": "YOUR_LIVE_USERNAME",
+			"type": "string"
+		},
+		{
+			"key": "live_password",
+			"value": "YOUR_LIVE_PASSWORD",
+			"type": "string"
+		},
+		{
+			"key": "live_account_number",
+			"value": "YOUR_LIVE_ACCOUNT_NUMBER",
+			"type": "string"
+		},
+		{
+			"key": "live_account_pin",
+			"value": "YOUR_LIVE_ACCOUNT_PIN",
+			"type": "string"
+		},
+		{
+			"key": "live_account_entity",
+			"value": "RUH",
+			"type": "string"
+		},
+		{
+			"key": "live_account_country_code",
+			"value": "SA",
+			"type": "string"
+		},
+		{
+			"key": "live_pickup_address_line1",
+			"value": "Live Address Line 1",
+			"type": "string"
+		},
+		{
+			"key": "live_pickup_address_line2",
+			"value": "Live Address Line 2",
+			"type": "string"
+		},
+		{
+			"key": "live_pickup_city",
+			"value": "Riyadh",
+			"type": "string"
+		},
+		{
+			"key": "live_pickup_postcode",
+			"value": "00000",
+			"type": "string"
+		},
+		{
+			"key": "live_pickup_country",
+			"value": "SA",
+			"type": "string"
+		},
+		{
+			"key": "live_pickup_longitude",
+			"value": "0.0",
+			"type": "string"
+		},
+		{
+			"key": "live_pickup_latitude",
+			"value": "0.0",
+			"type": "string"
+		},
+		{
+			"key": "live_pickup_contact_name",
+			"value": "Live Contact",
+			"type": "string"
+		},
+		{
+			"key": "live_pickup_company",
+			"value": "Live Company",
+			"type": "string"
+		},
+		{
+			"key": "live_pickup_phone",
+			"value": "966571427069",
+			"type": "string"
+		},
+		{
+			"key": "live_pickup_email",
+			"value": "live@aramex.com",
+			"type": "string"
+		},
+		{
+			"key": "live_pickup_location",
+			"value": "Home",
+			"type": "string"
+		},
+		{
+			"key": "live_pickup_comments",
+			"value": "Live pickup request from Postman",
+			"type": "string"
+		},
+		{
+			"key": "live_pickup_reference",
+			"value": "LIVE-PICKUP-{{$timestamp}}",
+			"type": "string"
+		},
+		{
+			"key": "live_product_group",
+			"value": "DOM",
+			"type": "string"
+		},
+		{
+			"key": "live_product_type",
+			"value": "RTC",
+			"type": "string"
+		},
+		{
+			"key": "live_number_of_shipments",
+			"value": "1",
+			"type": "string"
+		},
+		{
+			"key": "live_payment_type",
+			"value": "C",
+			"type": "string"
+		},
+		{
+			"key": "live_number_of_pieces",
+			"value": "1",
+			"type": "string"
+		},
+		{
+			"key": "live_pickup_item_comments",
+			"value": "Live pickup item",
+			"type": "string"
+		},
+		{
+			"key": "live_pickup_status",
+			"value": "Ready",
+			"type": "string"
+		},
+		{
+			"key": "live_existing_shipment_number",
+			"value": "YOUR_EXISTING_SHIPMENT_NUMBER",
+			"type": "string"
+		},
+		{
+			"key": "live_origin_entity",
+			"value": "RUH",
+			"type": "string"
+		},
+		{
+			"key": "live_existing_product_group",
+			"value": "DOM",
+			"type": "string"
+		}
+	]
+}
