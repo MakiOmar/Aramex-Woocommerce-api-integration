@@ -567,11 +567,29 @@ class Aramex_Bulk_Method extends MO_Aramex_Helper
         $info = MO_Aramex_Helper::getInfo(wp_create_nonce('aramex-shipment-check' . wp_get_current_user()->user_email));
 
         //SOAP object
-     
-        $soapClient = new SoapClient($info['baseUrl'] . 'shipping.wsdl', array('soap_version' => SOAP_1_1));
+        $wsdl_url = $info['baseUrl'] . 'shipping.wsdl';
+        custom_plugin_log('Bulk shipment SOAP WSDL URL: ' . $wsdl_url);
+        
+        try {
+            $soapClient = new SoapClient($wsdl_url, array('soap_version' => SOAP_1_1));
+            custom_plugin_log('SOAP client created successfully for bulk shipment');
+        } catch (Exception $wsdl_exception) {
+            custom_plugin_log('SOAP client creation failed: ' . $wsdl_exception->getMessage());
+            mo_aramex_log_api_error(
+                'CreateShipments (Bulk)',
+                'SOAP client creation failed: ' . $wsdl_exception->getMessage(),
+                500,
+                array(
+                    'wsdl_url' => $wsdl_url,
+                    'exception_type' => 'wsdl_creation'
+                )
+            );
+            throw $wsdl_exception;
+        }
         try {
             //create shipment call
             // Log API call
+            custom_plugin_log('Bulk shipment request data: ' . print_r($major_par, true));
             $start_time = microtime(true);
             mo_aramex_log_api_call(
                 'CreateShipments (Bulk)',
@@ -580,17 +598,45 @@ class Aramex_Bulk_Method extends MO_Aramex_Helper
                 array('WSDL' => $info['baseUrl'] . 'shipping.wsdl')
             );
             
-            $auth_call = $soapClient->CreateShipments($major_par);
-            $execution_time = microtime(true) - $start_time;
-            
-            // Log API response
-            mo_aramex_log_api_response(
-                'CreateShipments (Bulk)',
-                $auth_call,
-                200,
-                array(),
-                $execution_time
-            );
+            try {
+                custom_plugin_log('About to call CreateShipments API...');
+                $auth_call = $soapClient->CreateShipments($major_par);
+                $execution_time = microtime(true) - $start_time;
+                
+                custom_plugin_log('CreateShipments API call completed successfully. Response: ' . print_r($auth_call, true));
+                
+                // Log API response
+                mo_aramex_log_api_response(
+                    'CreateShipments (Bulk)',
+                    $auth_call,
+                    200,
+                    array(),
+                    $execution_time
+                );
+                
+                custom_plugin_log('API response logged successfully');
+            } catch (Exception $soap_exception) {
+                $execution_time = microtime(true) - $start_time;
+                
+                custom_plugin_log('SOAP exception caught in bulk shipment: ' . $soap_exception->getMessage());
+                custom_plugin_log('SOAP exception trace: ' . $soap_exception->getTraceAsString());
+                
+                // Log API error
+                mo_aramex_log_api_error(
+                    'CreateShipments (Bulk)',
+                    $soap_exception->getMessage(),
+                    500,
+                    array(
+                        'soap_exception' => true,
+                        'execution_time' => $execution_time,
+                        'request_data' => $major_par,
+                        'exception_trace' => $soap_exception->getTraceAsString()
+                    )
+                );
+                
+                // Re-throw the exception to be handled by the outer catch block
+                throw $soap_exception;
+            }
             if ($auth_call->HasErrors) {
                 if (empty($auth_call->Shipments)) {
                     if (count((array)$auth_call->Notifications->Notification) > 1) {
@@ -695,6 +741,20 @@ class Aramex_Bulk_Method extends MO_Aramex_Helper
                 return array($method, 'success');
             }
         } catch (Exception $e) {
+            custom_plugin_log('Outer exception caught in postAction: ' . $e->getMessage());
+            custom_plugin_log('Outer exception trace: ' . $e->getTraceAsString());
+            
+            mo_aramex_log_api_error(
+                'CreateShipments (Bulk)',
+                'Outer exception in postAction: ' . $e->getMessage(),
+                500,
+                array(
+                    'outer_exception' => true,
+                    'exception_trace' => $e->getTraceAsString(),
+                    'method' => $method
+                )
+            );
+            
             $errors = $e->getMessage();
             return array($method, 'error');
         }
