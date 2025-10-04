@@ -570,8 +570,28 @@ class Aramex_Bulk_Method extends MO_Aramex_Helper
         $wsdl_url = $info['baseUrl'] . 'shipping.wsdl';
         custom_plugin_log('Bulk shipment SOAP WSDL URL: ' . $wsdl_url);
         
+        // Test network connectivity to Aramex servers
+        $this->test_aramex_connectivity();
+        
         try {
-            $soapClient = new SoapClient($wsdl_url, array('soap_version' => SOAP_1_1));
+            $soapClient = new SoapClient($wsdl_url, array(
+                'soap_version' => SOAP_1_1,
+                'connection_timeout' => 30,
+                'cache_wsdl' => WSDL_CACHE_NONE,
+                'trace' => true,
+                'exceptions' => true,
+                'stream_context' => stream_context_create([
+                    'http' => [
+                        'timeout' => 30,
+                        'user_agent' => 'MO-Aramex-Plugin/' . MO_ARAMEX_VERSION
+                    ],
+                    'ssl' => [
+                        'verify_peer' => false,
+                        'verify_peer_name' => false,
+                        'allow_self_signed' => true
+                    ]
+                ])
+            ));
             custom_plugin_log('SOAP client created successfully for bulk shipment');
         } catch (Exception $wsdl_exception) {
             custom_plugin_log('SOAP client creation failed: ' . $wsdl_exception->getMessage());
@@ -757,6 +777,116 @@ class Aramex_Bulk_Method extends MO_Aramex_Helper
             
             $errors = $e->getMessage();
             return array($method, 'error');
+        }
+    }
+
+    /**
+     * Test network connectivity to Aramex servers
+     */
+    private function test_aramex_connectivity()
+    {
+        $aramex_hosts = [
+            'ws.aramex.net' => 'Main Aramex API server',
+            'ws-sandbox.aramex.net' => 'Aramex Sandbox server'
+        ];
+        
+        foreach ($aramex_hosts as $host => $description) {
+            custom_plugin_log("Testing connectivity to {$description} ({$host})");
+            
+            // Test DNS resolution
+            $ip = gethostbyname($host);
+            if ($ip === $host) {
+                custom_plugin_log("DNS resolution failed for {$host}");
+                mo_aramex_log_api_error(
+                    'Network Test',
+                    "DNS resolution failed for {$host}",
+                    500,
+                    array('host' => $host, 'test_type' => 'dns')
+                );
+            } else {
+                custom_plugin_log("DNS resolution successful for {$host}: {$ip}");
+            }
+            
+            // Test port connectivity
+            $port = 443; // HTTPS port
+            $connection = @fsockopen($host, $port, $errno, $errstr, 10);
+            if ($connection) {
+                custom_plugin_log("Port {$port} is open on {$host}");
+                fclose($connection);
+            } else {
+                custom_plugin_log("Port {$port} is closed on {$host}: {$errstr} ({$errno})");
+                mo_aramex_log_api_error(
+                    'Network Test',
+                    "Port {$port} connection failed to {$host}: {$errstr} ({$errno})",
+                    500,
+                    array('host' => $host, 'port' => $port, 'test_type' => 'port')
+                );
+            }
+            
+            // Test HTTPS connectivity
+            $context = stream_context_create([
+                'http' => [
+                    'timeout' => 10,
+                    'method' => 'HEAD'
+                ],
+                'ssl' => [
+                    'verify_peer' => false,
+                    'verify_peer_name' => false
+                ]
+            ]);
+            
+            $url = "https://{$host}/";
+            $result = @file_get_contents($url, false, $context);
+            if ($result !== false) {
+                custom_plugin_log("HTTPS connectivity successful to {$host}");
+            } else {
+                $error = error_get_last();
+                custom_plugin_log("HTTPS connectivity failed to {$host}: " . ($error['message'] ?? 'Unknown error'));
+                mo_aramex_log_api_error(
+                    'Network Test',
+                    "HTTPS connectivity failed to {$host}: " . ($error['message'] ?? 'Unknown error'),
+                    500,
+                    array('host' => $host, 'test_type' => 'https', 'error' => $error)
+                );
+            }
+        }
+        
+        // Test cURL functionality
+        if (function_exists('curl_init')) {
+            custom_plugin_log('cURL is available');
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL, 'https://ws.aramex.net/');
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+            curl_setopt($ch, CURLOPT_HEADER, true);
+            curl_setopt($ch, CURLOPT_NOBODY, true);
+            
+            $result = curl_exec($ch);
+            $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            $error = curl_error($ch);
+            curl_close($ch);
+            
+            if ($result !== false) {
+                custom_plugin_log("cURL test successful: HTTP {$http_code}");
+            } else {
+                custom_plugin_log("cURL test failed: {$error}");
+                mo_aramex_log_api_error(
+                    'Network Test',
+                    "cURL test failed: {$error}",
+                    500,
+                    array('test_type' => 'curl', 'error' => $error)
+                );
+            }
+        } else {
+            custom_plugin_log('cURL is not available');
+            mo_aramex_log_api_error(
+                'Network Test',
+                'cURL extension is not available',
+                500,
+                array('test_type' => 'curl_availability')
+            );
         }
     }
 
