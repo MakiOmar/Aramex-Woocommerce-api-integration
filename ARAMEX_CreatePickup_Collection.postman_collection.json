@@ -249,22 +249,30 @@
 					"const lastPickupTime = new Date(now.getTime() + (26 * 60 * 60 * 1000)); // Tomorrow + 2 hours",
 					"const closingTime = new Date(now.getTime() + (27 * 60 * 60 * 1000)); // Tomorrow + 3 hours",
 					"",
-					"// Set environment variables for timestamps",
-					"pm.environment.set('test_pickup_date', pickupDate.getTime());",
-					"pm.environment.set('test_ready_time', readyTime.getTime());",
-					"pm.environment.set('test_last_pickup_time', lastPickupTime.getTime());",
-					"pm.environment.set('test_closing_time', closingTime.getTime());",
+					"// Set collection variables for timestamps",
+					"pm.collectionVariables.set('test_pickup_date', pickupDate.getTime());",
+					"pm.collectionVariables.set('test_ready_time', readyTime.getTime());",
+					"pm.collectionVariables.set('test_last_pickup_time', lastPickupTime.getTime());",
+					"pm.collectionVariables.set('test_closing_time', closingTime.getTime());",
 					"",
 					"// Set live environment timestamps",
-					"pm.environment.set('live_pickup_date', pickupDate.getTime());",
-					"pm.environment.set('live_ready_time', readyTime.getTime());",
-					"pm.environment.set('live_last_pickup_time', lastPickupTime.getTime());",
-					"pm.environment.set('live_closing_time', closingTime.getTime());",
+					"pm.collectionVariables.set('live_pickup_date', pickupDate.getTime());",
+					"pm.collectionVariables.set('live_ready_time', readyTime.getTime());",
+					"pm.collectionVariables.set('live_last_pickup_time', lastPickupTime.getTime());",
+					"pm.collectionVariables.set('live_closing_time', closingTime.getTime());",
 					"",
 					"// Generate unique reference",
 					"const reference = 'PICKUP-' + Date.now();",
-					"pm.environment.set('test_pickup_reference', reference);",
-					"pm.environment.set('live_pickup_reference', reference);"
+					"pm.collectionVariables.set('test_pickup_reference', reference);",
+					"pm.collectionVariables.set('live_pickup_reference', reference);",
+					"",
+					"// Log the generated values for debugging",
+					"console.log('Generated timestamps:');",
+					"console.log('Pickup Date:', pickupDate.getTime());",
+					"console.log('Ready Time:', readyTime.getTime());",
+					"console.log('Last Pickup Time:', lastPickupTime.getTime());",
+					"console.log('Closing Time:', closingTime.getTime());",
+					"console.log('Reference:', reference);"
 				]
 			}
 		},
@@ -587,6 +595,46 @@
 		{
 			"key": "live_existing_product_group",
 			"value": "DOM",
+			"type": "string"
+		},
+		{
+			"key": "test_pickup_date",
+			"value": "1737018820000",
+			"type": "string"
+		},
+		{
+			"key": "test_ready_time",
+			"value": "1737018820000",
+			"type": "string"
+		},
+		{
+			"key": "test_last_pickup_time",
+			"value": "1737033220000",
+			"type": "string"
+		},
+		{
+			"key": "test_closing_time",
+			"value": "1737033220000",
+			"type": "string"
+		},
+		{
+			"key": "live_pickup_date",
+			"value": "1737018820000",
+			"type": "string"
+		},
+		{
+			"key": "live_ready_time",
+			"value": "1737018820000",
+			"type": "string"
+		},
+		{
+			"key": "live_last_pickup_time",
+			"value": "1737033220000",
+			"type": "string"
+		},
+		{
+			"key": "live_closing_time",
+			"value": "1737033220000",
 			"type": "string"
 		}
 	]
