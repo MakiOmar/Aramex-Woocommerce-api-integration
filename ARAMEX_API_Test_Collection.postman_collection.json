@@ -1,0 +1,436 @@
+{
+	"info": {
+		"_postman_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+		"name": "Aramex Shipping API Test Collection",
+		"description": "Collection for testing Aramex Shipping API endpoints - CreateShipment, PrintLabel, CalculateRate, etc.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "12345678"
+	},
+	"item": [
+		{
+			"name": "Test Environment",
+			"item": [
+				{
+					"name": "CreateShipment - Test",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response has Transaction\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('Transaction');",
+									"});",
+									"",
+									"pm.test(\"Response has Shipments\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('Shipments');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"ClientInfo\": {\n        \"AccountCountryCode\": \"SA\",\n        \"AccountEntity\": \"RUH\",\n        \"AccountNumber\": \"{{test_account_number}}\",\n        \"AccountPin\": \"{{test_account_pin}}\",\n        \"UserName\": \"{{test_username}}\",\n        \"Password\": \"{{test_password}}\",\n        \"Version\": \"v1.0\",\n        \"Source\": 52\n    },\n    \"Transaction\": {\n        \"Reference1\": \"{{test_reference}}\",\n        \"Reference2\": \"\",\n        \"Reference3\": \"\",\n        \"Reference4\": \"\",\n        \"Reference5\": \"\"\n    },\n    \"Shipments\": [\n        {\n            \"Reference1\": \"{{test_reference}}\",\n            \"Reference2\": \"\",\n            \"Reference3\": \"\",\n            \"Shipper\": {\n                \"Reference1\": \"{{test_reference}}\",\n                \"Reference2\": \"\",\n                \"AccountNumber\": \"{{test_account_number}}\",\n                \"PartyAddress\": {\n                    \"Line1\": \"{{test_shipper_address}}\",\n                    \"Line2\": \"\",\n                    \"Line3\": \"\",\n                    \"City\": \"{{test_shipper_city}}\",\n                    \"StateOrProvinceCode\": \"\",\n                    \"PostCode\": \"{{test_shipper_postcode}}\",\n                    \"CountryCode\": \"{{test_shipper_country}}\"\n                },\n                \"Contact\": {\n                    \"Department\": \"\",\n                    \"PersonName\": \"{{test_shipper_name}}\",\n                    \"Title\": \"\",\n                    \"CompanyName\": \"{{test_shipper_company}}\",\n                    \"PhoneNumber1\": \"{{test_shipper_phone}}\",\n                    \"PhoneNumber1Ext\": \"\",\n                    \"PhoneNumber2\": \"\",\n                    \"PhoneNumber2Ext\": \"\",\n                    \"FaxNumber\": \"\",\n                    \"CellPhone\": \"{{test_shipper_phone}}\",\n                    \"EmailAddress\": \"{{test_shipper_email}}\",\n                    \"Type\": \"\"\n                }\n            },\n            \"Consignee\": {\n                \"Reference1\": \"{{test_reference}}\",\n                \"Reference2\": \"\",\n                \"AccountNumber\": \"\",\n                \"PartyAddress\": {\n                    \"Line1\": \"{{test_consignee_address}}\",\n                    \"Line2\": \"\",\n                    \"Line3\": \"\",\n                    \"City\": \"{{test_consignee_city}}\",\n                    \"StateOrProvinceCode\": \"\",\n                    \"PostCode\": \"{{test_consignee_postcode}}\",\n                    \"CountryCode\": \"{{test_consignee_country}}\"\n                },\n                \"Contact\": {\n                    \"Department\": \"\",\n                    \"PersonName\": \"{{test_consignee_name}}\",\n                    \"Title\": \"\",\n                    \"CompanyName\": \"{{test_consignee_company}}\",\n                    \"PhoneNumber1\": \"{{test_consignee_phone}}\",\n                    \"PhoneNumber1Ext\": \"\",\n                    \"PhoneNumber2\": \"\",\n                    \"PhoneNumber2Ext\": \"\",\n                    \"FaxNumber\": \"\",\n                    \"CellPhone\": \"{{test_consignee_phone}}\",\n                    \"EmailAddress\": \"{{test_consignee_email}}\",\n                    \"Type\": \"\"\n                }\n            },\n            \"ThirdParty\": {\n                \"Reference1\": \"{{test_reference}}\",\n                \"Reference2\": \"\",\n                \"AccountNumber\": \"{{test_account_number}}\",\n                \"AccountPin\": \"{{test_account_pin}}\",\n                \"PartyAddress\": {\n                    \"Line1\": \"{{test_shipper_address}}\",\n                    \"Line2\": \"\",\n                    \"Line3\": \"\",\n                    \"City\": \"{{test_shipper_city}}\",\n                    \"StateOrProvinceCode\": \"\",\n                    \"PostCode\": \"{{test_shipper_postcode}}\",\n                    \"CountryCode\": \"{{test_shipper_country}}\"\n                },\n                \"Contact\": {\n                    \"Department\": \"\",\n                    \"PersonName\": \"{{test_shipper_name}}\",\n                    \"Title\": \"\",\n                    \"CompanyName\": \"{{test_shipper_company}}\",\n                    \"PhoneNumber1\": \"{{test_shipper_phone}}\",\n                    \"PhoneNumber1Ext\": \"\",\n                    \"PhoneNumber2\": \"\",\n                    \"PhoneNumber2Ext\": \"\",\n                    \"FaxNumber\": \"\",\n                    \"CellPhone\": \"{{test_shipper_phone}}\",\n                    \"EmailAddress\": \"{{test_shipper_email}}\",\n                    \"Type\": \"\"\n                }\n            },\n            \"ForeignHAWB\": \"\",\n            \"TransportType\": 0,\n            \"ShippingDateTime\": {{$timestamp}},\n            \"DueDate\": {{$timestamp}},\n            \"PickupLocation\": \"Reception\",\n            \"PickupGUID\": \"\",\n            \"Comments\": \"Test shipment from Postman\",\n            \"AccountingInstrcutions\": \"\",\n            \"OperationsInstructions\": \"\",\n            \"Details\": {\n                \"Dimensions\": {\n                    \"Length\": 10,\n                    \"Width\": 10,\n                    \"Height\": 10,\n                    \"Unit\": \"CM\"\n                },\n                \"ActualWeight\": {\n                    \"Value\": 0.5,\n                    \"Unit\": \"KG\"\n                },\n                \"ProductGroup\": \"EXP\",\n                \"ProductType\": \"EPX\",\n                \"PaymentType\": \"P\",\n                \"PaymentOptions\": \"\",\n                \"Services\": \"\",\n                \"NumberOfPieces\": 1,\n                \"DescriptionOfGoods\": \"Test Package\",\n                \"GoodsOriginCountry\": \"SA\",\n                \"Items\": [\n                    {\n                        \"PackageType\": \"Box\",\n                        \"Quantity\": 1,\n                        \"Weight\": {\n                            \"Value\": 0.5,\n                            \"Unit\": \"KG\"\n                        },\n                        \"Comments\": \"Test item\",\n                        \"Reference\": \"\"\n                    }\n                ],\n                \"AdditionalProperties\": [\n                    {\n                        \"Name\": \"string\",\n                        \"Value\": \"string\"\n                    }\n                ],\n                \"CustomsValueAmount\": {\n                    \"Value\": 100,\n                    \"CurrencyCode\": \"SAR\"\n                }\n            }\n        }\n    ],\n    \"LabelInfo\": {\n        \"ReportID\": 9201,\n        \"ReportType\": \"URL\"\n    }\n}"
+						},
+						"url": {
+							"raw": "{{test_base_url}}/CreateShipments",
+							"host": [
+								"{{test_base_url}}"
+							],
+							"path": [
+								"CreateShipments"
+							]
+						},
+						"description": "Create a test shipment using the test environment"
+					},
+					"response": []
+				},
+				{
+					"name": "PrintLabel - Test",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"ClientInfo\": {\n        \"AccountCountryCode\": \"SA\",\n        \"AccountEntity\": \"RUH\",\n        \"AccountNumber\": \"{{test_account_number}}\",\n        \"AccountPin\": \"{{test_account_pin}}\",\n        \"UserName\": \"{{test_username}}\",\n        \"Password\": \"{{test_password}}\",\n        \"Version\": \"v1.0\",\n        \"Source\": 52\n    },\n    \"Transaction\": {\n        \"Reference1\": \"{{test_reference}}\",\n        \"Reference2\": \"\",\n        \"Reference3\": \"\",\n        \"Reference4\": \"\",\n        \"Reference5\": \"\"\n    },\n    \"Shipments\": [\n        {\n            \"Reference1\": \"{{test_reference}}\",\n            \"Reference2\": \"\",\n            \"Reference3\": \"\"\n        }\n    ],\n    \"LabelInfo\": {\n        \"ReportID\": 9201,\n        \"ReportType\": \"URL\"\n    }\n}"
+						},
+						"url": {
+							"raw": "{{test_base_url}}/PrintLabel",
+							"host": [
+								"{{test_base_url}}"
+							],
+							"path": [
+								"PrintLabel"
+							]
+						},
+						"description": "Print label for a test shipment"
+					},
+					"response": []
+				}
+			],
+			"description": "Test environment endpoints"
+		},
+		{
+			"name": "Live Environment",
+			"item": [
+				{
+					"name": "CreateShipment - Live",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response has Transaction\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('Transaction');",
+									"});",
+									"",
+									"pm.test(\"Response has Shipments\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('Shipments');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"ClientInfo\": {\n        \"AccountCountryCode\": \"SA\",\n        \"AccountEntity\": \"RUH\",\n        \"AccountNumber\": \"{{live_account_number}}\",\n        \"AccountPin\": \"{{live_account_pin}}\",\n        \"UserName\": \"{{live_username}}\",\n        \"Password\": \"{{live_password}}\",\n        \"Version\": \"v1.0\",\n        \"Source\": 52\n    },\n    \"Transaction\": {\n        \"Reference1\": \"{{live_reference}}\",\n        \"Reference2\": \"\",\n        \"Reference3\": \"\",\n        \"Reference4\": \"\",\n        \"Reference5\": \"\"\n    },\n    \"Shipments\": [\n        {\n            \"Reference1\": \"{{live_reference}}\",\n            \"Reference2\": \"\",\n            \"Reference3\": \"\",\n            \"Shipper\": {\n                \"Reference1\": \"{{live_reference}}\",\n                \"Reference2\": \"\",\n                \"AccountNumber\": \"{{live_account_number}}\",\n                \"PartyAddress\": {\n                    \"Line1\": \"{{live_shipper_address}}\",\n                    \"Line2\": \"\",\n                    \"Line3\": \"\",\n                    \"City\": \"{{live_shipper_city}}\",\n                    \"StateOrProvinceCode\": \"\",\n                    \"PostCode\": \"{{live_shipper_postcode}}\",\n                    \"CountryCode\": \"{{live_shipper_country}}\"\n                },\n                \"Contact\": {\n                    \"Department\": \"\",\n                    \"PersonName\": \"{{live_shipper_name}}\",\n                    \"Title\": \"\",\n                    \"CompanyName\": \"{{live_shipper_company}}\",\n                    \"PhoneNumber1\": \"{{live_shipper_phone}}\",\n                    \"PhoneNumber1Ext\": \"\",\n                    \"PhoneNumber2\": \"\",\n                    \"PhoneNumber2Ext\": \"\",\n                    \"FaxNumber\": \"\",\n                    \"CellPhone\": \"{{live_shipper_phone}}\",\n                    \"EmailAddress\": \"{{live_shipper_email}}\",\n                    \"Type\": \"\"\n                }\n            },\n            \"Consignee\": {\n                \"Reference1\": \"{{live_reference}}\",\n                \"Reference2\": \"\",\n                \"AccountNumber\": \"\",\n                \"PartyAddress\": {\n                    \"Line1\": \"{{live_consignee_address}}\",\n                    \"Line2\": \"\",\n                    \"Line3\": \"\",\n                    \"City\": \"{{live_consignee_city}}\",\n                    \"StateOrProvinceCode\": \"\",\n                    \"PostCode\": \"{{live_consignee_postcode}}\",\n                    \"CountryCode\": \"{{live_consignee_country}}\"\n                },\n                \"Contact\": {\n                    \"Department\": \"\",\n                    \"PersonName\": \"{{live_consignee_name}}\",\n                    \"Title\": \"\",\n                    \"CompanyName\": \"{{live_consignee_company}}\",\n                    \"PhoneNumber1\": \"{{live_consignee_phone}}\",\n                    \"PhoneNumber1Ext\": \"\",\n                    \"PhoneNumber2\": \"\",\n                    \"PhoneNumber2Ext\": \"\",\n                    \"FaxNumber\": \"\",\n                    \"CellPhone\": \"{{live_consignee_phone}}\",\n                    \"EmailAddress\": \"{{live_consignee_email}}\",\n                    \"Type\": \"\"\n                }\n            },\n            \"ThirdParty\": {\n                \"Reference1\": \"{{live_reference}}\",\n                \"Reference2\": \"\",\n                \"AccountNumber\": \"{{live_account_number}}\",\n                \"AccountPin\": \"{{live_account_pin}}\",\n                \"PartyAddress\": {\n                    \"Line1\": \"{{live_shipper_address}}\",\n                    \"Line2\": \"\",\n                    \"Line3\": \"\",\n                    \"City\": \"{{live_shipper_city}}\",\n                    \"StateOrProvinceCode\": \"\",\n                    \"PostCode\": \"{{live_shipper_postcode}}\",\n                    \"CountryCode\": \"{{live_shipper_country}}\"\n                },\n                \"Contact\": {\n                    \"Department\": \"\",\n                    \"PersonName\": \"{{live_shipper_name}}\",\n                    \"Title\": \"\",\n                    \"CompanyName\": \"{{live_shipper_company}}\",\n                    \"PhoneNumber1\": \"{{live_shipper_phone}}\",\n                    \"PhoneNumber1Ext\": \"\",\n                    \"PhoneNumber2\": \"\",\n                    \"PhoneNumber2Ext\": \"\",\n                    \"FaxNumber\": \"\",\n                    \"CellPhone\": \"{{live_shipper_phone}}\",\n                    \"EmailAddress\": \"{{live_shipper_email}}\",\n                    \"Type\": \"\"\n                }\n            },\n            \"ForeignHAWB\": \"\",\n            \"TransportType\": 0,\n            \"ShippingDateTime\": {{$timestamp}},\n            \"DueDate\": {{$timestamp}},\n            \"PickupLocation\": \"Reception\",\n            \"PickupGUID\": \"\",\n            \"Comments\": \"Live shipment from Postman\",\n            \"AccountingInstrcutions\": \"\",\n            \"OperationsInstructions\": \"\",\n            \"Details\": {\n                \"Dimensions\": {\n                    \"Length\": 10,\n                    \"Width\": 10,\n                    \"Height\": 10,\n                    \"Unit\": \"CM\"\n                },\n                \"ActualWeight\": {\n                    \"Value\": 0.5,\n                    \"Unit\": \"KG\"\n                },\n                \"ProductGroup\": \"EXP\",\n                \"ProductType\": \"EPX\",\n                \"PaymentType\": \"P\",\n                \"PaymentOptions\": \"\",\n                \"Services\": \"\",\n                \"NumberOfPieces\": 1,\n                \"DescriptionOfGoods\": \"Live Package\",\n                \"GoodsOriginCountry\": \"SA\",\n                \"Items\": [\n                    {\n                        \"PackageType\": \"Box\",\n                        \"Quantity\": 1,\n                        \"Weight\": {\n                            \"Value\": 0.5,\n                            \"Unit\": \"KG\"\n                        },\n                        \"Comments\": \"Live item\",\n                        \"Reference\": \"\"\n                    }\n                ],\n                \"AdditionalProperties\": [\n                    {\n                        \"Name\": \"string\",\n                        \"Value\": \"string\"\n                    }\n                ],\n                \"CustomsValueAmount\": {\n                    \"Value\": 100,\n                    \"CurrencyCode\": \"SAR\"\n                }\n            }\n        }\n    ],\n    \"LabelInfo\": {\n        \"ReportID\": 9201,\n        \"ReportType\": \"URL\"\n    }\n}"
+						},
+						"url": {
+							"raw": "{{live_base_url}}/CreateShipments",
+							"host": [
+								"{{live_base_url}}"
+							],
+							"path": [
+								"CreateShipments"
+							]
+						},
+						"description": "Create a live shipment (USE WITH CAUTION)"
+					},
+					"response": []
+				}
+			],
+			"description": "Live environment endpoints (USE WITH CAUTION)"
+		},
+		{
+			"name": "SOAP Endpoints",
+			"item": [
+				{
+					"name": "CreateShipment - SOAP Test",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "text/xml; charset=utf-8"
+							},
+							{
+								"key": "SOAPAction",
+								"value": "http://ws.aramex.net/ShippingAPI/v1/Service_1_0/CreateShipments"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:tns=\"http://ws.aramex.net/ShippingAPI/v1/Service_1_0\">\n    <soap:Header>\n        <tns:ClientInfo>\n            <tns:AccountCountryCode>SA</tns:AccountCountryCode>\n            <tns:AccountEntity>RUH</tns:AccountEntity>\n            <tns:AccountNumber>{{test_account_number}}</tns:AccountNumber>\n            <tns:AccountPin>{{test_account_pin}}</tns:AccountPin>\n            <tns:UserName>{{test_username}}</tns:UserName>\n            <tns:Password>{{test_password}}</tns:Password>\n            <tns:Version>v1.0</tns:Version>\n            <tns:Source>52</tns:Source>\n        </tns:ClientInfo>\n    </soap:Header>\n    <soap:Body>\n        <tns:CreateShipments>\n            <tns:Transaction>\n                <tns:Reference1>{{test_reference}}</tns:Reference1>\n                <tns:Reference2></tns:Reference2>\n                <tns:Reference3></tns:Reference3>\n                <tns:Reference4></tns:Reference4>\n                <tns:Reference5></tns:Reference5>\n            </tns:Transaction>\n            <tns:Shipments>\n                <tns:Shipment>\n                    <tns:Reference1>{{test_reference}}</tns:Reference1>\n                    <tns:Reference2></tns:Reference2>\n                    <tns:Reference3></tns:Reference3>\n                    <tns:Shipper>\n                        <tns:Reference1>{{test_reference}}</tns:Reference1>\n                        <tns:Reference2></tns:Reference2>\n                        <tns:AccountNumber>{{test_account_number}}</tns:AccountNumber>\n                        <tns:PartyAddress>\n                            <tns:Line1>{{test_shipper_address}}</tns:Line1>\n                            <tns:Line2></tns:Line2>\n                            <tns:Line3></tns:Line3>\n                            <tns:City>{{test_shipper_city}}</tns:City>\n                            <tns:StateOrProvinceCode></tns:StateOrProvinceCode>\n                            <tns:PostCode>{{test_shipper_postcode}}</tns:PostCode>\n                            <tns:CountryCode>{{test_shipper_country}}</tns:CountryCode>\n                        </tns:PartyAddress>\n                        <tns:Contact>\n                            <tns:Department></tns:Department>\n                            <tns:PersonName>{{test_shipper_name}}</tns:PersonName>\n                            <tns:Title></tns:Title>\n                            <tns:CompanyName>{{test_shipper_company}}</tns:CompanyName>\n                            <tns:PhoneNumber1>{{test_shipper_phone}}</tns:PhoneNumber1>\n                            <tns:PhoneNumber1Ext></tns:PhoneNumber1Ext>\n                            <tns:PhoneNumber2></tns:PhoneNumber2>\n                            <tns:PhoneNumber2Ext></tns:PhoneNumber2Ext>\n                            <tns:FaxNumber></tns:FaxNumber>\n                            <tns:CellPhone>{{test_shipper_phone}}</tns:CellPhone>\n                            <tns:EmailAddress>{{test_shipper_email}}</tns:EmailAddress>\n                            <tns:Type></tns:Type>\n                        </tns:Contact>\n                    </tns:Shipper>\n                    <tns:Consignee>\n                        <tns:Reference1>{{test_reference}}</tns:Reference1>\n                        <tns:Reference2></tns:Reference2>\n                        <tns:AccountNumber></tns:AccountNumber>\n                        <tns:PartyAddress>\n                            <tns:Line1>{{test_consignee_address}}</tns:Line1>\n                            <tns:Line2></tns:Line2>\n                            <tns:Line3></tns:Line3>\n                            <tns:City>{{test_consignee_city}}</tns:City>\n                            <tns:StateOrProvinceCode></tns:StateOrProvinceCode>\n                            <tns:PostCode>{{test_consignee_postcode}}</tns:PostCode>\n                            <tns:CountryCode>{{test_consignee_country}}</tns:CountryCode>\n                        </tns:PartyAddress>\n                        <tns:Contact>\n                            <tns:Department></tns:Department>\n                            <tns:PersonName>{{test_consignee_name}}</tns:PersonName>\n                            <tns:Title></tns:Title>\n                            <tns:CompanyName>{{test_consignee_company}}</tns:CompanyName>\n                            <tns:PhoneNumber1>{{test_consignee_phone}}</tns:PhoneNumber1>\n                            <tns:PhoneNumber1Ext></tns:PhoneNumber1Ext>\n                            <tns:PhoneNumber2></tns:PhoneNumber2>\n                            <tns:PhoneNumber2Ext></tns:PhoneNumber2Ext>\n                            <tns:FaxNumber></tns:FaxNumber>\n                            <tns:CellPhone>{{test_consignee_phone}}</tns:CellPhone>\n                            <tns:EmailAddress>{{test_consignee_email}}</tns:EmailAddress>\n                            <tns:Type></tns:Type>\n                        </tns:Contact>\n                    </tns:Consignee>\n                    <tns:ThirdParty>\n                        <tns:Reference1>{{test_reference}}</tns:Reference1>\n                        <tns:Reference2></tns:Reference2>\n                        <tns:AccountNumber>{{test_account_number}}</tns:AccountNumber>\n                        <tns:AccountPin>{{test_account_pin}}</tns:AccountPin>\n                        <tns:PartyAddress>\n                            <tns:Line1>{{test_shipper_address}}</tns:Line1>\n                            <tns:Line2></tns:Line2>\n                            <tns:Line3></tns:Line3>\n                            <tns:City>{{test_shipper_city}}</tns:City>\n                            <tns:StateOrProvinceCode></tns:StateOrProvinceCode>\n                            <tns:PostCode>{{test_shipper_postcode}}</tns:PostCode>\n                            <tns:CountryCode>{{test_shipper_country}}</tns:CountryCode>\n                        </tns:PartyAddress>\n                        <tns:Contact>\n                            <tns:Department></tns:Department>\n                            <tns:PersonName>{{test_shipper_name}}</tns:PersonName>\n                            <tns:Title></tns:Title>\n                            <tns:CompanyName>{{test_shipper_company}}</tns:CompanyName>\n                            <tns:PhoneNumber1>{{test_shipper_phone}}</tns:PhoneNumber1>\n                            <tns:PhoneNumber1Ext></tns:PhoneNumber1Ext>\n                            <tns:PhoneNumber2></tns:PhoneNumber2>\n                            <tns:PhoneNumber2Ext></tns:PhoneNumber2Ext>\n                            <tns:FaxNumber></tns:FaxNumber>\n                            <tns:CellPhone>{{test_shipper_phone}}</tns:CellPhone>\n                            <tns:EmailAddress>{{test_shipper_email}}</tns:EmailAddress>\n                            <tns:Type></tns:Type>\n                        </tns:Contact>\n                    </tns:ThirdParty>\n                    <tns:ForeignHAWB></tns:ForeignHAWB>\n                    <tns:TransportType>0</tns:TransportType>\n                    <tns:ShippingDateTime>{{$timestamp}}</tns:ShippingDateTime>\n                    <tns:DueDate>{{$timestamp}}</tns:DueDate>\n                    <tns:PickupLocation>Reception</tns:PickupLocation>\n                    <tns:PickupGUID></tns:PickupGUID>\n                    <tns:Comments>Test shipment from Postman SOAP</tns:Comments>\n                    <tns:AccountingInstrcutions></tns:AccountingInstrcutions>\n                    <tns:OperationsInstructions></tns:OperationsInstructions>\n                    <tns:Details>\n                        <tns:Dimensions>\n                            <tns:Length>10</tns:Length>\n                            <tns:Width>10</tns:Width>\n                            <tns:Height>10</tns:Height>\n                            <tns:Unit>CM</tns:Unit>\n                        </tns:Dimensions>\n                        <tns:ActualWeight>\n                            <tns:Value>0.5</tns:Value>\n                            <tns:Unit>KG</tns:Unit>\n                        </tns:ActualWeight>\n                        <tns:ProductGroup>EXP</tns:ProductGroup>\n                        <tns:ProductType>EPX</tns:ProductType>\n                        <tns:PaymentType>P</tns:PaymentType>\n                        <tns:PaymentOptions></tns:PaymentOptions>\n                        <tns:Services></tns:Services>\n                        <tns:NumberOfPieces>1</tns:NumberOfPieces>\n                        <tns:DescriptionOfGoods>Test Package SOAP</tns:DescriptionOfGoods>\n                        <tns:GoodsOriginCountry>SA</tns:GoodsOriginCountry>\n                        <tns:Items>\n                            <tns:ShipmentItem>\n                                <tns:PackageType>Box</tns:PackageType>\n                                <tns:Quantity>1</tns:Quantity>\n                                <tns:Weight>\n                                    <tns:Value>0.5</tns:Value>\n                                    <tns:Unit>KG</tns:Unit>\n                                </tns:Weight>\n                                <tns:Comments>Test item SOAP</tns:Comments>\n                                <tns:Reference></tns:Reference>\n                            </tns:ShipmentItem>\n                        </tns:Items>\n                        <tns:AdditionalProperties></tns:AdditionalProperties>\n                        <tns:CustomsValueAmount>\n                            <tns:Value>100</tns:Value>\n                            <tns:CurrencyCode>SAR</tns:CurrencyCode>\n                        </tns:CustomsValueAmount>\n                    </tns:Details>\n                </tns:Shipment>\n            </tns:Shipments>\n            <tns:LabelInfo>\n                <tns:ReportID>9201</tns:ReportID>\n                <tns:ReportType>URL</tns:ReportType>\n            </tns:LabelInfo>\n        </tns:CreateShipments>\n    </soap:Body>\n</soap:Envelope>"
+						},
+						"url": {
+							"raw": "{{test_soap_url}}",
+							"host": [
+								"{{test_soap_url}}"
+							]
+						},
+						"description": "Create shipment using SOAP protocol in test environment"
+					},
+					"response": []
+				}
+			],
+			"description": "SOAP protocol endpoints"
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "test_base_url",
+			"value": "https://ws.dev.aramex.net/shippingapi.v2/shipping/service_1_0.svc/json",
+			"type": "string"
+		},
+		{
+			"key": "live_base_url",
+			"value": "https://ws.aramex.net/shippingapi.v2/shipping/service_1_0.svc/json",
+			"type": "string"
+		},
+		{
+			"key": "test_soap_url",
+			"value": "https://ws.dev.aramex.net/shippingapi.v2/shipping/service_1_0.svc",
+			"type": "string"
+		},
+		{
+			"key": "live_soap_url",
+			"value": "https://ws.aramex.net/shippingapi.v2/shipping/service_1_0.svc",
+			"type": "string"
+		},
+		{
+			"key": "test_account_number",
+			"value": "YOUR_TEST_ACCOUNT_NUMBER",
+			"type": "string"
+		},
+		{
+			"key": "test_account_pin",
+			"value": "YOUR_TEST_ACCOUNT_PIN",
+			"type": "string"
+		},
+		{
+			"key": "test_username",
+			"value": "YOUR_TEST_USERNAME",
+			"type": "string"
+		},
+		{
+			"key": "test_password",
+			"value": "YOUR_TEST_PASSWORD",
+			"type": "string"
+		},
+		{
+			"key": "test_reference",
+			"value": "TEST-{{$timestamp}}",
+			"type": "string"
+		},
+		{
+			"key": "test_shipper_address",
+			"value": "Your Test Shipper Address",
+			"type": "string"
+		},
+		{
+			"key": "test_shipper_city",
+			"value": "Riyadh",
+			"type": "string"
+		},
+		{
+			"key": "test_shipper_postcode",
+			"value": "12345",
+			"type": "string"
+		},
+		{
+			"key": "test_shipper_country",
+			"value": "SA",
+			"type": "string"
+		},
+		{
+			"key": "test_shipper_name",
+			"value": "Test Shipper",
+			"type": "string"
+		},
+		{
+			"key": "test_shipper_company",
+			"value": "Test Company",
+			"type": "string"
+		},
+		{
+			"key": "test_shipper_phone",
+			"value": "+966501234567",
+			"type": "string"
+		},
+		{
+			"key": "test_shipper_email",
+			"value": "test@example.com",
+			"type": "string"
+		},
+		{
+			"key": "test_consignee_address",
+			"value": "Test Consignee Address",
+			"type": "string"
+		},
+		{
+			"key": "test_consignee_city",
+			"value": "Jeddah",
+			"type": "string"
+		},
+		{
+			"key": "test_consignee_postcode",
+			"value": "23456",
+			"type": "string"
+		},
+		{
+			"key": "test_consignee_country",
+			"value": "SA",
+			"type": "string"
+		},
+		{
+			"key": "test_consignee_name",
+			"value": "Test Consignee",
+			"type": "string"
+		},
+		{
+			"key": "test_consignee_company",
+			"value": "Test Consignee Company",
+			"type": "string"
+		},
+		{
+			"key": "test_consignee_phone",
+			"value": "+966509876543",
+			"type": "string"
+		},
+		{
+			"key": "test_consignee_email",
+			"value": "consignee@example.com",
+			"type": "string"
+		},
+		{
+			"key": "live_account_number",
+			"value": "YOUR_LIVE_ACCOUNT_NUMBER",
+			"type": "string"
+		},
+		{
+			"key": "live_account_pin",
+			"value": "YOUR_LIVE_ACCOUNT_PIN",
+			"type": "string"
+		},
+		{
+			"key": "live_username",
+			"value": "YOUR_LIVE_USERNAME",
+			"type": "string"
+		},
+		{
+			"key": "live_password",
+			"value": "YOUR_LIVE_PASSWORD",
+			"type": "string"
+		},
+		{
+			"key": "live_reference",
+			"value": "LIVE-{{$timestamp}}",
+			"type": "string"
+		},
+		{
+			"key": "live_shipper_address",
+			"value": "Your Live Shipper Address",
+			"type": "string"
+		},
+		{
+			"key": "live_shipper_city",
+			"value": "Riyadh",
+			"type": "string"
+		},
+		{
+			"key": "live_shipper_postcode",
+			"value": "12345",
+			"type": "string"
+		},
+		{
+			"key": "live_shipper_country",
+			"value": "SA",
+			"type": "string"
+		},
+		{
+			"key": "live_shipper_name",
+			"value": "Live Shipper",
+			"type": "string"
+		},
+		{
+			"key": "live_shipper_company",
+			"value": "Live Company",
+			"type": "string"
+		},
+		{
+			"key": "live_shipper_phone",
+			"value": "+966501234567",
+			"type": "string"
+		},
+		{
+			"key": "live_shipper_email",
+			"value": "live@example.com",
+			"type": "string"
+		},
+		{
+			"key": "live_consignee_address",
+			"value": "Live Consignee Address",
+			"type": "string"
+		},
+		{
+			"key": "live_consignee_city",
+			"value": "Jeddah",
+			"type": "string"
+		},
+		{
+			"key": "live_consignee_postcode",
+			"value": "23456",
+			"type": "string"
+		},
+		{
+			"key": "live_consignee_country",
+			"value": "SA",
+			"type": "string"
+		},
+		{
+			"key": "live_consignee_name",
+			"value": "Live Consignee",
+			"type": "string"
+		},
+		{
+			"key": "live_consignee_company",
+			"value": "Live Consignee Company",
+			"type": "string"
+		},
+		{
+			"key": "live_consignee_phone",
+			"value": "+966509876543",
+			"type": "string"
+		},
+		{
+			"key": "live_consignee_email",
+			"value": "liveconsignee@example.com",
+			"type": "string"
+		}
+	]
+}
