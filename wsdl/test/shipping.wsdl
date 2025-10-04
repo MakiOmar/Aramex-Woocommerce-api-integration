@@ -526,7 +526,7 @@
     </wsdl:binding>
     <wsdl:service name="Service_1_0">
         <wsdl:port name="Service_1_0" binding="tns:Service_1_0">
-            <soap:address location="https://ws.dev.aramex.net/shippingapi/shipping/service_1_0.svc"/>
+            <soap:address location="https://ws.dev.aramex.net/shippingapi.v2/shipping/service_1_0.svc"/>
         </wsdl:port>
     </wsdl:service>
 </wsdl:definitions>

@@ -786,8 +786,8 @@ class Aramex_Bulk_Method extends MO_Aramex_Helper
     private function test_aramex_connectivity()
     {
         $aramex_hosts = [
-            'ws.aramex.net' => 'Main Aramex API server',
-            'ws-sandbox.aramex.net' => 'Aramex Sandbox server'
+            'ws.aramex.net' => 'Main Aramex API server (Live)',
+            'ws.dev.aramex.net' => 'Aramex Development server (Test)'
         ];
         
         foreach ($aramex_hosts as $host => $description) {
