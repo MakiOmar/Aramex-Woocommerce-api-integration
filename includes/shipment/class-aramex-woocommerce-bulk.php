@@ -628,15 +628,15 @@ class Aramex_Bulk_Method extends MO_Aramex_Helper
                     if (isset($json->Notifications->Notification) && count((array)$json->Notifications->Notification) > 1) {
                         if(is_array($json->Notifications->Notification)){
                             foreach ($json->Notifications->Notification as $notify_error) {
-                                aramex_errors()->add('error',
+                                $this->aramex_errors()->add('error',
                                 __('Aramex: ' . $notify_error->Code . ' - ' . $notify_error->Message));
                             }
                         }else{
-                            aramex_errors()->add('error',
+                            $this->aramex_errors()->add('error',
                                 __('Aramex: ' . $json->Notifications->Notification->Code . ' - ' . $json->Notifications->Notification->Message));
                         }
                     } else {
-                        aramex_errors()->add('error',
+                        $this->aramex_errors()->add('error',
                             __('Aramex: ' . ($json->Notifications->Notification->Code ?? 'ERR') . ' - ' . ($json->Notifications->Notification->Message ?? 'Unknown error')));
                     }
                 } else {
