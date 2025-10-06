@@ -1,7 +1,7 @@
 {
     "name": "MO Aramex Shipping Integration",
     "slug": "mo-aramex-shipping-integration",
-    "version": "1.0.14",
+    "version": "1.0.15",
     "tested": "6.4",
     "requires": "5.3",
     "requires_php": "7.4",

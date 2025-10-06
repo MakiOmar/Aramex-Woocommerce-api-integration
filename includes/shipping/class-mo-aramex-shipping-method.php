@@ -87,6 +87,7 @@ if (!class_exists('MO_Aramex_Shipping_Method')) {
             (function($){
                 function toggleAramexCredentialFields(){
                     var isTest = $('#woocommerce_mo-aramex_sandbox_flag').val() === '1';
+                    var codEnabled = $('#woocommerce_mo-aramex_allowed_cod').val() === '1';
 
                     var liveKeys = [
                         'user_name','password','account_pin','account_number','account_entity','account_country_code'
@@ -103,9 +104,18 @@ if (!class_exists('MO_Aramex_Shipping_Method')) {
                         var row = $('#woocommerce_mo-aramex_' + key).closest('tr');
                         if(isTest){ row.show(); } else { row.hide(); }
                     });
+
+                    var codKeys = [
+                        'cod_account_number','cod_account_pin','cod_account_entity','cod_account_country_code'
+                    ];
+                    codKeys.forEach(function(key){
+                        var row = $('#woocommerce_mo-aramex_' + key).closest('tr');
+                        if(codEnabled){ row.show(); } else { row.hide(); }
+                    });
                 }
 
                 $(document).on('change', '#woocommerce_mo-aramex_sandbox_flag', toggleAramexCredentialFields);
+                $(document).on('change', '#woocommerce_mo-aramex_allowed_cod', toggleAramexCredentialFields);
                 $(document).ready(toggleAramexCredentialFields);
             })(jQuery);
             </script>
