@@ -582,15 +582,12 @@ class Aramex_Bulk_Method extends MO_Aramex_Helper
         custom_plugin_log('Bulk shipment REST endpoint: ' . $endpoint);
         try {
             // Create shipment call via REST/JSON
-            // Compose REST payload per Aramex JSON schema
+            // Compose REST payload per Aramex JSON schema using previously prepared data
             $rest_payload = [
-                'Shipments' => [$params],
-                'ClientInfo' => MO_Aramex_Helper::getRestClientInfo(),
-                'LabelInfo' => [
-                    'ReportID' => $report_id,
-                    'ReportType' => 'URL',
-                ],
-                'Transaction' => [
+                'Shipments'   => isset($major_par['Shipments']) ? $major_par['Shipments'] : [],
+                'ClientInfo'  => isset($major_par['ClientInfo']) ? $major_par['ClientInfo'] : MO_Aramex_Helper::getRestClientInfo(),
+                'LabelInfo'   => isset($major_par['LabelInfo']) ? $major_par['LabelInfo'] : ['ReportID' => 9729, 'ReportType' => 'URL'],
+                'Transaction' => isset($major_par['Transaction']) ? $major_par['Transaction'] : [
                     'Reference1' => (string)$order->get_id(),
                     'Reference2' => '',
                     'Reference3' => '',
