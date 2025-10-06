@@ -226,23 +226,15 @@ class Aramex_Bulk_Method extends MO_Aramex_Helper
                             if ($normalized_weight_unit === 'LBS') { $normalized_weight_unit = 'LB'; }
                             if ($normalized_weight_unit === 'KGS') { $normalized_weight_unit = 'KG'; }
                            
-                            $attribute_value = $product->get_attribute('hscode');
-                            if(empty($attribute_value )){
-                                $attribute_value = "";
-                            }
                             array_push($itemDetails,[
-                                'Quantity' =>  $itemvv['qty'],
+                                'PackageType' => 'Box',
+                                'Quantity' =>  (int)$itemvv['qty'],
                                 'Weight' => [
-                                    'Value' => $product_weight,
+                                    'Value' => (float)$product_weight,
                                     'Unit' => $normalized_weight_unit
                                 ],
-                                'CommodityCode' => $attribute_value,
-                                'GoodsDescription' => trim($itemvv['name']),
-                                'CustomsValue' => [
-                                    'Value' => $product_price,
-                                    'CurrencyCode' => $CurrencyCode
-                                ],
-                                   
+                                'Comments' => trim($itemvv['name']),
+                                'Reference' => ''
                             ]);
 
                             // Ensure we have a valid weight (minimum 0.1 kg if empty)
@@ -455,16 +447,17 @@ class Aramex_Bulk_Method extends MO_Aramex_Helper
                 $params['OperationsInstructions'] = '';
                 $params['Details'] = array(
                     'Dimensions' => array(
-                        'Length' => '0',
-                        'Width' => '0',
-                        'Height' => '0',
+                        'Length' => 0,
+                        'Width' => 0,
+                        'Height' => 0,
                         'Unit' => 'CM'
                     ),
-                    'PieceDimensions' => [
-                        'Dimensions' => $PiecesDimensions
-                    ],
                     'ActualWeight' => array(
-                        'Value' => (string)$totalWeight,
+                        'Value' => (float)$totalWeight,
+                        'Unit' => $weightUnit
+                    ),
+                    'ChargeableWeight' => array(
+                        'Value' => (float)$totalWeight,
                         'Unit' => $weightUnit
                     ),
                     'ProductGroup' => $orderItem['method'],
@@ -475,9 +468,7 @@ class Aramex_Bulk_Method extends MO_Aramex_Helper
                     'NumberOfPieces' => max(1, (int)$totalPieces),
                     'DescriptionOfGoods' => $descriptionOfGoods,
                     'GoodsOriginCountry' => $settings->settings['country'],
-                    'Items' =>  [
-                        'ShipmentItem' => $itemDetails
-                    ],
+                    'Items' =>  $itemDetails,
                     // AdditionalProperties added conditionally below
                 );
 
@@ -522,9 +513,7 @@ class Aramex_Bulk_Method extends MO_Aramex_Helper
                             $AdditionalPropertyDetails[$idx]['CategoryName'] = 'CustomsClearance';
                         }
                     }
-                    $params['Details']['AdditionalProperties'] = [
-                        'AdditionalProperty' => $AdditionalPropertyDetails
-                    ];
+                    $params['Details']['AdditionalProperties'] = $AdditionalPropertyDetails;
                 }
 
                 $major_par['Shipments'][] = $params;
