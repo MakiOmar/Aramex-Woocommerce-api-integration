@@ -585,7 +585,8 @@ class Aramex_Bulk_Method extends MO_Aramex_Helper
             // Compose REST payload per Aramex JSON schema using previously prepared data
             $rest_payload = [
                 'Shipments'   => isset($major_par['Shipments']) ? $major_par['Shipments'] : [],
-                'ClientInfo'  => isset($major_par['ClientInfo']) ? $major_par['ClientInfo'] : MO_Aramex_Helper::getRestClientInfo(),
+                // Always use REST client info derived from current mode (test/live)
+                'ClientInfo'  => MO_Aramex_Helper::getRestClientInfo(),
                 'LabelInfo'   => isset($major_par['LabelInfo']) ? $major_par['LabelInfo'] : ['ReportID' => 9729, 'ReportType' => 'URL'],
                 'Transaction' => isset($major_par['Transaction']) ? $major_par['Transaction'] : [
                     'Reference1' => (string)$order->get_id(),
