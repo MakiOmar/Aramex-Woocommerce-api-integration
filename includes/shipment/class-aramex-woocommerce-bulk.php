@@ -566,127 +566,93 @@ class Aramex_Bulk_Method extends MO_Aramex_Helper
         $shipper_name = $order->get_shipping_first_name() . " " . $order->get_shipping_last_name();
         $info = MO_Aramex_Helper::getInfo(wp_create_nonce('aramex-shipment-check' . wp_get_current_user()->user_email));
 
-        //SOAP object
-        $wsdl_url = $info['baseUrl'] . 'shipping.wsdl';
-        custom_plugin_log('Bulk shipment SOAP WSDL URL: ' . $wsdl_url);
-        
-        // Test network connectivity to Aramex servers
-        $this->test_aramex_connectivity();
-        
+        // REST/JSON endpoint
+        $rest_base = MO_Aramex_Helper::getRestJsonBaseUrl();
+        $endpoint = rtrim($rest_base, '/') . '/CreateShipments';
+        custom_plugin_log('Bulk shipment REST endpoint: ' . $endpoint);
         try {
-            $soapClient = new SoapClient($wsdl_url, array(
-                'soap_version' => SOAP_1_1,
-                'connection_timeout' => 30,
-                'cache_wsdl' => WSDL_CACHE_NONE,
-                'trace' => true,
-                'exceptions' => true,
-                'stream_context' => stream_context_create([
-                    'http' => [
-                        'timeout' => 30,
-                        'user_agent' => 'MO-Aramex-Plugin/' . MO_ARAMEX_VERSION
-                    ],
-                    'ssl' => [
-                        'verify_peer' => false,
-                        'verify_peer_name' => false,
-                        'allow_self_signed' => true
-                    ]
-                ])
-            ));
-            custom_plugin_log('SOAP client created successfully for bulk shipment');
-        } catch (Exception $wsdl_exception) {
-            custom_plugin_log('SOAP client creation failed: ' . $wsdl_exception->getMessage());
-            mo_aramex_log_api_error(
-                'CreateShipments (Bulk)',
-                'SOAP client creation failed: ' . $wsdl_exception->getMessage(),
-                500,
-                array(
-                    'wsdl_url' => $wsdl_url,
-                    'exception_type' => 'wsdl_creation'
-                )
-            );
-            throw $wsdl_exception;
-        }
-        try {
-            //create shipment call
-            // Log API call
-            custom_plugin_log('Bulk shipment request data: ' . print_r($major_par, true));
+            // Create shipment call via REST/JSON
+            // Compose REST payload per Aramex JSON schema
+            $rest_payload = [
+                'Shipments' => [$params],
+                'ClientInfo' => MO_Aramex_Helper::getRestClientInfo(),
+                'LabelInfo' => [
+                    'ReportID' => $report_id,
+                    'ReportType' => 'URL',
+                ],
+                'Transaction' => [
+                    'Reference1' => (string)$order->get_id(),
+                    'Reference2' => '',
+                    'Reference3' => '',
+                    'Reference4' => '',
+                    'Reference5' => '',
+                ],
+            ];
+
+            custom_plugin_log('Bulk shipment REST request data: ' . print_r($rest_payload, true));
             $start_time = microtime(true);
-            mo_aramex_log_api_call(
-                'CreateShipments (Bulk)',
-                $major_par,
-                'SOAP',
-                array('WSDL' => $info['baseUrl'] . 'shipping.wsdl')
-            );
-            
-            try {
-                custom_plugin_log('About to call CreateShipments API...');
-                $auth_call = $soapClient->CreateShipments($major_par);
-                $execution_time = microtime(true) - $start_time;
-                
-                custom_plugin_log('CreateShipments API call completed successfully. Response: ' . print_r($auth_call, true));
-                
-                // Log API response
-                mo_aramex_log_api_response(
-                    'CreateShipments (Bulk)',
-                    $auth_call,
-                    200,
-                    array(),
-                    $execution_time
-                );
-                
-                custom_plugin_log('API response logged successfully');
-            } catch (Exception $soap_exception) {
-                $execution_time = microtime(true) - $start_time;
-                
-                custom_plugin_log('SOAP exception caught in bulk shipment: ' . $soap_exception->getMessage());
-                custom_plugin_log('SOAP exception trace: ' . $soap_exception->getTraceAsString());
-                
-                // Log API error
-                mo_aramex_log_api_error(
-                    'CreateShipments (Bulk)',
-                    $soap_exception->getMessage(),
-                    500,
-                    array(
-                        'soap_exception' => true,
-                        'execution_time' => $execution_time,
-                        'request_data' => $major_par,
-                        'exception_trace' => $soap_exception->getTraceAsString()
-                    )
-                );
-                
-                // Re-throw the exception to be handled by the outer catch block
-                throw $soap_exception;
+            mo_aramex_log_api_call('CreateShipments (Bulk)', $rest_payload, 'REST', ['endpoint' => $endpoint]);
+
+            $args = [
+                'method' => 'POST',
+                'timeout' => 60,
+                'redirection' => 3,
+                'httpversion' => '1.1',
+                'blocking' => true,
+                'headers' => [
+                    'Content-Type' => 'application/json',
+                    'Accept' => 'application/json',
+                    'User-Agent' => 'MO-Aramex-Plugin/' . MO_ARAMEX_VERSION,
+                ],
+                'body' => wp_json_encode($rest_payload),
+                'cookies' => [],
+            ];
+
+            $response = wp_remote_post($endpoint, $args);
+            $execution_time = microtime(true) - $start_time;
+
+            if (is_wp_error($response)) {
+                $error_message = $response->get_error_message();
+                custom_plugin_log('REST error in bulk shipment: ' . $error_message);
+                mo_aramex_log_api_error('CreateShipments (Bulk)', $error_message, 500, ['request_data' => $rest_payload]);
+                throw new Exception($error_message);
             }
-            if ($auth_call->HasErrors) {
-                if (empty($auth_call->Shipments)) {
-                    if (count((array)$auth_call->Notifications->Notification) > 1) {
-                        if(is_array($auth_call->Notifications->Notification)){
-                            foreach ($auth_call->Notifications->Notification as $notify_error) {
+
+            $status = wp_remote_retrieve_response_code($response);
+            $body = wp_remote_retrieve_body($response);
+            $json = json_decode($body);
+
+            mo_aramex_log_api_response('CreateShipments (Bulk)', $json, $status, [], $execution_time);
+            if (!$json || (isset($json->HasErrors) && $json->HasErrors)) {
+                if (empty($json->Shipments)) {
+                    if (isset($json->Notifications->Notification) && count((array)$json->Notifications->Notification) > 1) {
+                        if(is_array($json->Notifications->Notification)){
+                            foreach ($json->Notifications->Notification as $notify_error) {
                                 aramex_errors()->add('error',
                                 __('Aramex: ' . $notify_error->Code . ' - ' . $notify_error->Message));
                             }
                         }else{
                             aramex_errors()->add('error',
-                                __('Aramex: ' . $auth_call->Notifications->Notification->Code . ' - ' . $auth_call->Notifications->Notification->Message));
+                                __('Aramex: ' . $json->Notifications->Notification->Code . ' - ' . $json->Notifications->Notification->Message));
                         }
                     } else {
                         aramex_errors()->add('error',
-                            __('Aramex: ' . $auth_call->Notifications->Notification->Code . ' - ' . $auth_call->Notifications->Notification->Message));
+                            __('Aramex: ' . ($json->Notifications->Notification->Code ?? 'ERR') . ' - ' . ($json->Notifications->Notification->Message ?? 'Unknown error')));
                     }
                 } else {
-                    if (count((array)$auth_call->Shipments->ProcessedShipment->Notifications->Notification) > 1) {
+                    if (isset($json->Shipments->ProcessedShipment->Notifications->Notification) && count((array)$json->Shipments->ProcessedShipment->Notifications->Notification) > 1) {
                         $notification_string = '';
-                        if(is_array($auth_call->Shipments->ProcessedShipment->Notifications->Notification)){
-                            foreach ($auth_call->Shipments->ProcessedShipment->Notifications->Notification as $notification_error) {
+                        if(is_array($json->Shipments->ProcessedShipment->Notifications->Notification)){
+                            foreach ($json->Shipments->ProcessedShipment->Notifications->Notification as $notification_error) {
                                 $notification_string .= $notification_error->Code . ' - ' . $notification_error->Message . ' <br />';
                             }
                         }else{
-                            $notification_string .= $auth_call->Shipments->ProcessedShipment->Notifications->Notification->Code . ' - ' . $auth_call->Shipments->ProcessedShipment->Notifications->Notification->Message . ' <br />';
+                            $notification_string .= ($json->Shipments->ProcessedShipment->Notifications->Notification->Code ?? 'ERR') . ' - ' . ($json->Shipments->ProcessedShipment->Notifications->Notification->Message ?? 'Unknown error') . ' <br />';
                         }
                         $this->aramex_errors()->add('error', __($notification_string, 'aramex'));
                     } else {
                         $this->aramex_errors()->add('error',
-                            __('Aramex: ' . $auth_call->Shipments->ProcessedShipment->Notifications->Notification->Code . ' - ' . $auth_call->Shipments->ProcessedShipment->Notifications->Notification->Message),
+                            __('Aramex: ' . ($json->Shipments->ProcessedShipment->Notifications->Notification->Code ?? 'ERR') . ' - ' . ($json->Shipments->ProcessedShipment->Notifications->Notification->Message ?? 'Unknown error')),
                             'aramex');
                     }
                 }
@@ -697,7 +663,7 @@ class Aramex_Bulk_Method extends MO_Aramex_Helper
                     'comment_author' => '',
                     'comment_author_email' => '',
                     'comment_author_url' => '',
-                    'comment_content' => "AWB No. " . $auth_call->Shipments->ProcessedShipment->ID . " - Order No. " . $auth_call->Shipments->ProcessedShipment->Reference1,
+                    'comment_content' => "AWB No. " . ($json->Shipments->ProcessedShipment->ID ?? '') . " - Order No. " . ($json->Shipments->ProcessedShipment->Reference1 ?? ''),
                     'comment_type' => 'order_note',
                     'user_id' => "0",
                 );
@@ -708,7 +674,7 @@ class Aramex_Bulk_Method extends MO_Aramex_Helper
                 $order->save();
                 if (!empty($order)) {
                     $order->update_status('printing-aramex', __('Aramex shipment created.', 'woocommerce'));
-                    update_post_meta($order->get_id(), 'aramex_awb_no', $auth_call->Shipments->ProcessedShipment->ID);
+                    update_post_meta($order->get_id(), 'aramex_awb_no', $json->Shipments->ProcessedShipment->ID ?? '');
                 }
 
                 /* sending mail */
@@ -787,7 +753,7 @@ class Aramex_Bulk_Method extends MO_Aramex_Helper
     {
         $aramex_hosts = [
             'ws.aramex.net' => 'Main Aramex API server (Live)',
-            'ws.dev.aramex.net' => 'Aramex Development server (Test)'
+            'ws.sbx.aramex.net' => 'Aramex Sandbox server (Test)'
         ];
         
         foreach ($aramex_hosts as $host => $description) {

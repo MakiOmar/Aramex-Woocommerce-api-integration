@@ -145,6 +145,56 @@ if (!class_exists('MO_Aramex_Helper')) {
         }
 
         /**
+         * Get REST base URL (JSON) depending on sandbox flag
+         * Test: https://ws.sbx.aramex.net/ShippingAPI.V2/Shipping/Service_1_0.svc/json
+         * Live: https://ws.aramex.net/ShippingAPI.V2/Shipping/Service_1_0.svc/json
+         *
+         * @return string
+         */
+        public static function getRestJsonBaseUrl(): string
+        {
+            $settings = get_option('woocommerce_aramex_settings');
+            $isSandbox = isset($settings['sandbox_flag']) && (string)$settings['sandbox_flag'] === '1';
+            if ($isSandbox) {
+                return 'https://ws.sbx.aramex.net/ShippingAPI.V2/Shipping/Service_1_0.svc/json';
+            }
+            return 'https://ws.aramex.net/ShippingAPI.V2/Shipping/Service_1_0.svc/json';
+        }
+
+        /**
+         * Get client credentials based on mode (live/test)
+         *
+         * @return array
+         */
+        public static function getRestClientInfo(): array
+        {
+            $settings = get_option('woocommerce_aramex_settings', []);
+            $isSandbox = isset($settings['sandbox_flag']) && (string)$settings['sandbox_flag'] === '1';
+
+            if ($isSandbox) {
+                return [
+                    'UserName' => $settings['test_user_name'] ?? '',
+                    'Password' => $settings['test_password'] ?? '',
+                    'Version' => '1.0',
+                    'AccountNumber' => $settings['test_account_number'] ?? '',
+                    'AccountPin' => $settings['test_account_pin'] ?? '',
+                    'AccountEntity' => $settings['test_account_entity'] ?? '',
+                    'AccountCountryCode' => $settings['test_account_country_code'] ?? '',
+                ];
+            }
+
+            return [
+                'UserName' => $settings['user_name'] ?? '',
+                'Password' => $settings['password'] ?? '',
+                'Version' => '1.0',
+                'AccountNumber' => $settings['account_number'] ?? '',
+                'AccountPin' => $settings['account_pin'] ?? '',
+                'AccountEntity' => $settings['account_entity'] ?? '',
+                'AccountCountryCode' => $settings['account_country_code'] ?? '',
+            ];
+        }
+
+        /**
          * Log API calls
          *
          * @param string $message Log message

@@ -79,6 +79,41 @@ return array(
         'title' => __('* Password', 'aramex'),
         'type' => 'password',
     ),
+    // Test credentials (used when Test Mode is enabled)
+    'freight_test' => array(
+        'title' => __('Test Credentials (ws.sbx)', 'aramex'),
+        'type' => 'title',
+    ),
+    'test_user_name' => array(
+        'title' => __('Test Email', 'aramex'),
+        'type' => 'text',
+        'description' => __('Used only when Test Mode is enabled', 'aramex'),
+    ),
+    'test_password' => array(
+        'title' => __('Test Password', 'aramex'),
+        'type' => 'password',
+        'description' => __('Used only when Test Mode is enabled', 'aramex'),
+    ),
+    'test_account_pin' => array(
+        'title' => __('Test Account Pin', 'aramex'),
+        'type' => 'text',
+        'description' => __('Used only when Test Mode is enabled', 'aramex'),
+    ),
+    'test_account_number' => array(
+        'title' => __('Test Account Number', 'aramex'),
+        'type' => 'text',
+        'description' => __('Used only when Test Mode is enabled', 'aramex'),
+    ),
+    'test_account_entity' => array(
+        'title' => __('Test Account Entity', 'aramex'),
+        'type' => 'text',
+        'description' => __('Used only when Test Mode is enabled', 'aramex'),
+    ),
+    'test_account_country_code' => array(
+        'title' => __('Test Account Country Code', 'aramex'),
+        'type' => 'text',
+        'description' => __('Used only when Test Mode is enabled', 'aramex'),
+    ),
     'account_pin' => array(
         'title' => __('* Account Pin', 'aramex'),
         'type' => 'text',

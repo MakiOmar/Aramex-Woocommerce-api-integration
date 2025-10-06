@@ -3,7 +3,7 @@
 ## Overview
 This document provides a comprehensive reference for the Aramex International Shipping API endpoints. The API supports multiple protocols including SOAP, REST/JSON, and REST/XML.
 
-**Base URL**: `https://ws.dev.aramex.net/shippingapi.v2/shipping/service_1_0.svc`
+**Base URL**: `https://ws.sbx.aramex.net/shippingapi.v2/shipping/service_1_0.svc`
 
 ---
 
@@ -13,9 +13,9 @@ This document provides a comprehensive reference for the Aramex International Sh
 Create new shipment orders in the Aramex system.
 
 **Available Protocols:**
-- **SOAP**: [/service_1_0.svc](https://ws.dev.aramex.net/shippingapi.v2/shipping/service_1_0.svc)
-- **REST/JSON**: [/service_1_0.svc/json](https://ws.dev.aramex.net/shippingapi.v2/shipping/service_1_0.svc/json)
-- **REST/XML**: [/service_1_0.svc/xml](https://ws.dev.aramex.net/shippingapi.v2/shipping/service_1_0.svc/xml)
+- **SOAP**: [/service_1_0.svc](https://ws.sbx.aramex.net/shippingapi.v2/shipping/service_1_0.svc)
+- **REST/JSON**: [/service_1_0.svc/json](https://ws.sbx.aramex.net/shippingapi.v2/shipping/service_1_0.svc/json)
+- **REST/XML**: [/service_1_0.svc/xml](https://ws.sbx.aramex.net/shippingapi.v2/shipping/service_1_0.svc/xml)
 
 ---
 
@@ -23,9 +23,9 @@ Create new shipment orders in the Aramex system.
 Generate and print shipping labels for created shipments.
 
 **Available Protocols:**
-- **SOAP**: [/service_1_0.svc](https://ws.dev.aramex.net/shippingapi.v2/shipping/service_1_0.svc)
-- **REST/JSON**: [/service_1_0.svc/json](https://ws.dev.aramex.net/shippingapi.v2/shipping/service_1_0.svc/json)
-- **REST/XML**: [/service_1_0.svc/xml](https://ws.dev.aramex.net/shippingapi.v2/shipping/service_1_0.svc/xml)
+- **SOAP**: [/service_1_0.svc](https://ws.sbx.aramex.net/shippingapi.v2/shipping/service_1_0.svc)
+- **REST/JSON**: [/service_1_0.svc/json](https://ws.sbx.aramex.net/shippingapi.v2/shipping/service_1_0.svc/json)
+- **REST/XML**: [/service_1_0.svc/xml](https://ws.sbx.aramex.net/shippingapi.v2/shipping/service_1_0.svc/xml)
 
 ---
 
@@ -33,9 +33,9 @@ Generate and print shipping labels for created shipments.
 Schedule a pickup request for shipments.
 
 **Available Protocols:**
-- **SOAP**: [/service_1_0.svc](https://ws.dev.aramex.net/shippingapi.v2/shipping/service_1_0.svc)
-- **REST/JSON**: [/service_1_0.svc/json](https://ws.dev.aramex.net/shippingapi.v2/shipping/service_1_0.svc/json)
-- **REST/XML**: [/service_1_0.svc/xml](https://ws.dev.aramex.net/shippingapi.v2/shipping/service_1_0.svc/xml)
+- **SOAP**: [/service_1_0.svc](https://ws.sbx.aramex.net/shippingapi.v2/shipping/service_1_0.svc)
+- **REST/JSON**: [/service_1_0.svc/json](https://ws.sbx.aramex.net/shippingapi.v2/shipping/service_1_0.svc/json)
+- **REST/XML**: [/service_1_0.svc/xml](https://ws.sbx.aramex.net/shippingapi.v2/shipping/service_1_0.svc/xml)
 
 ---
 
@@ -43,9 +43,9 @@ Schedule a pickup request for shipments.
 Cancel a previously scheduled pickup request.
 
 **Available Protocols:**
-- **SOAP**: [/service_1_0.svc](https://ws.dev.aramex.net/shippingapi.v2/shipping/service_1_0.svc)
-- **REST/JSON**: [/service_1_0.svc/json](https://ws.dev.aramex.net/shippingapi.v2/shipping/service_1_0.svc/json)
-- **REST/XML**: [/service_1_0.svc/xml](https://ws.dev.aramex.net/shippingapi.v2/shipping/service_1_0.svc/xml)
+- **SOAP**: [/service_1_0.svc](https://ws.sbx.aramex.net/shippingapi.v2/shipping/service_1_0.svc)
+- **REST/JSON**: [/service_1_0.svc/json](https://ws.sbx.aramex.net/shippingapi.v2/shipping/service_1_0.svc/json)
+- **REST/XML**: [/service_1_0.svc/xml](https://ws.sbx.aramex.net/shippingapi.v2/shipping/service_1_0.svc/xml)
 
 ---
 
@@ -53,9 +53,9 @@ Cancel a previously scheduled pickup request.
 Reserve a range of shipment numbers for future use.
 
 **Available Protocols:**
-- **SOAP**: [/service_1_0.svc](https://ws.dev.aramex.net/shippingapi.v2/shipping/service_1_0.svc)
-- **REST/JSON**: [/service_1_0.svc/json](https://ws.dev.aramex.net/shippingapi.v2/shipping/service_1_0.svc/json)
-- **REST/XML**: [/service_1_0.svc/xml](https://ws.dev.aramex.net/shippingapi.v2/shipping/service_1_0.svc/xml)
+- **SOAP**: [/service_1_0.svc](https://ws.sbx.aramex.net/shippingapi.v2/shipping/service_1_0.svc)
+- **REST/JSON**: [/service_1_0.svc/json](https://ws.sbx.aramex.net/shippingapi.v2/shipping/service_1_0.svc/json)
+- **REST/XML**: [/service_1_0.svc/xml](https://ws.sbx.aramex.net/shippingapi.v2/shipping/service_1_0.svc/xml)
 
 ---
 
@@ -63,9 +63,9 @@ Reserve a range of shipment numbers for future use.
 Retrieve the last range of shipment numbers that were reserved.
 
 **Available Protocols:**
-- **SOAP**: [/service_1_0.svc](https://ws.dev.aramex.net/shippingapi.v2/shipping/service_1_0.svc)
-- **REST/JSON**: [/service_1_0.svc/json](https://ws.dev.aramex.net/shippingapi.v2/shipping/service_1_0.svc/json)
-- **REST/XML**: [/service_1_0.svc/xml](https://ws.dev.aramex.net/shippingapi.v2/shipping/service_1_0.svc/xml)
+- **SOAP**: [/service_1_0.svc](https://ws.sbx.aramex.net/shippingapi.v2/shipping/service_1_0.svc)
+- **REST/JSON**: [/service_1_0.svc/json](https://ws.sbx.aramex.net/shippingapi.v2/shipping/service_1_0.svc/json)
+- **REST/XML**: [/service_1_0.svc/xml](https://ws.sbx.aramex.net/shippingapi.v2/shipping/service_1_0.svc/xml)
 
 ---
 
@@ -73,9 +73,9 @@ Retrieve the last range of shipment numbers that were reserved.
 Schedule a delivery for shipments.
 
 **Available Protocols:**
-- **SOAP**: [/service_1_0.svc](https://ws.dev.aramex.net/shippingapi.v2/shipping/service_1_0.svc)
-- **REST/JSON**: [/service_1_0.svc/json](https://ws.dev.aramex.net/shippingapi.v2/shipping/service_1_0.svc/json)
-- **REST/XML**: [/service_1_0.svc/xml](https://ws.dev.aramex.net/shippingapi.v2/shipping/service_1_0.svc/xml)
+- **SOAP**: [/service_1_0.svc](https://ws.sbx.aramex.net/shippingapi.v2/shipping/service_1_0.svc)
+- **REST/JSON**: [/service_1_0.svc/json](https://ws.sbx.aramex.net/shippingapi.v2/shipping/service_1_0.svc/json)
+- **REST/XML**: [/service_1_0.svc/xml](https://ws.sbx.aramex.net/shippingapi.v2/shipping/service_1_0.svc/xml)
 
 ---
 
@@ -95,7 +95,7 @@ Use REST/XML for REST-based integrations with XML request/response format. Appen
 ## Environment
 **Current Environment**: Development (dev)
 
-For production use, replace `ws.dev.aramex.net` with the production URL provided by Aramex.
+For production use, replace `ws.sbx.aramex.net` with the production URL provided by Aramex.
 
 ---
 
