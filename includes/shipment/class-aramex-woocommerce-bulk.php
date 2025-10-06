@@ -153,6 +153,7 @@ class Aramex_Bulk_Method extends MO_Aramex_Helper
                 //calculating total weight of current order
                 $totalWeight = 0;
                 $weight = 0;
+                $totalPieces = 0;
                 $itemsv = $order->get_items();
                 $itemDetails = array();
                 $PiecesDimensions = array();
@@ -182,6 +183,7 @@ class Aramex_Bulk_Method extends MO_Aramex_Helper
                             $totalWeight += (float)$weight * $itemvv['qty'];
                             $descriptionOfGoods .= $itemvv['product_id'] . ' - ' . trim($itemvv['name']) . ' : ';
                             $qty = $itemvv['qty'];
+                            $totalPieces += (int)$qty;
 
                             $product_id = $itemvv['product_id'];
 
@@ -219,6 +221,10 @@ class Aramex_Bulk_Method extends MO_Aramex_Helper
 							}
                             // Get product weight unit (default is 'kg' for kilograms)
                             $product_weight_unit = get_option('woocommerce_weight_unit');
+                            // Normalize weight unit to API expected uppercase values
+                            $normalized_weight_unit = strtoupper($product_weight_unit);
+                            if ($normalized_weight_unit === 'LBS') { $normalized_weight_unit = 'LB'; }
+                            if ($normalized_weight_unit === 'KGS') { $normalized_weight_unit = 'KG'; }
                            
                             $attribute_value = $product->get_attribute('hscode');
                             if(empty($attribute_value )){
@@ -228,7 +234,7 @@ class Aramex_Bulk_Method extends MO_Aramex_Helper
                                 'Quantity' =>  $itemvv['qty'],
                                 'Weight' => [
                                     'Value' => $product_weight,
-                                    'Unit' => $product_weight_unit
+                                    'Unit' => $normalized_weight_unit
                                 ],
                                 'CommodityCode' => $attribute_value,
                                 'GoodsDescription' => trim($itemvv['name']),
@@ -248,10 +254,10 @@ class Aramex_Bulk_Method extends MO_Aramex_Helper
                                 'Height' => $product_height,
                                 'ActualWeight' => array(
                                     'Value' => $ActualWeight,
-                                    'Unit' => $product_weight_unit
+                                    'Unit' => $normalized_weight_unit
                                 ),
-                             //   'NumberOfPieces' => $itemvv['qty'],
-                                'Unit' => $product_unit,
+                                //   'NumberOfPieces' => $itemvv['qty'],
+                                'Unit' => strtoupper($product_unit ?: 'CM'),
                             ]);
                         }
                     }
@@ -386,7 +392,7 @@ class Aramex_Bulk_Method extends MO_Aramex_Helper
                     )
                 );
                 //new
-                if ($aramex_shipment_info_payment_type == 3) {
+                if ($aramex_shipment_info_payment_type == 3 || $aramex_shipment_info_payment_type === '3') {
                     $params['ThirdParty'] = array(
                         'Reference1' => (string)$order->get_id(), //'ref11111',
                         'Reference2' => '',
@@ -422,9 +428,9 @@ class Aramex_Bulk_Method extends MO_Aramex_Helper
 
                 // To covert the weight unit from 'lbs' to 'lb'
                 $weightUnit = get_option('woocommerce_weight_unit');
-                if ($weightUnit == 'lbs'){
-                    $weightUnit = 'lb';
-                }
+                $weightUnit = strtoupper($weightUnit);
+                if ($weightUnit === 'LBS') { $weightUnit = 'LB'; }
+                if ($weightUnit === 'KGS') { $weightUnit = 'KG'; }
 
                 // Other Main Shipment Parameters
                 $params['Reference1'] = (string)$order->get_id();
@@ -445,7 +451,7 @@ class Aramex_Bulk_Method extends MO_Aramex_Helper
                         'Length' => '0',
                         'Width' => '0',
                         'Height' => '0',
-                        'Unit' => 'cm'
+                        'Unit' => 'CM'
                     ),
                     'PieceDimensions' => [
                         'Dimensions' => $PiecesDimensions
@@ -459,7 +465,7 @@ class Aramex_Bulk_Method extends MO_Aramex_Helper
                     'PaymentType' => $aramex_shipment_info_payment_type,
                     'PaymentOptions' => $aramex_shipment_info_payment_option,
                     'Services' => $aramex_shipment_info_service_type,
-                    'NumberOfPieces' => $qty,
+                    'NumberOfPieces' => max(1, (int)$totalPieces),
                     'DescriptionOfGoods' => $descriptionOfGoods,
                     'GoodsOriginCountry' => $settings->settings['country'],
                     'Items' =>  [
@@ -474,9 +480,13 @@ class Aramex_Bulk_Method extends MO_Aramex_Helper
                 {
 
                     // $hasCODS= array_search("CODS",$aramex_shipment_info_service_type,false);
-                    $hasCODS = "CODS";
-                    // if ($hasCODS !== false)
-                    if ($hasCODS === $aramex_shipment_info_service_type)
+                    // Services may be an array or a string; normalize to array
+                    $servicesNormalized = $aramex_shipment_info_service_type;
+                    if (!is_array($servicesNormalized)) {
+                        $servicesNormalized = array($servicesNormalized);
+                    }
+                    $hasCODS = in_array('CODS', $servicesNormalized, true);
+                    if ($hasCODS)
                     {         
                          $params['Details']['CashOnDeliveryAmount'] = array(
                         'Value' => $order->get_total(),
