@@ -77,6 +77,42 @@ if (!class_exists('MO_Aramex_Shipping_Method')) {
         }
 
         /**
+         * Render admin options and inject UI logic to toggle live/test fields
+         */
+        public function admin_options()
+        {
+            parent::admin_options();
+            ?>
+            <script type="text/javascript">
+            (function($){
+                function toggleAramexCredentialFields(){
+                    var isTest = $('#woocommerce_mo-aramex_sandbox_flag').val() === '1';
+
+                    var liveKeys = [
+                        'user_name','password','account_pin','account_number','account_entity','account_country_code'
+                    ];
+                    var testKeys = [
+                        'test_user_name','test_password','test_account_pin','test_account_number','test_account_entity','test_account_country_code'
+                    ];
+
+                    liveKeys.forEach(function(key){
+                        var row = $('#woocommerce_mo-aramex_' + key).closest('tr');
+                        if(isTest){ row.hide(); } else { row.show(); }
+                    });
+                    testKeys.forEach(function(key){
+                        var row = $('#woocommerce_mo-aramex_' + key).closest('tr');
+                        if(isTest){ row.show(); } else { row.hide(); }
+                    });
+                }
+
+                $(document).on('change', '#woocommerce_mo-aramex_sandbox_flag', toggleAramexCredentialFields);
+                $(document).ready(toggleAramexCredentialFields);
+            })(jQuery);
+            </script>
+            <?php
+        }
+
+        /**
          * Define settings field for this shipping
          * @return void
          */
