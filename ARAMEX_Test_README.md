@@ -1,21 +1,113 @@
-# Aramex Shipping API Documentation
+# Aramex Shipping API - Test Environment (JSON Only)
 
 ## Overview
-This document provides a comprehensive reference for the Aramex International Shipping API endpoints. The API supports multiple protocols including SOAP, REST/JSON, and REST/XML.
+Use the JSON REST API only. SOAP is not used.
 
-**Base URL**: `https://ws.sbx.aramex.net/shippingapi.v2/shipping/service_1_0.svc`
+**Base URL (JSON)**: `https://ws.sbx.aramex.net/ShippingAPI.V2/Shipping/Service_1_0.svc/json`
 
 ---
 
-## Service Endpoints
+## Service Endpoints (JSON)
 
-### 1. CreateShipments
-Create new shipment orders in the Aramex system.
+- CreateShipments: `POST https://ws.sbx.aramex.net/ShippingAPI.V2/Shipping/Service_1_0.svc/json/CreateShipments`
+- CreatePickup: `POST https://ws.sbx.aramex.net/ShippingAPI.V2/Shipping/Service_1_0.svc/json/CreatePickup`
+- PrintLabel: `POST https://ws.sbx.aramex.net/ShippingAPI.V2/Shipping/Service_1_0.svc/json/PrintLabel`
 
-**Available Protocols:**
-- **SOAP**: [/service_1_0.svc](https://ws.sbx.aramex.net/shippingapi.v2/shipping/service_1_0.svc)
-- **REST/JSON**: [/service_1_0.svc/json](https://ws.sbx.aramex.net/shippingapi.v2/shipping/service_1_0.svc/json)
-- **REST/XML**: [/service_1_0.svc/xml](https://ws.sbx.aramex.net/shippingapi.v2/shipping/service_1_0.svc/xml)
+---
+
+## Minimal CreateShipments JSON Sample
+
+```json
+{
+  "Shipments": [
+    {
+      "Shipper": {
+        "Reference1": "10001",
+        "AccountNumber": "{TEST_ACCOUNT_NUMBER}",
+        "PartyAddress": {
+          "Line1": "Address line",
+          "City": "Riyadh",
+          "PostCode": "00000",
+          "CountryCode": "SA"
+        },
+        "Contact": {
+          "PersonName": "Sender Name",
+          "CompanyName": "Sender Co",
+          "PhoneNumber1": "+966500000000",
+          "EmailAddress": "sender@example.com"
+        }
+      },
+      "Consignee": {
+        "Reference1": "10001",
+        "PartyAddress": {
+          "Line1": "Customer address",
+          "City": "Jeddah",
+          "PostCode": "23456",
+          "CountryCode": "SA"
+        },
+        "Contact": {
+          "PersonName": "Customer Name",
+          "CompanyName": "",
+          "PhoneNumber1": "+966511111111",
+          "EmailAddress": "customer@example.com"
+        }
+      },
+      "Reference1": "10001",
+      "TransportType": 0,
+      "ShippingDateTime": 1737018820,
+      "DueDate": 1737623620,
+      "PickupLocation": "Reception",
+      "Comments": "Order 10001",
+      "Details": {
+        "ActualWeight": { "Value": 0.5, "Unit": "KG" },
+        "ProductGroup": "EXP",
+        "ProductType": "EPX",
+        "PaymentType": "P",
+        "Services": "",
+        "NumberOfPieces": 1,
+        "DescriptionOfGoods": "Order items",
+        "GoodsOriginCountry": "SA"
+      }
+    }
+  ],
+  "ClientInfo": {
+    "UserName": "{TEST_USERNAME}",
+    "Password": "{TEST_PASSWORD}",
+    "Version": "1.0",
+    "AccountNumber": "{TEST_ACCOUNT_NUMBER}",
+    "AccountPin": "{TEST_ACCOUNT_PIN}",
+    "AccountEntity": "{TEST_ACCOUNT_ENTITY}",
+    "AccountCountryCode": "{TEST_ACCOUNT_COUNTRY}"
+  },
+  "LabelInfo": { "ReportID": 9729, "ReportType": "URL" },
+  "Transaction": { "Reference1": "10001" }
+}
+```
+
+Notes:
+- Omit unsupported/unused fields to reduce errors.
+- Do not include ClientInfo.Source unless explicitly required by Aramex.
+
+---
+
+## CreatePickup JSON Sample (with ExistingShipments)
+
+Endpoint: `POST /CreatePickup`
+
+Use the sample provided in the project `ARAMEX_CreatePickup_Collection.postman_collection.json`. Timestamp fields use the `/Date(…+TZ)/` format.
+
+---
+
+## Test Credentials
+
+Configure in WordPress > WooCommerce > Settings > Shipping > MO Aramex Shipping:
+
+- Test Email, Test Password
+- Test Account Number, Test Account Pin
+- Test Account Entity, Test Account Country Code
+- Enable "Test Mode"
+
+When Test Mode is enabled, requests are sent to `ws.sbx` using the Test credentials.
 
 ---
 
@@ -81,41 +173,31 @@ Schedule a delivery for shipments.
 
 ## Protocol Information
 
-### SOAP
-Use SOAP protocol for traditional web service integrations. Endpoints use the base service URL.
-
-### REST/JSON
-Use REST/JSON for modern API integrations with JSON request/response format. Append `/json` to the base URL.
-
-### REST/XML
-Use REST/XML for REST-based integrations with XML request/response format. Append `/xml` to the base URL.
+This environment uses JSON only. SOAP and REST/XML are not used.
 
 ---
 
 ## Environment
-**Current Environment**: Development (dev)
+**Current Environment**: Sandbox (ws.sbx)
 
-For production use, replace `ws.sbx.aramex.net` with the production URL provided by Aramex.
+For production use, see the Live README.
 
 ---
 
 ## Getting Started
 
 1. **Authentication**: Contact Aramex to obtain API credentials
-2. **Choose Protocol**: Select SOAP, REST/JSON, or REST/XML based on your integration needs
-3. **Test Endpoints**: Use the development environment for testing
-4. **Integration**: Implement the required methods for your shipping workflow
+2. **Enable Test Mode** in plugin settings and fill Test credentials
+3. **Use JSON** endpoints documented above
+4. **CreateShipments** then **PrintLabel**, optionally **CreatePickup**
 
 ---
 
 ## Common Workflow
 
-1. **ReserveShipmentNumberRange** - Reserve shipment numbers
-2. **CreateShipments** - Create shipment with reserved numbers
-3. **PrintLabel** - Generate shipping labels
-4. **CreatePickup** - Schedule pickup for the shipment
-5. **ScheduleDelivery** - Schedule delivery (if applicable)
-6. **CancelPickup** - Cancel pickup if needed
+1. **CreateShipments** - Create shipment
+2. **PrintLabel** - Generate shipping labels
+3. **CreatePickup** - Schedule pickup for the shipment (optional)
 
 ---
 
