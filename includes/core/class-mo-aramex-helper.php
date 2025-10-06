@@ -153,7 +153,11 @@ if (!class_exists('MO_Aramex_Helper')) {
          */
         public static function getRestJsonBaseUrl(): string
         {
-            $settings = get_option('woocommerce_aramex_settings');
+            // Prefer the MO settings; fallback to legacy aramex settings
+            $settings = get_option('woocommerce_mo-aramex_settings');
+            if (!$settings) {
+                $settings = get_option('woocommerce_aramex_settings');
+            }
             $isSandbox = isset($settings['sandbox_flag']) && (string)$settings['sandbox_flag'] === '1';
             if ($isSandbox) {
                 return 'https://ws.sbx.aramex.net/ShippingAPI.V2/Shipping/Service_1_0.svc/json';
@@ -168,7 +172,11 @@ if (!class_exists('MO_Aramex_Helper')) {
          */
         public static function getRestClientInfo(): array
         {
-            $settings = get_option('woocommerce_aramex_settings', []);
+            // Prefer the MO settings; fallback to legacy aramex settings
+            $settings = get_option('woocommerce_mo-aramex_settings', []);
+            if (!$settings) {
+                $settings = get_option('woocommerce_aramex_settings', []);
+            }
             $isSandbox = isset($settings['sandbox_flag']) && (string)$settings['sandbox_flag'] === '1';
 
             if ($isSandbox) {
