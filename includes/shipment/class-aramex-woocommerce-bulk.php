@@ -439,8 +439,15 @@ class Aramex_Bulk_Method extends MO_Aramex_Helper
                 $params['ForeignHAWB'] = '';
 
                 $params['TransportType'] = 0;
-                $params['ShippingDateTime'] = time(); //date('m/d/Y g:i:sA');
-                $params['DueDate'] = time() + (7 * 24 * 60 * 60); //date('m/d/Y g:i:sA');
+                // Aramex expects /Date(ms+offset)/ format; build with local timezone offset
+                $now = time();
+                $due = $now + (7 * 24 * 60 * 60);
+                $offsetMinutes = (int) (get_option('gmt_offset') * 60);
+                $offsetSign = $offsetMinutes >= 0 ? '+' : '-';
+                $absMinutes = abs($offsetMinutes);
+                $tzPart = sprintf('%s%02d%02d', $offsetSign, floor($absMinutes/60), $absMinutes%60);
+                $params['ShippingDateTime'] = sprintf('/Date(%d%s)/', $now * 1000, $tzPart);
+                $params['DueDate'] = sprintf('/Date(%d%s)/', $due * 1000, $tzPart);
                 $params['PickupLocation'] = 'Reception';
                 $params['PickupGUID'] = '';
                 $params['Comments'] = '';
@@ -471,9 +478,7 @@ class Aramex_Bulk_Method extends MO_Aramex_Helper
                     'Items' =>  [
                         'ShipmentItem' => $itemDetails
                     ],
-                    'AdditionalProperties' => [
-                        'AdditionalProperty' => $AdditionalPropertyDetails
-                     ]
+                    // AdditionalProperties added conditionally below
                 );
 
                  if ($aramex_shipment_info_service_type != null)
@@ -508,6 +513,19 @@ class Aramex_Bulk_Method extends MO_Aramex_Helper
                     'Value' => $aramex_shipment_info_custom_amount,
                     'CurrencyCode' => $aramex_shipment_currency_code
                 );
+
+                // Only include AdditionalProperties if we have at least one valid entry
+                if (!empty($AdditionalPropertyDetails)) {
+                    // Ensure each entry has required CategoryName
+                    foreach ($AdditionalPropertyDetails as $idx => $ap) {
+                        if (empty($ap['CategoryName'])) {
+                            $AdditionalPropertyDetails[$idx]['CategoryName'] = 'CustomsClearance';
+                        }
+                    }
+                    $params['Details']['AdditionalProperties'] = [
+                        'AdditionalProperty' => $AdditionalPropertyDetails
+                    ];
+                }
 
                 $major_par['Shipments'][] = $params;
                 $info = MO_Aramex_Helper::getInfo(wp_create_nonce('aramex-shipment-check' . wp_get_current_user()->user_email));
