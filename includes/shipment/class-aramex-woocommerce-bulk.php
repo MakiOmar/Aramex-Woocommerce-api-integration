@@ -721,7 +721,31 @@ class Aramex_Bulk_Method extends MO_Aramex_Helper
                 $order->save();
                 if (!empty($order)) {
                     $order->update_status('printing-aramex', __('Aramex shipment created.', 'woocommerce'));
-                    update_post_meta($order->get_id(), 'aramex_awb_no', $json->Shipments->ProcessedShipment->ID ?? '');
+                    
+                    // Store AWB number
+                    $awb_no = '';
+                    if (isset($json->Shipments[0]->ID)) {
+                        $awb_no = $json->Shipments[0]->ID;
+                    } elseif (isset($json->Shipments->ProcessedShipment->ID)) {
+                        $awb_no = $json->Shipments->ProcessedShipment->ID;
+                    }
+                    update_post_meta($order->get_id(), 'aramex_awb_no', $awb_no);
+                    
+                    // Store Label URL
+                    $label_url = '';
+                    if (isset($json->Shipments[0]->ShipmentLabel->LabelURL)) {
+                        $label_url = $json->Shipments[0]->ShipmentLabel->LabelURL;
+                    } elseif (isset($json->Shipments->ProcessedShipment->ShipmentLabel->LabelURL)) {
+                        $label_url = $json->Shipments->ProcessedShipment->ShipmentLabel->LabelURL;
+                    }
+                    if (!empty($label_url)) {
+                        update_post_meta($order->get_id(), 'aramex_label_url', $label_url);
+                    }
+                    
+                    // Store Product Group (DOM/EXP)
+                    if (!empty($responseProductGroup)) {
+                        update_post_meta($order->get_id(), 'aramex_product_group', $responseProductGroup);
+                    }
                 }
 
                 /* sending mail */
