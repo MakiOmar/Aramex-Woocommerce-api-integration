@@ -22,7 +22,7 @@ class MO_Aramex_Log_Viewer {
         add_action('admin_menu', array($this, 'add_log_viewer_menu'));
         add_action('admin_enqueue_scripts', array($this, 'enqueue_admin_scripts'));
         add_action('wp_ajax_mo_aramex_clear_logs', array($this, 'ajax_clear_logs'));
-        add_action('wp_ajax_mo_aramex_download_log', array($this, 'ajax_download_log'));
+        add_action('admin_init', array($this, 'handle_download_log'));
     }
     
     /**
@@ -231,9 +231,18 @@ class MO_Aramex_Log_Viewer {
     }
     
     /**
-     * AJAX handler for downloading logs
+     * Handler for downloading logs
      */
-    public function ajax_download_log() {
+    public function handle_download_log() {
+        // Check if this is a download request
+        if (!isset($_GET['page']) || $_GET['page'] !== 'mo-aramex-logs') {
+            return;
+        }
+        
+        if (!isset($_GET['action']) || $_GET['action'] !== 'download_log') {
+            return;
+        }
+        
         if (!isset($_GET['log_file']) || !isset($_GET['_wpnonce'])) {
             wp_die(__('Invalid request.', 'mo-aramex-shipping'));
         }
@@ -256,6 +265,7 @@ class MO_Aramex_Log_Viewer {
         
         // Verify the file exists in our log files list
         $file_exists = false;
+        $file_path = '';
         foreach ($log_files as $file) {
             if ($file['filename'] === $log_file) {
                 $file_exists = true;
