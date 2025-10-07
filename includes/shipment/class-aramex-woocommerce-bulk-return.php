@@ -250,7 +250,14 @@ class Aramex_Bulk_Return_Method
 
         // Determine endpoint based on sandbox mode (reuse $helper_info from earlier)
         // sandbox_flag is stored as '1' for yes, '0' for no
-        $is_sandbox = isset($helper_info['sandbox_flag']) && (string)$helper_info['sandbox_flag'] === '1';
+        $settings = get_option('woocommerce_mo-aramex_settings', []);
+        $is_sandbox = isset($settings['sandbox_flag']) && (string)$settings['sandbox_flag'] === '1';
+        
+        mo_aramex_log_api_call('CreatePickup (Return) - Sandbox Check', 0, json_encode([
+            'helper_info_sandbox_flag' => $helper_info['sandbox_flag'] ?? 'NOT SET',
+            'direct_settings_sandbox_flag' => $settings['sandbox_flag'] ?? 'NOT SET',
+            'is_sandbox_result' => $is_sandbox ? 'TRUE' : 'FALSE'
+        ], JSON_PRETTY_PRINT));
         
         $endpoint = $is_sandbox 
             ? 'https://ws.sbx.aramex.net/ShippingAPI.V2/Shipping/Service_1_0.svc/json/CreatePickup'
