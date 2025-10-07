@@ -249,12 +249,44 @@ function aramex_display_bulk_in_admin()
         jQuery.noConflict();
         (function ($) {
             $(document).ready(function () {
-				$('.page-title-action').first().after("<a class=' page-title-action' style='margin-left:15px;' id='create_aramex_shipment'><?php echo esc_html__('Bulk Aramex Shipment',
-                    'aramex'); ?> </a>");    
+				// Create Aramex Actions dropdown menu if it doesn't exist
+				if ($('#aramex-actions-dropdown').length === 0) {
+					var dropdown = '<div style="display: inline-block; position: relative; margin-left: 15px;" id="aramex-actions-dropdown">' +
+						'<a class="page-title-action" id="aramex-dropdown-toggle" style="cursor: pointer;">' +
+						'<span class="dashicons dashicons-carrot" style="vertical-align: middle; margin-right: 5px;"></span>' +
+						'<?php echo esc_html__('Aramex Actions', 'aramex'); ?>' +
+						'<span class="dashicons dashicons-arrow-down-alt2" style="vertical-align: middle; margin-left: 3px; font-size: 14px;"></span>' +
+						'</a>' +
+						'<ul id="aramex-dropdown-menu" style="display: none; position: absolute; top: 100%; left: 0; background: white; border: 1px solid #ddd; box-shadow: 0 2px 8px rgba(0,0,0,0.1); list-style: none; margin: 5px 0 0 0; padding: 0; min-width: 200px; z-index: 1000; border-radius: 4px;">' +
+						'<li style="margin: 0;"><a id="create_aramex_shipment" style="display: block; padding: 10px 15px; text-decoration: none; color: #2271b1; cursor: pointer; border-bottom: 1px solid #f0f0f0;" onmouseover="this.style.background=\'#f6f7f7\'" onmouseout="this.style.background=\'white\'"><span class="dashicons dashicons-admin-page" style="vertical-align: middle; margin-right: 8px;"></span><?php echo esc_html__('Create Bulk Shipment', 'aramex'); ?></a></li>' +
+						'<li style="margin: 0;"><a id="bulk_print_label" style="display: block; padding: 10px 15px; text-decoration: none; color: #2271b1; cursor: pointer;" onmouseover="this.style.background=\'#f6f7f7\'" onmouseout="this.style.background=\'white\'"><span class="dashicons dashicons-printer" style="vertical-align: middle; margin-right: 8px;"></span><?php echo esc_html__('Print Bulk Labels', 'aramex'); ?></a></li>' +
+						'</ul>' +
+						'</div>';
+					$('.page-title-action').first().after(dropdown);
+					
+					// Toggle dropdown
+					$(document).on('click', '#aramex-dropdown-toggle', function(e) {
+						e.preventDefault();
+						e.stopPropagation();
+						$('#aramex-dropdown-menu').toggle();
+					});
+					
+					// Close dropdown when clicking outside
+					$(document).on('click', function(e) {
+						if (!$(e.target).closest('#aramex-actions-dropdown').length) {
+							$('#aramex-dropdown-menu').hide();
+						}
+					});
+					
+					// Close dropdown when clicking a menu item
+					$(document).on('click', '#aramex-dropdown-menu a', function() {
+						$('#aramex-dropdown-menu').hide();
+					});
+				}
             });
             $(document).ready(function () {
                 
-                $("#create_aramex_shipment").click(function () {
+                $(document).on("click", "#create_aramex_shipment", function () {
                     $(".aramex_loader").css("display","none");
                     $(".order_in_background").fadeIn(500);
                     $(".aramex_bulk").fadeIn(500);

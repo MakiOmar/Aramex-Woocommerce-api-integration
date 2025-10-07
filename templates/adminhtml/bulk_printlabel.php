@@ -34,12 +34,9 @@ function aramex_display_bulk_printlabel_in_admin()
         jQuery.noConflict();
         (function ($) {
             $(document).ready(function () {
-				$('.page-title-action').first().after("<a class=' page-title-action' style='margin-left:15px;' id='bulk_print_label'><?php echo esc_html__('Bulk Print Label',
-                    'aramex'); ?> </a>");    
-            });
-            $(document).ready(function () {
-                
-                $("#bulk_print_label").click(function () {
+                // Bulk Print Label button is now in the dropdown created by bulk.php
+                // Just bind the click handler using event delegation
+                $(document).on("click", "#bulk_print_label", function () {
                     aramexsend_print();
                 });
 
