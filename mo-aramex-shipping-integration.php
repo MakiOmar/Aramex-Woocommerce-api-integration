@@ -205,6 +205,7 @@ class MO_Aramex_Plugin {
         // Include bulk operation classes
         require_once MO_ARAMEX_PLUGIN_DIR . 'includes/shipment/class-aramex-woocommerce-bulk.php';
         require_once MO_ARAMEX_PLUGIN_DIR . 'includes/shipment/class-aramex-woocommerce-bulk-printlabel.php';
+        require_once MO_ARAMEX_PLUGIN_DIR . 'includes/shipment/class-aramex-woocommerce-bulk-return.php';
     }
     
     /**
@@ -424,6 +425,11 @@ class MO_Aramex_Plugin {
             include_once MO_ARAMEX_PLUGIN_DIR . 'templates/adminhtml/bulk_printlabel.php';
             if (function_exists('aramex_display_bulk_printlabel_in_admin')) {
                 aramex_display_bulk_printlabel_in_admin();
+            }
+            
+            include_once MO_ARAMEX_PLUGIN_DIR . 'templates/adminhtml/bulk_return.php';
+            if (function_exists('aramex_display_bulk_return_in_admin')) {
+                aramex_display_bulk_return_in_admin();
             }
         }
     }
