@@ -127,7 +127,8 @@ class Aramex_Bulk_Return_Method
 
         // Get client info and settings
         $clientInfo = MO_Aramex_Helper::getRestClientInfo();
-        $helper_info = MO_Aramex_Helper::getInfo();
+        $nonce = isset($_POST['_wpnonce']) ? sanitize_text_field(wp_unslash($_POST['_wpnonce'])) : '';
+        $helper_info = MO_Aramex_Helper::getInfo($nonce);
         
         custom_plugin_log("Return pickup for order {$order_id}:");
         custom_plugin_log("- AWB: {$awb_number}, Product Group: {$product_group}");
