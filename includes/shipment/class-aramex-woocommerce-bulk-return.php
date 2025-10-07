@@ -125,8 +125,15 @@ class Aramex_Bulk_Return_Method
             $product_group = 'DOM'; // Default to domestic
         }
 
-        // Get client info
+        // Get client info and settings
         $clientInfo = MO_Aramex_Helper::getRestClientInfo();
+        $helper_info = MO_Aramex_Helper::getInfo();
+        
+        custom_plugin_log("Return pickup for order {$order_id}:");
+        custom_plugin_log("- AWB: {$awb_number}, Product Group: {$product_group}");
+        custom_plugin_log("- Customer: " . $order->get_shipping_first_name() . ' ' . $order->get_shipping_last_name());
+        custom_plugin_log("- Pickup from: " . $order->get_shipping_address_1() . ', ' . $order->get_shipping_city() . ', ' . $order->get_shipping_country());
+        custom_plugin_log("- Store Account: " . $clientInfo['AccountNumber'] . ' (' . $clientInfo['AccountEntity'] . ')');
         
         // Get pickup location and comments from POST
         $pickup_location = isset($_POST['pickup_location']) ? sanitize_text_field(wp_unslash($_POST['pickup_location'])) : 'Home';
@@ -149,6 +156,10 @@ class Aramex_Bulk_Return_Method
         $closing_time_formatted = '/Date(' . ($closing_time * 1000) . $offset_hours . ')/';
 
         // Build pickup request payload
+        // For return shipments:
+        // - PickupAddress = Customer's address (where we pick up from)
+        // - PickupContact = Customer's contact info
+        // - The return destination (shipper/receiver) is implied by the ExistingShipments and will be the store's address from settings
         $payload = [
             'Pickup' => [
                 'PickupAddress' => [
@@ -170,7 +181,7 @@ class Aramex_Bulk_Return_Method
                 ],
                 'PickupContact' => [
                     'Department' => null,
-                    'PersonName' => $order->get_shipping_first_name() . ' ' . $order->get_shipping_last_name(),
+                    'PersonName' => trim(($order->get_shipping_first_name() ?: $order->get_billing_first_name()) . ' ' . ($order->get_shipping_last_name() ?: $order->get_billing_last_name())),
                     'Title' => null,
                     'CompanyName' => $order->get_shipping_company() ?: $order->get_billing_company(),
                     'PhoneNumber1' => $order->get_billing_phone(),
