@@ -58,81 +58,53 @@ class Aramex_Bulk_Printlabel_Method extends MO_Aramex_Helper
                     $order_id = (int)$id;
                     
                     if ($order_id) {
-                        //SOAP object
-                        $soapClient = new SoapClient($info['baseUrl'] . 'shipping.wsdl', array('soap_version' => SOAP_1_1));
-                        $awbno = array();
-
-                        global $wpdb;
-                        $comments_table = $wpdb->prefix . 'comments';
-                        $commentmeta_table = $wpdb->prefix . 'commentmeta';
-
-                        // $order_ids = 49; // Replace with the actual order ID
-
-                        $query = $wpdb->prepare(
-                            "SELECT c.*, cm.meta_key, cm.meta_value
-                            FROM $comments_table AS c
-                            LEFT JOIN $commentmeta_table AS cm ON c.comment_ID = cm.comment_id
-                            WHERE c.comment_post_ID = %d
-                            ORDER BY c.comment_ID DESC",
-                            $order_id
-                        );
-
-                        $prepared_query = $wpdb->prepare($query, $post_id);
-                        $history = $wpdb->get_results($prepared_query);
-                       
-                        $history_list = array();
-                        foreach ($history as $shipment) {
-                            $history_list[] = $shipment->comment_content;
-                        }
-
-                        $aramex_return_button = false;
-
-                        if (count($history_list)) {
-                            foreach ($history_list as $history) {
-                                $pos = strpos($history, 'Return');
-                                if ($pos) {
-                                    $aramex_return_button = true;
-                                    break;
-                                }
-                                $awbno = strstr($history, "- Order No", true);
-                                $awbno = trim($awbno, "AWB No.");
-                                if ($awbno != "") {
-                                    $aramex_return_button = true;
-                                    break;
-                                }
-                            }
-                        }
-
-                        $last_track = "";
-                        if (count($history_list)) {
-                            foreach ($history_list as $history) {
-                                $awbno = strstr($history, "- Order No", true);
-                                $awbno = trim($awbno, "AWB No.");
-                                if (isset($awbno)) {
-                                    if ((int)$awbno) {
-                                        $last_track = $awbno;
-                                        break;
-                                    }
-                                }
-                                $awbno = trim($awbno, "Aramex Shipment Return Order AWB No.");
-                                if (isset($awbno)) {
-                                    if ((int)$awbno) {
-                                        $last_track = $awbno;
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-
+                        // First, try to get the AWB number from order meta (new method)
+                        $last_track = get_post_meta($order_id, 'aramex_awb_no', true);
                         
-                        if($aramex_return_button == true){
+                        // If not found in meta, fall back to parsing comments (legacy method)
+                        if (empty($last_track)) {
+                            global $wpdb;
+                            $comments_table = $wpdb->prefix . 'comments';
                             
-                            if ($last_track) {
-                               
-                                $report_id = $info['clientInfo']['report_id'];
-                                if (!$report_id) {
-                                    $report_id = 9729;
+                            $query = $wpdb->prepare(
+                                "SELECT comment_content
+                                FROM $comments_table
+                                WHERE comment_post_ID = %d
+                                AND comment_type = 'order_note'
+                                ORDER BY comment_ID DESC",
+                                $order_id
+                            );
+                            
+                            $history = $wpdb->get_results($query);
+                           
+                            $history_list = array();
+                            foreach ($history as $shipment) {
+                                $history_list[] = $shipment->comment_content;
+                            }
+                            
+                            if (count($history_list)) {
+                                foreach ($history_list as $history) {
+                                    $awbno = strstr($history, "- Order No", true);
+                                    $awbno = trim($awbno, "AWB No.");
+                                    $awbno = trim($awbno);
+                                    if (isset($awbno) && is_numeric($awbno) && $awbno > 0) {
+                                        $last_track = $awbno;
+                                        break;
+                                    }
                                 }
+                            }
+                        }
+                        
+                        if (!empty($last_track)) {
+                            //SOAP object
+                            $soapClient = new SoapClient($info['baseUrl'] . 'shipping.wsdl', array('soap_version' => SOAP_1_1));
+                            
+                            $report_id = $info['clientInfo']['report_id'];
+                            if (!$report_id) {
+                                $report_id = 9729;
+                            }
+                            
+                            try {
                                 $params = array(
                                     'ClientInfo' => $info['clientInfo'],
                                     'Transaction' => array(
@@ -158,44 +130,47 @@ class Aramex_Bulk_Printlabel_Method extends MO_Aramex_Helper
                                     array('WSDL' => $info['baseUrl'] . 'shipping.wsdl', 'order_id' => $order_id)
                                 );
                                 
-                                    $auth_call = $soapClient->PrintLabel($params);
-                                    $execution_time = microtime(true) - $start_time;
-                                    
-                                    // Log API response
-                                    mo_aramex_log_api_response(
-                                        'PrintLabel (Bulk)',
-                                        $auth_call,
-                                        200,
-                                        array(),
-                                        $execution_time
-                                    );
-                                          
-                                    /* bof  PDF demaged Fixes debug */
+                                $auth_call = $soapClient->PrintLabel($params);
+                                $execution_time = microtime(true) - $start_time;
+                                
+                                // Log API response
+                                mo_aramex_log_api_response(
+                                    'PrintLabel (Bulk)',
+                                    $auth_call,
+                                    200,
+                                    array(),
+                                    $execution_time
+                                );
+                                      
+                                /* bof  PDF demaged Fixes debug */
 
-                                    if ($auth_call->HasErrors) {
+                                if ($auth_call->HasErrors) {
+                                    array_push($failed_pdf_ID,$order_id);
+                                    continue;
+                                }
+                                /* eof  PDF demaged Fixes */
+                                
+                                $filepath = $auth_call->ShipmentLabel->LabelURL;
 
-                                        array_push($failed_pdf_ID,$order_id);
-                                        continue;
+                                if (!file_exists($print_label_dirname)) {
+                                    mkdir($print_label_dirname, 0777, true);
+                                }
 
-                                    }
-                                    /* eof  PDF demaged Fixes */
-                                    
-                                    $filepath = $auth_call->ShipmentLabel->LabelURL;
-
-                                    if (!file_exists($print_label_dirname)) {
-                                        mkdir($print_label_dirname, 0777, true);
-                                    }
-
-                                    $time = time();
-                                    $pdf_filename_by_order_id = $print_label_dirname . "/".$order_id . "_" .$time.".pdf";
-                              
-                                    file_put_contents($pdf_filename_by_order_id, fopen($filepath, 'r'));
-                                    
-                                    array_push($bulk_pdf, $pdf_filename_by_order_id);
-                                    array_push($success_pdf_ID,$order_id);
-
+                                $time = time();
+                                $pdf_filename_by_order_id = $print_label_dirname . "/".$order_id . "_" .$time.".pdf";
+                          
+                                file_put_contents($pdf_filename_by_order_id, fopen($filepath, 'r'));
+                                
+                                array_push($bulk_pdf, $pdf_filename_by_order_id);
+                                array_push($success_pdf_ID,$order_id);
+                                
+                            } catch (Exception $e) {
+                                custom_plugin_log('PrintLabel error for order ' . $order_id . ': ' . $e->getMessage());
+                                mo_aramex_log_api_error('PrintLabel (Bulk)', $e->getMessage(), 0, ['order_id' => $order_id, 'awb' => $last_track]);
+                                array_push($failed_pdf_ID,$order_id);
                             }
-                        }else{
+                        } else {
+                            custom_plugin_log('No AWB number found for order ' . $order_id);
                             array_push($failed_pdf_ID,$order_id);
                         }
 
