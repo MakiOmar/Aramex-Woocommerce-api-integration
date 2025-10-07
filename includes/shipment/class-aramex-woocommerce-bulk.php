@@ -604,9 +604,14 @@ class Aramex_Bulk_Method extends MO_Aramex_Helper
                 ],
             ];
 
+            // Encode JSON for API call
+            $json_payload = wp_json_encode($rest_payload, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+            
             custom_plugin_log('Bulk shipment REST request data: ' . print_r($rest_payload, true));
+            custom_plugin_log('JSON payload for manual testing: ' . $json_payload);
+            
             $start_time = microtime(true);
-            mo_aramex_log_api_call('CreateShipments (Bulk)', $rest_payload, 'REST', ['endpoint' => $endpoint]);
+            mo_aramex_log_api_call('CreateShipments (Bulk)', $rest_payload, 'REST', ['endpoint' => $endpoint, 'json_payload' => $json_payload]);
 
             $args = [
                 'method' => 'POST',
@@ -619,7 +624,7 @@ class Aramex_Bulk_Method extends MO_Aramex_Helper
                     'Accept' => 'application/json',
                     'User-Agent' => 'MO-Aramex-Plugin/' . MO_ARAMEX_VERSION,
                 ],
-                'body' => wp_json_encode($rest_payload),
+                'body' => $json_payload,
                 'cookies' => [],
             ];
 
