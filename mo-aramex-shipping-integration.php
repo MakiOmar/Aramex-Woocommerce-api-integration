@@ -84,6 +84,9 @@ require_once MO_ARAMEX_PLUGIN_DIR . 'includes/class-mo-aramex-logger.php';
 require_once MO_ARAMEX_PLUGIN_DIR . 'includes/class-mo-aramex-log-helper.php';
 require_once MO_ARAMEX_PLUGIN_DIR . 'includes/class-mo-aramex-log-viewer.php';
 
+// Load order meta box for displaying shipment information
+require_once MO_ARAMEX_PLUGIN_DIR . 'includes/class-mo-aramex-order-meta-box.php';
+
 // Optional: If you're using a private repository, specify the access token.
 // $updateChecker->setAuthentication('your-github-token');
 

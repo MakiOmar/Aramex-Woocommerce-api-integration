@@ -722,14 +722,11 @@ class Aramex_Bulk_Method extends MO_Aramex_Helper
                 if (!empty($order)) {
                     $order->update_status('printing-aramex', __('Aramex shipment created.', 'woocommerce'));
                     
-                    // Store AWB number
-                    $awb_no = '';
-                    if (isset($json->Shipments[0]->ID)) {
-                        $awb_no = $json->Shipments[0]->ID;
-                    } elseif (isset($json->Shipments->ProcessedShipment->ID)) {
-                        $awb_no = $json->Shipments->ProcessedShipment->ID;
+                    // Store AWB number (use shipmentID which was already extracted correctly above)
+                    if (!empty($shipmentID)) {
+                        update_post_meta($order->get_id(), 'aramex_awb_no', $shipmentID);
+                        custom_plugin_log('Stored AWB number: ' . $shipmentID . ' for order ' . $order->get_id());
                     }
-                    update_post_meta($order->get_id(), 'aramex_awb_no', $awb_no);
                     
                     // Store Label URL
                     $label_url = '';
@@ -740,11 +737,15 @@ class Aramex_Bulk_Method extends MO_Aramex_Helper
                     }
                     if (!empty($label_url)) {
                         update_post_meta($order->get_id(), 'aramex_label_url', $label_url);
+                        custom_plugin_log('Stored Label URL: ' . $label_url . ' for order ' . $order->get_id());
+                    } else {
+                        custom_plugin_log('No Label URL found in response for order ' . $order->get_id());
                     }
                     
                     // Store Product Group (DOM/EXP)
                     if (!empty($responseProductGroup)) {
                         update_post_meta($order->get_id(), 'aramex_product_group', $responseProductGroup);
+                        custom_plugin_log('Stored Product Group: ' . $responseProductGroup . ' for order ' . $order->get_id());
                     }
                 }
 
