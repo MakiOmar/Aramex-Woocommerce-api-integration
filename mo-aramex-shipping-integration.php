@@ -5,7 +5,7 @@
  * Description: Professional Aramex shipping integration for WooCommerce with advanced features
  * Author: Mohammad Omar
  * Author URI: mailto:maki3omar@gmail.com
- * Version: 1.0.44
+ * Version: 1.0.45
  * Text Domain: mo-aramex-shipping
  * Domain Path: /languages
  * Requires at least: 5.3
@@ -21,7 +21,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Define plugin constants
-define('MO_ARAMEX_VERSION', '1.0.44');
+define('MO_ARAMEX_VERSION', '1.0.45');
 define('MO_ARAMEX_PLUGIN_FILE', __FILE__);
 define('MO_ARAMEX_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('MO_ARAMEX_PLUGIN_URL', plugin_dir_url(__FILE__));
@@ -51,7 +51,7 @@ if (method_exists($GLOBALS['puc_plugin_update_checker'], 'addHttpRequestArgFilte
             $options['headers'] = array();
         }
         
-                       $options['headers']['User-Agent'] = 'MO-Aramex-Plugin/1.0.44';
+                       $options['headers']['User-Agent'] = 'MO-Aramex-Plugin/1.0.45';
         $options['headers']['Accept'] = 'application/vnd.github.v3+json';
         $options['headers']['X-MO-Aramex-Plugin'] = 'MO Aramex Shipping Integration';
         $options['headers']['X-Plugin-Version'] = MO_ARAMEX_VERSION;
