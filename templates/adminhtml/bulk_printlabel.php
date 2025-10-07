@@ -83,26 +83,29 @@ function aramex_display_bulk_printlabel_in_admin()
 
                         var responce = JSON.parse(request);
                         var pdfData = responce.file_path;
+                        var fileUrl = responce.file_url;
 
-                        if(pdfData !== ''){
-                    
-                            success_id = responce.success_id;
-                            failed_id = responce.failed_id;
+                        success_id = responce.success_id;
+                        failed_id = responce.failed_id;
 
-                            if(success_id.length !== 0 && failed_id.length !== 0){
-                                alert("Success Id's: "+responce.success_id + " Falied Id's: "+responce.failed_id);
-                            }else if(success_id.length !== 0 && failed_id.length == 0){
-                                alert("Success Id's: "+responce.success_id);
-                            }else if(success_id.length == 0 && failed_id.length !== 0){
-                                alert("Falied Id's: "+responce.failed_id);
-                            }
+                        if(success_id.length !== 0 && failed_id.length !== 0){
+                            alert("Success Id's: "+responce.success_id + " Failed Id's: "+responce.failed_id);
+                        }else if(success_id.length !== 0 && failed_id.length == 0){
+                            alert("Success Id's: "+responce.success_id);
+                        }else if(success_id.length == 0 && failed_id.length !== 0){
+                            alert("Failed Id's: "+responce.failed_id);
+                        }
 
-                            window.location.href = responce.file_url;
+                        if(pdfData !== '' && fileUrl !== ''){
+                            window.location.href = fileUrl;
                             
                             <!-- Repeate function call for delete generated pdf -->
                             aramexsend_print(pdfData);
                         }else{
-                            alert("Falied Id's: "+responce.failed_id);
+                            $('.aramex_loader').css("display","none");
+                            if(failed_id.length !== 0){
+                                console.log("Print label failed for orders: " + failed_id);
+                            }
                         }
                         
                     });
