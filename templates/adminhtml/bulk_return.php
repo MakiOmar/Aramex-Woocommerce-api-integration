@@ -43,15 +43,10 @@ function aramex_display_bulk_return_in_admin()
                     return;
                 }
 
-                // Get pickup details from user
-                var pickupLocation = prompt("<?php echo esc_html__('Enter pickup location (default: Home):', 'aramex'); ?>", "Home");
-                if (pickupLocation === null) return; // User cancelled
-                
-                var numberOfPieces = prompt("<?php echo esc_html__('Number of pieces (default: 1):', 'aramex'); ?>", "1");
-                if (numberOfPieces === null) return; // User cancelled
-                
-                var pickupComments = prompt("<?php echo esc_html__('Pickup comments (optional):', 'aramex'); ?>", "");
-                if (pickupComments === null) pickupComments = ""; // User cancelled but we continue
+                // Use smart defaults - no prompts needed
+                var pickupLocation = "Home"; // Default pickup location
+                var numberOfPieces = selected.length; // One piece per order
+                var pickupComments = "Return shipment for order(s): " + selected.join(', '); // Auto-generated comment
 
                 // Show loader
                 if ($('.aramex_return_loader').length === 0) {
