@@ -69,7 +69,7 @@ class MO_Aramex_Order_Meta_Box {
                 <p>
                     <strong><?php esc_html_e('AWB Number:', 'mo-aramex-shipping'); ?></strong><br>
                     <code style="font-size: 14px;"><?php echo esc_html($awb_no); ?></code>
-                    <a href="https://www.aramex.com/track/results?mode=0&shipNo=<?php echo esc_attr($awb_no); ?>" 
+                    <a href="https://www.aramex.com/ae/en/track/results?source=aramex&ShipmentNumber=<?php echo esc_attr($awb_no); ?>" 
                        target="_blank" 
                        class="button button-small" 
                        style="margin-left: 5px;">
