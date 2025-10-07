@@ -59,10 +59,18 @@ function aramex_display_bulk_printlabel_in_admin()
                 });
                 if (selected.length === 0) {
                     alert("<?php echo esc_html__('Please select orders', 'aramex'); ?>");
-                    $('.aramex_loader').css("display","none");
-                  
-
-                }else{
+                    return;
+                }
+                
+                // Show loading indicator only on first call (not when deleting temp PDF)
+                if (!pdfData) {
+                    if ($('.aramex_print_loader').length === 0) {
+                        $('body').append('<div class="aramex_print_loader" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 9999; display: flex; align-items: center; justify-content: center;"><div style="background: white; padding: 40px; border-radius: 8px; text-align: center; box-shadow: 0 4px 20px rgba(0,0,0,0.3);"><img src="<?php echo esc_url(MO_ARAMEX_PLUGIN_URL . 'assets/img/aramex_loader.gif'); ?>" alt="Loading..." style="width: 80px; height: 80px;" /><p style="margin-top: 20px; font-size: 18px; font-weight: bold; color: #333;">Printing labels...</p><p style="margin-top: 10px; font-size: 14px; color: #666;">Please wait while we generate your shipping labels</p></div></div>');
+                    }
+                    $('.aramex_print_loader').show();
+                }
+                
+                {
                     // var _wpnonce = "<?php echo esc_js(wp_create_nonce('aramex-shipment-nonce' . wp_get_current_user()->user_email)); ?>";
 
                     <!-- alert("Selected say(s) are: " + selected.join(", ")); -->
@@ -94,12 +102,13 @@ function aramex_display_bulk_printlabel_in_admin()
                         }
 
                         if(pdfData !== '' && fileUrl !== ''){
+                            // Loader will disappear when page redirects to PDF
                             window.location.href = fileUrl;
                             
                             <!-- Repeate function call for delete generated pdf -->
                             aramexsend_print(pdfData);
                         }else{
-                            $('.aramex_loader').css("display","none");
+                            $('.aramex_print_loader').hide();
                             if(failed_id.length !== 0){
                                 console.log("Print label failed for orders: " + failed_id);
                             }
