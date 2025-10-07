@@ -240,8 +240,7 @@ class Aramex_Bulk_Return_Method
         // Log the payload
         custom_plugin_log('Return pickup payload: ' . json_encode($payload, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
 
-        // Determine endpoint based on sandbox mode
-        $helper_info = MO_Aramex_Helper::getInfo();
+        // Determine endpoint based on sandbox mode (reuse $helper_info from earlier)
         $is_sandbox = isset($helper_info['sandbox_flag']) && $helper_info['sandbox_flag'] === 'yes';
         
         $endpoint = $is_sandbox 
