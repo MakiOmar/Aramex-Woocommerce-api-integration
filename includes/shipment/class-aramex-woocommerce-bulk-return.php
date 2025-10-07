@@ -140,7 +140,8 @@ class Aramex_Bulk_Return_Method
             'customer' => $order->get_shipping_first_name() . ' ' . $order->get_shipping_last_name(),
             'pickup_address' => $order->get_shipping_address_1() . ', ' . $order->get_shipping_city() . ', ' . $order->get_shipping_country(),
             'store_account' => $clientInfo['AccountNumber'] . ' (' . $clientInfo['AccountEntity'] . ')',
-            'sandbox_mode' => isset($helper_info['sandbox_flag']) && $helper_info['sandbox_flag'] === 'yes' ? 'YES' : 'NO',
+            'sandbox_mode' => isset($helper_info['sandbox_flag']) && (string)$helper_info['sandbox_flag'] === '1' ? 'YES' : 'NO',
+            'sandbox_flag_value' => $helper_info['sandbox_flag'] ?? 'NOT SET',
             'client_info' => $clientInfo
         ];
         
@@ -248,7 +249,8 @@ class Aramex_Bulk_Return_Method
         ];
 
         // Determine endpoint based on sandbox mode (reuse $helper_info from earlier)
-        $is_sandbox = isset($helper_info['sandbox_flag']) && $helper_info['sandbox_flag'] === 'yes';
+        // sandbox_flag is stored as '1' for yes, '0' for no
+        $is_sandbox = isset($helper_info['sandbox_flag']) && (string)$helper_info['sandbox_flag'] === '1';
         
         $endpoint = $is_sandbox 
             ? 'https://ws.sbx.aramex.net/ShippingAPI.V2/Shipping/Service_1_0.svc/json/CreatePickup'
