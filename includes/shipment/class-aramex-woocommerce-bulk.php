@@ -322,10 +322,12 @@ class Aramex_Bulk_Method extends MO_Aramex_Helper
                 }
 
                 //shipper parameters
+                // Get ClientInfo to ensure Shipper uses same account credentials (test or live)
+                $clientInfo = MO_Aramex_Helper::getRestClientInfo();
                 $params['Shipper'] = array(
                     'Reference1' => (string)$order->get_id(),
                     'Reference2' => '',
-                    'AccountNumber' => (string)$settings->settings['account_number'],
+                    'AccountNumber' => $clientInfo['AccountNumber'],
                     //Party Address
                     'PartyAddress' => array(
                         'Line1' => addslashes($settings->settings['address']),
