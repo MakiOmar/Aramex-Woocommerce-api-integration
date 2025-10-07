@@ -85,10 +85,16 @@ function aramex_display_bulk_printlabel_in_admin()
         		};
 
                 jQuery.post(ajaxurl, postData, function(request) {
-
+                    console.log("Print label raw response:", request);
+                    
                     var responce = JSON.parse(request);
+                    console.log("Print label parsed response:", responce);
+                    
                     var pdfData = responce.file_path;
                     var fileUrl = responce.file_url;
+                    
+                    console.log("PDF Data:", pdfData);
+                    console.log("File URL:", fileUrl);
 
                     success_id = responce.success_id;
                     failed_id = responce.failed_id;
@@ -115,6 +121,13 @@ function aramex_display_bulk_printlabel_in_admin()
                         }
                     }
                     
+                }).fail(function(xhr, status, error) {
+                    console.error("Print label AJAX failed:", error);
+                    console.error("Status:", status);
+                    console.error("Response:", xhr.responseText);
+                    $('.aramex_print_loader').hide();
+                    $('.aramex_loader').css("display","none");
+                    alert("Error processing print label request: " + error);
                 });
             }
         })(jQuery);
