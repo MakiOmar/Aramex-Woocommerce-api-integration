@@ -127,6 +127,9 @@ class Aramex_Bulk_Return_Method
 
         // Get client info and settings
         $clientInfo = MO_Aramex_Helper::getRestClientInfo();
+        // Add Source parameter for CreatePickup API (Source: 24 for pickup operations)
+        $clientInfo['Source'] = 24;
+        
         $nonce = isset($_POST['_wpnonce']) ? sanitize_text_field(wp_unslash($_POST['_wpnonce'])) : '';
         $helper_info = MO_Aramex_Helper::getInfo($nonce);
         
