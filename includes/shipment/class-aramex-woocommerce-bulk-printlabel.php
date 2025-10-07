@@ -178,6 +178,8 @@ class Aramex_Bulk_Printlabel_Method extends MO_Aramex_Helper
                                     array_push($failed_pdf_ID,$order_id);
                                     continue;
                                 }
+                                
+                                custom_plugin_log('Downloading label from: ' . $filepath . ' for order ' . $order_id);
 
                                 if (!file_exists($print_label_dirname)) {
                                     mkdir($print_label_dirname, 0777, true);
@@ -186,7 +188,35 @@ class Aramex_Bulk_Printlabel_Method extends MO_Aramex_Helper
                                 $time = time();
                                 $pdf_filename_by_order_id = $print_label_dirname . "/".$order_id . "_" .$time.".pdf";
                           
-                                file_put_contents($pdf_filename_by_order_id, fopen($filepath, 'r'));
+                                // Download PDF from Aramex URL using wp_remote_get
+                                $pdf_response = wp_remote_get($filepath, array(
+                                    'timeout' => 60,
+                                    'sslverify' => false
+                                ));
+                                
+                                if (is_wp_error($pdf_response)) {
+                                    custom_plugin_log('Failed to download PDF for order ' . $order_id . ': ' . $pdf_response->get_error_message());
+                                    array_push($failed_pdf_ID,$order_id);
+                                    continue;
+                                }
+                                
+                                $pdf_content = wp_remote_retrieve_body($pdf_response);
+                                
+                                if (empty($pdf_content)) {
+                                    custom_plugin_log('Empty PDF content for order ' . $order_id);
+                                    array_push($failed_pdf_ID,$order_id);
+                                    continue;
+                                }
+                                
+                                file_put_contents($pdf_filename_by_order_id, $pdf_content);
+                                
+                                if (!file_exists($pdf_filename_by_order_id)) {
+                                    custom_plugin_log('Failed to save PDF file for order ' . $order_id);
+                                    array_push($failed_pdf_ID,$order_id);
+                                    continue;
+                                }
+                                
+                                custom_plugin_log('Successfully saved PDF for order ' . $order_id . ' at ' . $pdf_filename_by_order_id);
                                 
                                 array_push($bulk_pdf, $pdf_filename_by_order_id);
                                 array_push($success_pdf_ID,$order_id);
@@ -210,22 +240,48 @@ class Aramex_Bulk_Printlabel_Method extends MO_Aramex_Helper
                 }
 
                 // create merger instance
-                $pdf = new \Jurosh\PDFMerge\PDFMerger;
-                foreach ($bulk_pdf as $item) {
-                    $pdf->addPDF($item, 'all', 'vertical');
-                }
-                
+                $merge_pdf = '';
                 $merge_pdf_path = '';
-                if(!empty($bulk_pdf)){
-                    $time = time();
-                    $pdf_name = $time.'.pdf';
-                    $pdf->merge('file', $print_label_dirname.'/'.$pdf_name);
-                    $merge_pdf = $print_label_uploads_url.'/'.$pdf_name;
-                    $merge_pdf_path = $print_label_dirname.'/'.$pdf_name;
-                }
                 
-                foreach ($bulk_pdf as $item) {
-                    unlink($item);
+                if(!empty($bulk_pdf)){
+                    try {
+                        custom_plugin_log('Starting PDF merge for ' . count($bulk_pdf) . ' PDFs');
+                        
+                        $pdf = new \Jurosh\PDFMerge\PDFMerger;
+                        foreach ($bulk_pdf as $item) {
+                            if (file_exists($item)) {
+                                custom_plugin_log('Adding PDF to merger: ' . $item);
+                                $pdf->addPDF($item, 'all', 'vertical');
+                            } else {
+                                custom_plugin_log('PDF file not found for merging: ' . $item);
+                            }
+                        }
+                        
+                        $time = time();
+                        $pdf_name = $time.'.pdf';
+                        $merge_pdf_path = $print_label_dirname.'/'.$pdf_name;
+                        $merge_pdf = $print_label_uploads_url.'/'.$pdf_name;
+                        
+                        custom_plugin_log('Merging PDFs to: ' . $merge_pdf_path);
+                        $pdf->merge('file', $merge_pdf_path);
+                        
+                        if (file_exists($merge_pdf_path)) {
+                            custom_plugin_log('Merged PDF created successfully: ' . $merge_pdf_path . ' (Size: ' . filesize($merge_pdf_path) . ' bytes)');
+                        } else {
+                            custom_plugin_log('Merged PDF file was not created: ' . $merge_pdf_path);
+                        }
+                        
+                    } catch (Exception $e) {
+                        custom_plugin_log('PDF merge error: ' . $e->getMessage());
+                        mo_aramex_log_api_error('PrintLabel (Bulk) - PDF Merge', $e->getMessage(), 0, ['pdf_count' => count($bulk_pdf)]);
+                    }
+                    
+                    // Clean up individual PDFs
+                    foreach ($bulk_pdf as $item) {
+                        if (file_exists($item)) {
+                            unlink($item);
+                        }
+                    }
                 }
 
                 $output = array(
