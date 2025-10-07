@@ -686,10 +686,21 @@ class Aramex_Bulk_Method extends MO_Aramex_Helper
             } else {
                 // Extract ProductGroup from API response if available
                 $responseProductGroup = $method; // Default to request method
-                if (isset($json->Shipments->ProcessedShipment->ShipmentDetails->ProductGroup)) {
-                    $responseProductGroup = $json->Shipments->ProcessedShipment->ShipmentDetails->ProductGroup;
-                } elseif (isset($json->Shipments[0]->ShipmentDetails->ProductGroup)) {
+                if (isset($json->Shipments[0]->ShipmentDetails->ProductGroup)) {
                     $responseProductGroup = $json->Shipments[0]->ShipmentDetails->ProductGroup;
+                } elseif (isset($json->Shipments->ProcessedShipment->ShipmentDetails->ProductGroup)) {
+                    $responseProductGroup = $json->Shipments->ProcessedShipment->ShipmentDetails->ProductGroup;
+                }
+                
+                // Extract shipment details from response (try array format first, then ProcessedShipment format)
+                $shipmentID = '';
+                $shipmentRef = '';
+                if (isset($json->Shipments[0]->ID)) {
+                    $shipmentID = $json->Shipments[0]->ID;
+                    $shipmentRef = $json->Shipments[0]->Reference1 ?? '';
+                } elseif (isset($json->Shipments->ProcessedShipment->ID)) {
+                    $shipmentID = $json->Shipments->ProcessedShipment->ID;
+                    $shipmentRef = $json->Shipments->ProcessedShipment->Reference1 ?? '';
                 }
                 
                 $commentdata = array(
@@ -697,7 +708,7 @@ class Aramex_Bulk_Method extends MO_Aramex_Helper
                     'comment_author' => '',
                     'comment_author_email' => '',
                     'comment_author_url' => '',
-                    'comment_content' => "AWB No. " . ($json->Shipments->ProcessedShipment->ID ?? '') . " - Order No. " . ($json->Shipments->ProcessedShipment->Reference1 ?? ''),
+                    'comment_content' => "AWB No. " . $shipmentID . " - Order No. " . $shipmentRef,
                     'comment_type' => 'order_note',
                     'user_id' => "0",
                 );
