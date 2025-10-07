@@ -133,13 +133,18 @@ class Aramex_Bulk_Return_Method
         $nonce = isset($_POST['_wpnonce']) ? sanitize_text_field(wp_unslash($_POST['_wpnonce'])) : '';
         $helper_info = MO_Aramex_Helper::getInfo($nonce);
         
-        custom_plugin_log("Return pickup for order {$order_id}:");
-        custom_plugin_log("- AWB: {$awb_number}, Product Group: {$product_group}");
-        custom_plugin_log("- Customer: " . $order->get_shipping_first_name() . ' ' . $order->get_shipping_last_name());
-        custom_plugin_log("- Pickup from: " . $order->get_shipping_address_1() . ', ' . $order->get_shipping_city() . ', ' . $order->get_shipping_country());
-        custom_plugin_log("- Store Account: " . $clientInfo['AccountNumber'] . ' (' . $clientInfo['AccountEntity'] . ')');
-        custom_plugin_log("- ClientInfo being sent: " . json_encode($clientInfo, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
-        custom_plugin_log("- Is Sandbox Mode: " . (isset($helper_info['sandbox_flag']) && $helper_info['sandbox_flag'] === 'yes' ? 'YES' : 'NO'));
+        $debug_info = [
+            'order_id' => $order_id,
+            'awb_number' => $awb_number,
+            'product_group' => $product_group,
+            'customer' => $order->get_shipping_first_name() . ' ' . $order->get_shipping_last_name(),
+            'pickup_address' => $order->get_shipping_address_1() . ', ' . $order->get_shipping_city() . ', ' . $order->get_shipping_country(),
+            'store_account' => $clientInfo['AccountNumber'] . ' (' . $clientInfo['AccountEntity'] . ')',
+            'sandbox_mode' => isset($helper_info['sandbox_flag']) && $helper_info['sandbox_flag'] === 'yes' ? 'YES' : 'NO',
+            'client_info' => $clientInfo
+        ];
+        
+        mo_aramex_log_api_call('CreatePickup (Return) - Debug', 0, json_encode($debug_info, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
         
         // Get pickup location and comments from POST
         $pickup_location = isset($_POST['pickup_location']) ? sanitize_text_field(wp_unslash($_POST['pickup_location'])) : 'Home';
@@ -242,9 +247,6 @@ class Aramex_Bulk_Return_Method
             'Transaction' => null
         ];
 
-        // Log the payload
-        custom_plugin_log('Return pickup payload: ' . json_encode($payload, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
-
         // Determine endpoint based on sandbox mode (reuse $helper_info from earlier)
         $is_sandbox = isset($helper_info['sandbox_flag']) && $helper_info['sandbox_flag'] === 'yes';
         
@@ -252,7 +254,11 @@ class Aramex_Bulk_Return_Method
             ? 'https://ws.sbx.aramex.net/ShippingAPI.V2/Shipping/Service_1_0.svc/json/CreatePickup'
             : 'https://ws.aramex.net/ShippingAPI.V2/Shipping/Service_1_0.svc/json/CreatePickup';
         
-        custom_plugin_log("Using endpoint: " . $endpoint);
+        // Log the full request
+        mo_aramex_log_api_call('CreatePickup (Return)', 0, json_encode($payload), [
+            'endpoint' => $endpoint,
+            'json_payload' => json_encode($payload, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)
+        ]);
 
         // Make API call
         $response = wp_remote_post($endpoint, [
