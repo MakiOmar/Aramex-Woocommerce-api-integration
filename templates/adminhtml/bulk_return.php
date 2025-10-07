@@ -12,16 +12,6 @@ function aramex_display_bulk_return_in_admin()
     }
     ?>
 
-    <div class="aramex_return_loader" style="display:none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 99999; justify-content: center; align-items: center;">
-        <div style="text-align: center; color: white;">
-            <img src="<?php echo esc_url(plugins_url('../../assets/img/aramex_loader.gif', __FILE__)); ?>" alt="Loading..." style="width: 100px; height: 100px; margin-bottom: 20px;">
-            <p style="font-size: 18px; font-weight: bold;"><?php echo esc_html__('Creating return pickup, please wait...', 'aramex'); ?></p>
-        </div>
-    </div>
-
-    </div>
-    </div>
-
     <script type="text/javascript">
         jQuery.noConflict();
         (function ($) {
