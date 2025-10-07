@@ -684,6 +684,14 @@ class Aramex_Bulk_Method extends MO_Aramex_Helper
                 }
                 return array($method, 'error');
             } else {
+                // Extract ProductGroup from API response if available
+                $responseProductGroup = $method; // Default to request method
+                if (isset($json->Shipments->ProcessedShipment->ShipmentDetails->ProductGroup)) {
+                    $responseProductGroup = $json->Shipments->ProcessedShipment->ShipmentDetails->ProductGroup;
+                } elseif (isset($json->Shipments[0]->ShipmentDetails->ProductGroup)) {
+                    $responseProductGroup = $json->Shipments[0]->ShipmentDetails->ProductGroup;
+                }
+                
                 $commentdata = array(
                     'comment_post_ID' => $order->get_id(),
                     'comment_author' => '',
@@ -750,7 +758,7 @@ class Aramex_Bulk_Method extends MO_Aramex_Helper
                         $this->aramex_errors()->add('error', $ex->getMessage());
                     }
                 }
-                return array($method, 'success');
+                return array($responseProductGroup, 'success');
             }
         } catch (Exception $e) {
             custom_plugin_log('Outer exception caught in postAction: ' . $e->getMessage());
