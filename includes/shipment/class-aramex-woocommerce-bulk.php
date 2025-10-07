@@ -485,7 +485,7 @@ class Aramex_Bulk_Method extends MO_Aramex_Helper
                     if ($hasCODS)
                     {         
                          $params['Details']['CashOnDeliveryAmount'] = array(
-                        'Value' => $order->get_total(),
+                        'Value' => (float)$order->get_total(),
                         'CurrencyCode' => $aramex_shipment_currency_code
                         );
                     }
@@ -500,10 +500,13 @@ class Aramex_Bulk_Method extends MO_Aramex_Helper
                     $params['Details']['CashOnDeliveryAmount'] = null ;       
                 }
                
-                $params['Details']['CustomsValueAmount'] = array(
-                    'Value' => $aramex_shipment_info_custom_amount,
-                    'CurrencyCode' => $aramex_shipment_currency_code
-                );
+                // Only include CustomsValueAmount if a valid amount is provided
+                if (!empty($aramex_shipment_info_custom_amount) && is_numeric($aramex_shipment_info_custom_amount)) {
+                    $params['Details']['CustomsValueAmount'] = array(
+                        'Value' => (float)$aramex_shipment_info_custom_amount,
+                        'CurrencyCode' => $aramex_shipment_currency_code
+                    );
+                }
 
                 // Only include AdditionalProperties if we have at least one valid entry
                 if (!empty($AdditionalPropertyDetails)) {
@@ -520,11 +523,11 @@ class Aramex_Bulk_Method extends MO_Aramex_Helper
                 $info = MO_Aramex_Helper::getInfo(wp_create_nonce('aramex-shipment-check' . wp_get_current_user()->user_email));
                 $major_par['ClientInfo'] = $info['clientInfo'];
                 $report_id = trim($settings->settings['report_id']);
-                if ($report_id == "") {
+                if ($report_id == "" || !is_numeric($report_id)) {
                     $report_id = 9729;
                 }
                 $major_par['LabelInfo'] = array(
-                    'ReportID' => $report_id,
+                    'ReportID' => (int)$report_id,
                     'ReportType' => 'URL'
                 );
                 $replay = $this->postAction($major_par, $order, $orderItem['method'], $mail);
