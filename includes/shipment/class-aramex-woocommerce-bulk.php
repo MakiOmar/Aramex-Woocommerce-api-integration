@@ -276,7 +276,8 @@ class Aramex_Bulk_Method extends MO_Aramex_Helper
                     $aramex_shipment_info_payment_option = "";
                     $aramex_shipment_info_service_type = ($params1['aramex_shipment_info_service_type_dom']) ? $params1['aramex_shipment_info_service_type_dom'] : "";
                     $aramex_shipment_currency_code = ($params1['aramex_shipment_currency_code_dom']) ? $params1['aramex_shipment_currency_code_dom'] : "";
-                    $aramex_shipment_info_custom_amount = "";
+                    // For domestic, try to get custom amount from international field if set
+                    $aramex_shipment_info_custom_amount = ($params1['aramex_shipment_info_custom_amount']) ? $params1['aramex_shipment_info_custom_amount'] : "";
                 } else {
                     $aramex_shipment_info_product_type = ($params1['aramex_shipment_info_product_type']) ? $params1['aramex_shipment_info_product_type'] : "";
                     $aramex_shipment_info_payment_type = ($params1['aramex_shipment_info_payment_type']) ? $params1['aramex_shipment_info_payment_type'] : "";
