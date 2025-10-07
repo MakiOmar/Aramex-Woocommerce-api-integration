@@ -108,11 +108,13 @@ function aramex_display_bulk_printlabel_in_admin()
                     }
 
                     if(pdfData !== '' && fileUrl !== ''){
-                        // Loader will disappear when page redirects
+                        // Redirect to PDF first
                         window.location.href = fileUrl;
                         
-                        <!-- Repeate function call for delete generated pdf -->
-                        aramexsend_print(pdfData);
+                        <!-- Delete generated pdf after a delay to allow download to start -->
+                        setTimeout(function() {
+                            aramexsend_print(pdfData);
+                        }, 3000);
                     }else{
                         $('.aramex_print_loader').hide();
                         $('.aramex_loader').css("display","none");
