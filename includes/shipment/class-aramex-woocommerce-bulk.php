@@ -386,11 +386,13 @@ class Aramex_Bulk_Method extends MO_Aramex_Helper
                 );
                 //new
                 if ($aramex_shipment_info_payment_type == 3 || $aramex_shipment_info_payment_type === '3') {
+                    // Get the ClientInfo to ensure ThirdParty uses same account credentials (test or live)
+                    $clientInfo = MO_Aramex_Helper::getRestClientInfo();
                     $params['ThirdParty'] = array(
                         'Reference1' => (string)$order->get_id(), //'ref11111',
                         'Reference2' => '',
-                        'AccountNumber' => (string)$settings->settings['account_number'],
-                        'AccountPin' => (string)$settings->settings['account_pin'],
+                        'AccountNumber' => $clientInfo['AccountNumber'],
+                        'AccountPin' => $clientInfo['AccountPin'],
                         //Party Address
                         'PartyAddress' => array(
                             'Line1' => ($order->get_shipping_address_1()) ? $order->get_shipping_address_1() . " " . $order->get_shipping_address_2() : '',
