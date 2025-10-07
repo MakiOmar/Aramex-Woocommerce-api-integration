@@ -45,7 +45,7 @@ function aramex_display_bulk_return_in_admin()
 
                 // Use smart defaults - no prompts needed
                 var pickupLocation = "Home"; // Default pickup location
-                var numberOfPieces = selected.length; // One piece per order
+                var numberOfPieces = 1; // One piece per order
                 var pickupComments = "Return shipment for order(s): " + selected.join(', '); // Auto-generated comment
 
                 // Show loader
