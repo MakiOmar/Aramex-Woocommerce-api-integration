@@ -96,61 +96,88 @@ class Aramex_Bulk_Printlabel_Method extends MO_Aramex_Helper
                         }
                         
                         if (!empty($last_track)) {
-                            //SOAP object
-                            $soapClient = new SoapClient($info['baseUrl'] . 'shipping.wsdl', array('soap_version' => SOAP_1_1));
+                            // Use REST/JSON API instead of SOAP
+                            $rest_base = MO_Aramex_Helper::getRestJsonBaseUrl();
+                            $endpoint = rtrim($rest_base, '/') . '/PrintLabel';
                             
                             $report_id = $info['clientInfo']['report_id'];
-                            if (!$report_id) {
+                            if (!$report_id || !is_numeric($report_id)) {
                                 $report_id = 9729;
                             }
                             
                             try {
-                                $params = array(
-                                    'ClientInfo' => $info['clientInfo'],
+                                // Prepare REST payload
+                                $rest_payload = array(
+                                    'ClientInfo' => MO_Aramex_Helper::getRestClientInfo(),
                                     'Transaction' => array(
-                                        'Reference1' => $order_id,
+                                        'Reference1' => (string)$order_id,
                                         'Reference2' => '',
                                         'Reference3' => '',
                                         'Reference4' => '',
                                         'Reference5' => '',
                                     ),
                                     'LabelInfo' => array(
-                                        'ReportID' => $report_id,
+                                        'ReportID' => (int)$report_id,
                                         'ReportType' => 'URL',
                                     ),
+                                    'ShipmentNumber' => (string)$last_track,
                                 );
-                                $params['ShipmentNumber'] = $last_track;
                                 
                                 // Log API call
                                 $start_time = microtime(true);
                                 mo_aramex_log_api_call(
                                     'PrintLabel (Bulk)',
-                                    $params,
-                                    'SOAP',
-                                    array('WSDL' => $info['baseUrl'] . 'shipping.wsdl', 'order_id' => $order_id)
+                                    $rest_payload,
+                                    'REST',
+                                    array('endpoint' => $endpoint, 'order_id' => $order_id, 'awb' => $last_track)
                                 );
                                 
-                                $auth_call = $soapClient->PrintLabel($params);
+                                // Make REST API call
+                                $response = wp_remote_post($endpoint, array(
+                                    'method' => 'POST',
+                                    'timeout' => 60,
+                                    'headers' => array(
+                                        'Content-Type' => 'application/json',
+                                        'Accept' => 'application/json',
+                                    ),
+                                    'body' => wp_json_encode($rest_payload),
+                                ));
+                                
                                 $execution_time = microtime(true) - $start_time;
+                                
+                                if (is_wp_error($response)) {
+                                    throw new Exception($response->get_error_message());
+                                }
+                                
+                                $status = wp_remote_retrieve_response_code($response);
+                                $body = wp_remote_retrieve_body($response);
+                                $auth_call = json_decode($body);
                                 
                                 // Log API response
                                 mo_aramex_log_api_response(
                                     'PrintLabel (Bulk)',
                                     $auth_call,
-                                    200,
+                                    $status,
                                     array(),
                                     $execution_time
                                 );
                                       
                                 /* bof  PDF demaged Fixes debug */
 
-                                if ($auth_call->HasErrors) {
+                                if (isset($auth_call->HasErrors) && $auth_call->HasErrors) {
+                                    custom_plugin_log('PrintLabel has errors for order ' . $order_id);
                                     array_push($failed_pdf_ID,$order_id);
                                     continue;
                                 }
                                 /* eof  PDF demaged Fixes */
                                 
-                                $filepath = $auth_call->ShipmentLabel->LabelURL;
+                                $filepath = $auth_call->ShipmentLabel->LabelURL ?? '';
+                                
+                                if (empty($filepath)) {
+                                    custom_plugin_log('No label URL in PrintLabel response for order ' . $order_id);
+                                    array_push($failed_pdf_ID,$order_id);
+                                    continue;
+                                }
 
                                 if (!file_exists($print_label_dirname)) {
                                     mkdir($print_label_dirname, 0777, true);
