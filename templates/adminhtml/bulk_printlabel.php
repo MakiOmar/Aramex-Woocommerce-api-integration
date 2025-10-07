@@ -70,21 +70,20 @@ function aramex_display_bulk_printlabel_in_admin()
                     $('.aramex_print_loader').show();
                 }
                 
-                {
-                    // var _wpnonce = "<?php echo esc_js(wp_create_nonce('aramex-shipment-nonce' . wp_get_current_user()->user_email)); ?>";
+                // var _wpnonce = "<?php echo esc_js(wp_create_nonce('aramex-shipment-nonce' . wp_get_current_user()->user_email)); ?>";
 
-                    <!-- alert("Selected say(s) are: " + selected.join(", ")); -->
-                    var order_ids = selected.join(", ");
+                <!-- alert("Selected say(s) are: " + selected.join(", ")); -->
+                var order_ids = selected.join(", ");
 
-                    var postData = {
-            			action: 'the_aramex_bulk_printlabel',
-            			bulk: "bulk_printlabel",
-                        pdfData: pdfData,
-                        selected_orders : order_ids,
-                        _wpnonce :  "<?php echo esc_attr(wp_create_nonce('aramex-shipment-check' . wp_get_current_user()->user_email)); ?>"
-            		};
+                var postData = {
+        			action: 'the_aramex_bulk_printlabel',
+        			bulk: "bulk_printlabel",
+                    pdfData: pdfData,
+                    selected_orders : order_ids,
+                    _wpnonce :  "<?php echo esc_attr(wp_create_nonce('aramex-shipment-check' . wp_get_current_user()->user_email)); ?>"
+        		};
 
-                    jQuery.post(ajaxurl, postData, function(request) {
+                jQuery.post(ajaxurl, postData, function(request) {
 
                         var responce = JSON.parse(request);
                         var pdfData = responce.file_path;
@@ -114,10 +113,7 @@ function aramex_display_bulk_printlabel_in_admin()
                             }
                         }
                         
-                    });
-               
-            		  
-                }  
+                });
             }
         })(jQuery);
     </script>
