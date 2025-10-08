@@ -35,6 +35,13 @@
             // Disable button and show loading state
             $saveBtn.prop('disabled', true).text(moAramexAwb.i18n.saving);
             
+            // Debug logging
+            console.log('AWB Manager: Saving AWB', {
+                order_id: orderId,
+                awb_number: awbNumber,
+                ajax_url: moAramexAwb.ajax_url
+            });
+            
             // Send AJAX request
             $.ajax({
                 url: moAramexAwb.ajax_url,
@@ -46,6 +53,8 @@
                     awb_number: awbNumber
                 },
                 success: function(response) {
+                    console.log('AWB Manager: Save response', response);
+                    
                     if (response.success) {
                         showMessage($message, response.data.message, 'success');
                         
@@ -69,7 +78,12 @@
                         showMessage($message, response.data.message || moAramexAwb.i18n.error, 'error');
                     }
                 },
-                error: function() {
+                error: function(xhr, status, error) {
+                    console.error('AWB Manager: AJAX error', {
+                        status: status,
+                        error: error,
+                        response: xhr.responseText
+                    });
                     showMessage($message, moAramexAwb.i18n.error, 'error');
                 },
                 complete: function() {

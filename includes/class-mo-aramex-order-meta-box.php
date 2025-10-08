@@ -53,14 +53,16 @@ class MO_Aramex_Order_Meta_Box {
         // Get order ID (works for both legacy and HPOS)
         if (is_a($post_or_order, 'WP_Post')) {
             $order_id = $post_or_order->ID;
+            $order = wc_get_order($order_id);
         } else {
-            $order_id = $post_or_order->get_id();
+            $order = $post_or_order;
+            $order_id = $order->get_id();
         }
         
-        // Get Aramex shipment data
-        $awb_no = get_post_meta($order_id, 'aramex_awb_no', true);
-        $label_url = get_post_meta($order_id, 'aramex_label_url', true);
-        $product_group = get_post_meta($order_id, 'aramex_product_group', true);
+        // Get Aramex shipment data using WooCommerce methods
+        $awb_no = $order->get_meta('aramex_awb_no', true);
+        $label_url = $order->get_meta('aramex_label_url', true);
+        $product_group = $order->get_meta('aramex_product_group', true);
         
         // Display the information
         ?>

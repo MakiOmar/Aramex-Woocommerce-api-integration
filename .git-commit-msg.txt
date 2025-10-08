@@ -1,0 +1,28 @@
+Version 1.0.63: Add Manual AWB Management Feature
+
+NEW FEATURE: Manual AWB (Air Waybill) Management Interface
+
+Added complete admin interface for manually managing AWB numbers:
+- Manual AWB entry, update, and deletion from order edit page
+- Real-time AJAX validation (numeric only)
+- Automatic order notes for all AWB changes
+- Comprehensive activity logging for auditing
+- Full security: nonce verification and permission checks
+- HPOS compatible (traditional and High-Performance Order Storage)
+- User-friendly UI with success/error messages and auto-reload
+
+Files Added:
+- includes/class-mo-aramex-awb-manager.php (AWB management backend)
+- assets/js/awb-manager.js (AJAX frontend)
+- Complete documentation (6 markdown files)
+
+Files Modified:
+- mo-aramex-shipping-integration.php (version bump to 1.0.63)
+- includes/class-mo-aramex-order-meta-box.php (AWB editor UI)
+- update-info.json (version and changelog)
+
+Version: 1.0.63
+Release Date: 2025-10-08
+Backward Compatible: Yes
+Breaking Changes: None
+

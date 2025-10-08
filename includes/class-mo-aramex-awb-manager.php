@@ -160,9 +160,10 @@ class MO_Aramex_AWB_Manager {
             wp_send_json_error(array('message' => __('Order not found.', 'mo-aramex-shipping')));
         }
         
-        // Save AWB number
-        $old_awb = get_post_meta($order_id, 'aramex_awb_no', true);
-        update_post_meta($order_id, 'aramex_awb_no', $awb_number);
+        // Save AWB number using WooCommerce methods
+        $old_awb = $order->get_meta('aramex_awb_no', true);
+        $order->update_meta_data('aramex_awb_no', $awb_number);
+        $order->save();
         
         // Add order note
         $note = '';
@@ -219,10 +220,11 @@ class MO_Aramex_AWB_Manager {
         }
         
         // Get old AWB for logging
-        $old_awb = get_post_meta($order_id, 'aramex_awb_no', true);
+        $old_awb = $order->get_meta('aramex_awb_no', true);
         
-        // Delete AWB number
-        delete_post_meta($order_id, 'aramex_awb_no');
+        // Delete AWB number using WooCommerce methods
+        $order->delete_meta_data('aramex_awb_no');
+        $order->save();
         
         // Add order note
         $note = sprintf(__('AWB number removed: %s', 'mo-aramex-shipping'), $old_awb);

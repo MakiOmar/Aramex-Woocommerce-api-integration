@@ -1,0 +1,28 @@
+Version 1.0.64: Fix AWB not saving for non-HPOS orders
+
+CRITICAL FIX: AWB Manager now works correctly with traditional WooCommerce orders
+
+Changed from direct WordPress meta functions to WooCommerce order methods:
+- get_post_meta() → order->get_meta()
+- update_post_meta() → order->update_meta_data() + order->save()
+- delete_post_meta() → order->delete_meta_data() + order->save()
+
+Additional improvements:
+- Added console logging for debugging AWB operations
+- Better error visibility in browser console
+- Logs request/response data for troubleshooting
+
+This fix ensures AWB numbers work correctly with:
+- Traditional post-based WooCommerce orders (fixed)
+- HPOS (High-Performance Order Storage) orders (already working)
+
+Follows WooCommerce 3.0+ best practices for meta data handling.
+
+Files Changed:
+- mo-aramex-shipping-integration.php (version bump to 1.0.64)
+- update-info.json (version and changelog)
+- includes/class-mo-aramex-awb-manager.php (use WooCommerce methods)
+- includes/class-mo-aramex-order-meta-box.php (use WooCommerce methods)
+- assets/js/awb-manager.js (added debug logging)
+- BUGFIX_AWB_NON_HPOS.md (documentation)
+
