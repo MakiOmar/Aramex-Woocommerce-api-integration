@@ -294,22 +294,18 @@ class Aramex_Bulk_Return_Method
         $http_code = wp_remote_retrieve_response_code($response);
         $body = wp_remote_retrieve_body($response);
         
-        // Log full response details
-        custom_plugin_log('=== RETURN PICKUP API RESPONSE ===');
-        custom_plugin_log('HTTP Code: ' . $http_code);
-        custom_plugin_log('Response Body Length: ' . strlen($body));
-        custom_plugin_log('Response Body: ' . $body);
-        
-        // Pretty print if valid JSON
-        $json_check = json_decode($body);
-        if ($json_check) {
-            custom_plugin_log('Formatted Response: ' . json_encode($json_check, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
-        }
+        // Log full response details to API logs
+        mo_aramex_log_api_call('CreatePickup (Return) - Response Details', 0, '', [
+            'http_code' => $http_code,
+            'body_length' => strlen($body),
+            'raw_body' => $body,
+            'formatted_response' => json_encode(json_decode($body), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)
+        ]);
         
         mo_aramex_log_api_response('CreatePickup (Return)', $http_code, 0, $body);
 
         if ($http_code !== 200) {
-            custom_plugin_log('ERROR: Non-200 HTTP code received: ' . $http_code);
+            mo_aramex_log_api_call('CreatePickup (Return) - ERROR', 0, 'Non-200 HTTP code: ' . $http_code);
             return ['success' => false, 'error' => "HTTP {$http_code}: " . $body];
         }
 
@@ -320,24 +316,29 @@ class Aramex_Bulk_Return_Method
         }
 
         // Check for errors in response
-        custom_plugin_log('Checking for errors in response...');
-        custom_plugin_log('HasErrors: ' . (isset($json->HasErrors) ? ($json->HasErrors ? 'true' : 'false') : 'not set'));
+        $has_errors = isset($json->HasErrors) ? ($json->HasErrors ? 'true' : 'false') : 'not set';
+        mo_aramex_log_api_call('CreatePickup (Return) - Error Check', 0, '', [
+            'has_errors' => $has_errors
+        ]);
         
         if (isset($json->HasErrors) && $json->HasErrors) {
-            custom_plugin_log('API returned HasErrors = true');
             $error_msg = 'API returned errors';
+            $error_notifications = [];
             if (isset($json->Notifications) && is_array($json->Notifications)) {
                 $errors = [];
                 foreach ($json->Notifications as $notification) {
                     if (isset($notification->Message)) {
                         $errors[] = $notification->Message;
-                        custom_plugin_log('Error notification: ' . $notification->Message);
+                        $error_notifications[] = $notification->Message;
                     }
                 }
                 if (!empty($errors)) {
                     $error_msg = implode(', ', $errors);
                 }
             }
+            mo_aramex_log_api_call('CreatePickup (Return) - API Errors', 0, $error_msg, [
+                'notifications' => $error_notifications
+            ]);
             return ['success' => false, 'error' => $error_msg];
         }
 
@@ -345,11 +346,13 @@ class Aramex_Bulk_Return_Method
         $pickup_guid = isset($json->GUID) ? $json->GUID : '';
         $pickup_id = isset($json->ID) ? $json->ID : '';
         
-        custom_plugin_log('Extracted GUID: ' . ($pickup_guid ?: 'empty'));
-        custom_plugin_log('Extracted ID: ' . ($pickup_id ?: 'empty'));
+        mo_aramex_log_api_call('CreatePickup (Return) - Extracted Data', 0, '', [
+            'guid' => $pickup_guid ?: 'empty',
+            'id' => $pickup_id ?: 'empty'
+        ]);
         
         if (empty($pickup_guid) && empty($pickup_id)) {
-            custom_plugin_log('ERROR: No pickup GUID or ID found in response');
+            mo_aramex_log_api_call('CreatePickup (Return) - Missing Data', 0, 'ERROR: No pickup GUID or ID found in response');
             return ['success' => false, 'error' => 'No pickup GUID or ID returned'];
         }
 

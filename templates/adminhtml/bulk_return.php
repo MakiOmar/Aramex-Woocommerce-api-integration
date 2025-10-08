@@ -38,9 +38,20 @@ function aramex_display_bulk_return_in_admin()
                 var numberOfPieces = 1; // One piece per order
                 var pickupComments = "Return shipment for order(s): " + selected.join(', '); // Auto-generated comment
 
-                // Show loader
+                // Show loader with CSS spinner
                 if ($('.aramex_return_loader').length === 0) {
-                    $('body').append('<div class="aramex_return_loader" style="display:none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 99999; justify-content: center; align-items: center;"><div style="text-align: center; color: white;"><img src="<?php echo esc_url(plugins_url('../../assets/img/aramex_loader.gif', __FILE__)); ?>" alt="Loading..." style="width: 100px; height: 100px; margin-bottom: 20px;"><p style="font-size: 18px; font-weight: bold;"><?php echo esc_html__('Creating return pickup, please wait...', 'aramex'); ?></p></div></div>');
+                    var loaderHTML = '<div class="aramex_return_loader" style="display:none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 99999; justify-content: center; align-items: center;">' +
+                        '<div style="text-align: center; color: white;">' +
+                        '<div class="aramex-spinner" style="margin: 0 auto 20px; width: 60px; height: 60px; border: 6px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: aramex-spin 1s linear infinite;"></div>' +
+                        '<p style="font-size: 18px; font-weight: bold; margin: 0;"><?php echo esc_html__('Creating return pickup...', 'aramex'); ?></p>' +
+                        '<p style="font-size: 14px; margin: 10px 0 0 0; opacity: 0.8;"><?php echo esc_html__('Please wait', 'aramex'); ?></p>' +
+                        '</div></div>';
+                    $('body').append(loaderHTML);
+                    
+                    // Add spinner animation if not exists
+                    if (!$('#aramex-spinner-style').length) {
+                        $('head').append('<style id="aramex-spinner-style">@keyframes aramex-spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }</style>');
+                    }
                 }
                 $('.aramex_return_loader').css('display', 'flex');
 
