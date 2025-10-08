@@ -31,26 +31,45 @@ class MO_Aramex_AWB_Manager {
      * Enqueue admin scripts
      */
     public function enqueue_scripts($hook) {
-        // Only load on order edit pages
-        if (!in_array($hook, array('post.php', 'woocommerce_page_wc-orders'))) {
+        // Debug: Log what page we're on
+        error_log('AWB Manager enqueue_scripts called. Hook: ' . $hook);
+        
+        // Load on all admin pages for now to ensure it works
+        // We'll check for order page in a more reliable way
+        global $post, $pagenow;
+        
+        // Check multiple conditions
+        $should_load = false;
+        
+        // Check 1: Traditional order edit page
+        if ($pagenow === 'post.php' && isset($_GET['action']) && $_GET['action'] === 'edit') {
+            if (isset($post) && $post->post_type === 'shop_order') {
+                $should_load = true;
+                error_log('AWB Manager: Loading on traditional order edit page');
+            }
+        }
+        
+        // Check 2: HPOS order page
+        if ($hook === 'woocommerce_page_wc-orders' || $pagenow === 'admin.php' && isset($_GET['page']) && $_GET['page'] === 'wc-orders') {
+            $should_load = true;
+            error_log('AWB Manager: Loading on HPOS order page');
+        }
+        
+        // Check 3: Fallback - if meta box is registered, load the script
+        if (!$should_load && in_array($hook, array('post.php', 'woocommerce_page_wc-orders'))) {
+            global $post_type;
+            if (isset($post_type) && $post_type === 'shop_order') {
+                $should_load = true;
+                error_log('AWB Manager: Loading via post_type check');
+            }
+        }
+        
+        if (!$should_load) {
+            error_log('AWB Manager: Script NOT loaded. Hook: ' . $hook . ', Pagenow: ' . $pagenow);
             return;
         }
         
-        // Check if we're editing a shop order (for traditional orders)
-        global $post;
-        $is_shop_order = false;
-        
-        if ($hook === 'woocommerce_page_wc-orders') {
-            // HPOS orders page
-            $is_shop_order = true;
-        } elseif (isset($post) && $post->post_type === 'shop_order') {
-            // Traditional post-based orders
-            $is_shop_order = true;
-        }
-        
-        if (!$is_shop_order) {
-            return;
-        }
+        error_log('AWB Manager: Enqueuing script now!');
         
         wp_enqueue_script(
             'mo-aramex-awb-manager',
