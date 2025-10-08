@@ -99,7 +99,7 @@ class Aramex_Bulk_Return_Method
         }
 
         // TEMPORARY: Hardcoded AWB for testing - REMOVE LATER
-        $awb_number = '37285586273';
+        $awb_number = '35608940710';
         
         // Get AWB number from order meta (commented out for testing)
         // $awb_number = $order->get_meta('aramex_awb_no', true);
@@ -218,13 +218,16 @@ class Aramex_Bulk_Return_Method
                 'Reference2' => null,
                 'Vehicle' => null,
                 'Shipments' => null,
+                'Consignee' => [
+                    'AccountNumber' => $clientInfo['AccountNumber'] // Add store's account number in consignee
+                ],
                 'PickupItems' => [
                     [
                         'ProductGroup' => $product_group,
-                        'ProductType' => $product_group === 'DOM' ? 'RTC' : 'EPX',
+                        'ProductType' => 'RTC', // Always use RTC for return pickups
                         'NumberOfShipments' => 1,
                         'PackageType' => null,
-                        'Payment' => 'C',
+                        'Payment' => 'C', // PaymentType set as "C"
                         'ShipmentWeight' => null,
                         'ShipmentVolume' => null,
                         'NumberOfPieces' => $number_of_pieces,
