@@ -5,7 +5,7 @@
  * Description: Professional Aramex shipping integration for WooCommerce with advanced features
  * Author: Mohammad Omar
  * Author URI: mailto:maki3omar@gmail.com
- * Version: 1.0.62
+ * Version: 1.0.63
  * Text Domain: mo-aramex-shipping
  * Domain Path: /languages
  * Requires at least: 5.3
@@ -21,7 +21,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Define plugin constants
-define('MO_ARAMEX_VERSION', '1.0.62');
+define('MO_ARAMEX_VERSION', '1.0.63');
 define('MO_ARAMEX_PLUGIN_FILE', __FILE__);
 define('MO_ARAMEX_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('MO_ARAMEX_PLUGIN_URL', plugin_dir_url(__FILE__));
@@ -86,6 +86,9 @@ require_once MO_ARAMEX_PLUGIN_DIR . 'includes/class-mo-aramex-log-viewer.php';
 
 // Load order meta box for displaying shipment information
 require_once MO_ARAMEX_PLUGIN_DIR . 'includes/class-mo-aramex-order-meta-box.php';
+
+// Load AWB manager for manual AWB management
+require_once MO_ARAMEX_PLUGIN_DIR . 'includes/class-mo-aramex-awb-manager.php';
 
 // Optional: If you're using a private repository, specify the access token.
 // $updateChecker->setAuthentication('your-github-token');

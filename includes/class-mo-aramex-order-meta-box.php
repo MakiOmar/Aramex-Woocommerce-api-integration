@@ -105,6 +105,14 @@ class MO_Aramex_Order_Meta_Box {
                     <?php esc_html_e('No Aramex shipment created yet.', 'mo-aramex-shipping'); ?>
                 </p>
             <?php endif; ?>
+            
+            <?php
+            // Display AWB editor for manual AWB management
+            if (class_exists('MO_Aramex_AWB_Manager')) {
+                echo '<hr style="margin: 15px 0; border: none; border-top: 1px solid #ddd;">';
+                MO_Aramex_AWB_Manager::render_awb_editor($order_id, $awb_no);
+            }
+            ?>
         </div>
         <?php
     }
