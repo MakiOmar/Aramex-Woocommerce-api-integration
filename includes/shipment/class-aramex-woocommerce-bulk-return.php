@@ -224,7 +224,7 @@ class Aramex_Bulk_Return_Method
                         'ProductType' => 'RTC', // Always use RTC for return pickups
                         'NumberOfShipments' => 1,
                         'PackageType' => null,
-                        'Payment' => 'C', // PaymentType set as "C"
+                        'PaymentType' => 'C', // PaymentType set as "C"
                         'ShipmentWeight' => null,
                         'ShipmentVolume' => null,
                         'NumberOfPieces' => $number_of_pieces,
