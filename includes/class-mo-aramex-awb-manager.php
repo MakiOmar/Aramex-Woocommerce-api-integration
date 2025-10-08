@@ -36,13 +36,20 @@ class MO_Aramex_AWB_Manager {
             return;
         }
         
-        // Check if we're editing a shop order
+        // Check if we're editing a shop order (for traditional orders)
         global $post;
-        if (isset($post) && $post->post_type !== 'shop_order') {
-            // For HPOS, check if we're on the orders page
-            if ($hook !== 'woocommerce_page_wc-orders') {
-                return;
-            }
+        $is_shop_order = false;
+        
+        if ($hook === 'woocommerce_page_wc-orders') {
+            // HPOS orders page
+            $is_shop_order = true;
+        } elseif (isset($post) && $post->post_type === 'shop_order') {
+            // Traditional post-based orders
+            $is_shop_order = true;
+        }
+        
+        if (!$is_shop_order) {
+            return;
         }
         
         wp_enqueue_script(

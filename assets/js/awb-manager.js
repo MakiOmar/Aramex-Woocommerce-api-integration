@@ -6,11 +6,13 @@
     'use strict';
 
     $(document).ready(function() {
+        console.log('AWB Manager: JavaScript loaded and ready');
         
         /**
          * Handle AWB form submission
          */
         $(document).on('submit', '.mo-aramex-awb-form', function(e) {
+            console.log('AWB Manager: Form submit event triggered');
             e.preventDefault();
             
             var $form = $(this);
