@@ -98,29 +98,26 @@ class Aramex_Bulk_Return_Method
             return ['success' => false, 'error' => 'Order not found'];
         }
 
-        // TEMPORARY: Hardcoded AWB for testing - REMOVE LATER
-        $awb_number = '35608940710';
+        // Get AWB number from order meta
+        $awb_number = $order->get_meta('aramex_awb_no', true);
         
-        // Get AWB number from order meta (commented out for testing)
-        // $awb_number = $order->get_meta('aramex_awb_no', true);
-        // 
-        // if (empty($awb_number)) {
-        //     // Fallback: try to get from order comments
-        //     $comments = $order->get_customer_order_notes();
-        //     foreach ($comments as $comment) {
-        //         if (strpos($comment->comment_content, 'Aramex Shipment Number:') !== false) {
-        //             preg_match('/Aramex Shipment Number:\s*(\d+)/', $comment->comment_content, $matches);
-        //             if (isset($matches[1])) {
-        //                 $awb_number = $matches[1];
-        //                 break;
-        //             }
-        //         }
-        //     }
-        // }
-        // 
-        // if (empty($awb_number)) {
-        //     return ['success' => false, 'error' => 'No AWB number found for this order'];
-        // }
+        if (empty($awb_number)) {
+            // Fallback: try to get from order comments
+            $comments = $order->get_customer_order_notes();
+            foreach ($comments as $comment) {
+                if (strpos($comment->comment_content, 'Aramex Shipment Number:') !== false) {
+                    preg_match('/Aramex Shipment Number:\s*(\d+)/', $comment->comment_content, $matches);
+                    if (isset($matches[1])) {
+                        $awb_number = $matches[1];
+                        break;
+                    }
+                }
+            }
+        }
+        
+        if (empty($awb_number)) {
+            return ['success' => false, 'error' => 'No AWB number found for this order'];
+        }
 
         // Get product group from order meta
         $product_group = $order->get_meta('aramex_product_group', true);
