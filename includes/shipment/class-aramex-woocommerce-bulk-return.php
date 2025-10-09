@@ -92,13 +92,18 @@ class Aramex_Bulk_Return_Method
      */
     private function createReturnPickup($order_id)
     {
+        // Clear order cache to ensure we get fresh data (especially for updated AWB numbers)
+        wp_cache_delete($order_id, 'post_meta');
+        wp_cache_delete('order-' . $order_id, 'orders');
+        clean_post_cache($order_id);
+        
         $order = wc_get_order($order_id);
         
         if (!$order) {
             return ['success' => false, 'error' => 'Order not found'];
         }
 
-        // Get AWB number from order meta
+        // Get AWB number from order meta (refreshed from database)
         $awb_number = $order->get_meta('aramex_awb_no', true);
         
         if (empty($awb_number)) {
@@ -136,6 +141,7 @@ class Aramex_Bulk_Return_Method
         $debug_info = [
             'order_id' => $order_id,
             'awb_number' => $awb_number,
+            'awb_source' => 'Retrieved from order meta (aramex_awb_no) - cache cleared',
             'product_group' => $product_group,
             'customer' => $order->get_shipping_first_name() . ' ' . $order->get_shipping_last_name(),
             'pickup_address' => $order->get_shipping_address_1() . ', ' . $order->get_shipping_city() . ', ' . $order->get_shipping_country(),
@@ -145,6 +151,7 @@ class Aramex_Bulk_Return_Method
             'client_info' => $clientInfo
         ];
         
+        custom_plugin_log('Return Pickup - Using AWB Number: ' . $awb_number . ' for Order #' . $order_id);
         mo_aramex_log_api_call('CreatePickup (Return) - Debug', 0, json_encode($debug_info, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
         
         // Get pickup location and comments from POST

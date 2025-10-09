@@ -191,6 +191,11 @@ class MO_Aramex_AWB_Manager {
         $order->update_meta_data('aramex_awb_no', $awb_number);
         $order->save();
         
+        // Clear order cache to ensure updated AWB is immediately available
+        wp_cache_delete($order_id, 'post_meta');
+        wp_cache_delete('order-' . $order_id, 'orders');
+        clean_post_cache($order_id);
+        
         // Add order note
         $note = '';
         if (empty($old_awb)) {
@@ -251,6 +256,11 @@ class MO_Aramex_AWB_Manager {
         // Delete AWB number using WooCommerce methods
         $order->delete_meta_data('aramex_awb_no');
         $order->save();
+        
+        // Clear order cache to ensure deletion is immediately reflected
+        wp_cache_delete($order_id, 'post_meta');
+        wp_cache_delete('order-' . $order_id, 'orders');
+        clean_post_cache($order_id);
         
         // Add order note
         $note = sprintf(__('AWB number removed: %s', 'mo-aramex-shipping'), $old_awb);
