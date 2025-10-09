@@ -9,18 +9,23 @@
         console.log('AWB Manager: JavaScript loaded and ready');
         
         /**
-         * Handle AWB form submission
+         * Handle AWB save button click
          */
-        $(document).on('submit', '.mo-aramex-awb-form', function(e) {
-            console.log('AWB Manager: Form submit event triggered');
+        $(document).on('click', '.mo-aramex-save-awb', function(e) {
+            console.log('AWB Manager: Save button clicked');
             e.preventDefault();
             
-            var $form = $(this);
-            var $input = $form.find('.mo-aramex-awb-input');
-            var $message = $form.find('.mo-aramex-awb-message');
-            var $saveBtn = $form.find('.mo-aramex-save-awb');
-            var orderId = $form.data('order-id');
+            var $btn = $(this);
+            var $container = $btn.closest('.mo-aramex-awb-editor');
+            var $input = $container.find('.mo-aramex-awb-input');
+            var $message = $container.find('.mo-aramex-awb-message');
+            var orderId = $container.data('order-id');
             var awbNumber = $input.val().trim();
+            
+            console.log('AWB Manager: Data collected', {
+                order_id: orderId,
+                awb_number: awbNumber
+            });
             
             // Validate AWB number
             if (!awbNumber) {
@@ -35,7 +40,7 @@
             }
             
             // Disable button and show loading state
-            $saveBtn.prop('disabled', true).text(moAramexAwb.i18n.saving);
+            $btn.prop('disabled', true).text(moAramexAwb.i18n.saving);
             
             // Debug logging
             console.log('AWB Manager: Saving AWB', {
@@ -64,12 +69,12 @@
                         updateMetaBoxDisplay(orderId, response.data.awb_number, response.data.track_url);
                         
                         // Show delete button if hidden
-                        if ($form.find('.mo-aramex-delete-awb').length === 0) {
+                        if ($container.find('.mo-aramex-delete-awb').length === 0) {
                             var deleteBtn = $('<button type="button" class="button button-secondary mo-aramex-delete-awb">' +
                                 '<span class="dashicons dashicons-trash" style="vertical-align: middle; margin-top: 3px;"></span> ' +
                                 moAramexAwb.i18n.deleted.replace(' successfully!', '') +
                                 '</button>');
-                            $form.find('.mo-aramex-awb-actions').append(deleteBtn);
+                            $container.find('.mo-aramex-awb-actions').append(deleteBtn);
                         }
                         
                         // Reload page after 1.5 seconds to refresh all displays
@@ -90,9 +95,8 @@
                 },
                 complete: function() {
                     // Re-enable button
-                    $saveBtn.prop('disabled', false).html(
-                        '<span class="dashicons dashicons-yes" style="vertical-align: middle; margin-top: 3px;"></span> ' +
-                        $saveBtn.text().replace(moAramexAwb.i18n.saving, 'Save AWB')
+                    $btn.prop('disabled', false).html(
+                        '<span class="dashicons dashicons-yes" style="vertical-align: middle; margin-top: 3px;"></span> Save AWB'
                     );
                 }
             });
@@ -109,10 +113,10 @@
             }
             
             var $btn = $(this);
-            var $form = $btn.closest('.mo-aramex-awb-form');
-            var $message = $form.find('.mo-aramex-awb-message');
-            var $input = $form.find('.mo-aramex-awb-input');
-            var orderId = $form.data('order-id');
+            var $container = $btn.closest('.mo-aramex-awb-editor');
+            var $message = $container.find('.mo-aramex-awb-message');
+            var $input = $container.find('.mo-aramex-awb-input');
+            var orderId = $container.data('order-id');
             
             // Disable button and show loading state
             $btn.prop('disabled', true).text(moAramexAwb.i18n.deleting);

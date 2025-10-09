@@ -279,7 +279,7 @@ class MO_Aramex_AWB_Manager {
      */
     public static function render_awb_editor($order_id, $current_awb = '') {
         ?>
-        <div class="mo-aramex-awb-editor">
+        <div class="mo-aramex-awb-editor" data-order-id="<?php echo esc_attr($order_id); ?>">
             <h4 style="margin: 0 0 10px 0; font-size: 13px;">
                 <?php esc_html_e('Manual AWB Management', 'mo-aramex-shipping'); ?>
             </h4>
